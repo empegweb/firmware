@@ -1,0 +1,95 @@
+.\"
+.\" Lib/guessaddrt.3in -- manual page for unsn_guessaddrtype()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_guessaddrtype.3
+.TH UNSN_GUESSADDRTYPE 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_guessaddrtype \- guess the type of address represented by a string
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "unsigned unsn_guessaddrtype(char const *" str ", unsigned " allowed );
+.fi
+.SH DESCRIPTION
+This function uses standardized heuristics to decide how a string should
+be interpreted as an address.
+It guesses which of the address types specified by
+.I allowed
+.I str
+is most likely to be.
+.PP
+The following bit flags represent types of addresses:
+.TP
+.B UNSN_ADDRTYPE_HOSTNAME
+Internet host name or the presentation form of an IP address
+.TP
+.B UNSN_ADDRTYPE_PATHNAME
+Unix pathname
+.TP
+.B UNSN_ADDRTYPE_UNSN
+Universal Network Socket Name (UNSN)
+.PP
+.I allowed
+is the inclusive-OR of one or more of the bit flags, representing the
+set of possible address types from which the function must choose.
+One of these flags is returned, indicating how
+.I str
+should be interpreted.
+.I unsn_guessaddrtype
+does not guarantee that
+.I str
+is semantically or even syntactically valid as an address of the
+selected type, nor that it is not valid as an address of any other type.
+.SS "Standard heuristics"
+When deciding between UNSNs and Internet host names,
+a string containing
+.RB ` / "', `" = "' or `" ( '
+is taken to be a UNSN, and anything else as a host name.
+.PP
+When deciding between UNSNs and Unix pathnames,
+a string starting with
+.RB ` / "', `" ./ "' or `" ../ '
+is taken to be a pathname, and anything else as a UNSN.
+.PP
+When deciding between Internet host names and Unix pathnames,
+a string containing
+.RB ` / '
+is taken to be a pathname, and anything else as a host name.
+.SS "Forcing interpretation"
+Any Internet host name will be interpreted correctly.
+.PP
+A Unix pathname can be forced to be treated as such by normalizing it to
+start with
+.RB ` / "', `" ./ "' or `" ../ '.
+.PP
+A UNSN will normally be handled correctly, but can be forced to be treated
+as a UNSN by parenthesizing it or by preceding it with
+.RB ` ()/ '.
+.SH "RETURN VALUE"
+Returns one of the bit flags set in
+.IR allowed ,
+being the flag representing the address type in which
+.I str
+should be interpreted.
+.PP
+.IR errno (3)
+is not affected.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_syntaxok (3)

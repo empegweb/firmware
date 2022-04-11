@@ -1,0 +1,80 @@
+.\" -*- nroff -*-
+.TH BADBLOCKS 8 "@E2FSPROGS_MONTH@ @E2FSPROGS_YEAR@" "E2fsprogs version @E2FSPROGS_VERSION@"
+.SH NAME
+badblocks \- search a device for bad blocks
+.SH SYNOPSIS
+.B badblocks
+[
+.B \-b
+.I block-size
+]
+[
+.B \-o
+.I output_file
+]
+[
+.B \-s
+]
+[
+.B \-v
+]
+[
+.B \-w
+]
+.I device
+.IR blocks-count [ start-block ]
+.SH DESCRIPTION
+.B badblocks
+is used to search for bad blocks on a device (usually a disk partition).
+.I device
+is the special file corresponding to the device (e.g
+.IR /dev/hdc1 ).
+.I blocks-count
+is the number of blocks on the device.
+.SH OPTIONS
+.TP
+.BI \-b " block-size"
+Specify the size of blocks in bytes.
+.TP
+.BI \-o " output_file"
+Write the list of bad blocks to the specified file. Without this option,
+.B badblocks
+displays the list on its standard output.  The format of this file is suitable
+for use by the
+.B \-l
+option in 
+.BR e2fsck (8)
+or
+.BR mke2fs (8).
+.TP
+.B \-s
+Show the progress of the scan by writing out the block numbers as they
+are checked.
+.TP
+.B \-v
+Verbose mode.
+.TP
+.B \-w
+Use write-mode test. With this option,
+.B badblocks
+scans for bad blocks by writing some patterns (0xaa, 0x55, 0xff, 0x00) on
+every block of the device, reading every block and comparing the contents.
+.SH WARNING
+Never use the
+.B \-w
+option on an device containing an existing file system.
+This option erases data!
+.SH AUTHOR
+.B badblocks
+was written by Remy Card <card@masi.ibp.fr>, the developer and maintainer
+of the ext2 fs.
+.SH BUGS
+I had no chance to make real tests of this program since I use IDE drives,
+which remap bad blocks. I only made some tests on floppies.
+.SH AVAILABILITY
+.B badblocks
+is part of the e2fsprogs package and is available for anonymous 
+ftp from tsx-11.mit.edu in /pub/linux/packages/ext2fs.
+.SH SEE ALSO
+.BR e2fsck (8),
+.BR mke2fs (8)

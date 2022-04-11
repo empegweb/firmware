@@ -1,0 +1,106 @@
+What this is
+------------
+
+Linux USB driver for empeg-car players. This can be used in
+conjunction with "emptool" in order to upload tunes and organise the
+database (see end of this text).
+
+This driver is released under the terms of the GNU General Public
+License (GPL). Refer to the file "COPYING" for details.
+
+Changes
+-------
+
+0.10	- First release.
+0.11	- Removed throttle/unthrottle handlers, which is a workaround for
+	  uhci/ohci driver bugs causing occassional lockups and slower
+	  zmodem transfer rates.
+
+Requirements
+------------
+
+This driver has been written with Linux 2.3.39, but it seems to also
+work with 2.3.37. The rapid development of USB in Linux means that
+you're best bet is to obtain the latest kernel if you encounter any
+problems - but on the other hand, a newer version of the kernel may
+break this driver... An OHCI based USB controller was used for
+testing, but the code is not dependent on this.
+
+You will need a device called /dev/empeg-car0 created as such:
+
+cd /dev
+mknod empeg-car0 c 240 0
+chmod 666 empeg-car0
+ln -s empeg-car0 empeg-car
+
+This creates a character device on node major 240 minor 0, which
+according to Documentation/devices.txt is reserved for local and
+experimental use. If you need to use a different node, the relevant
+bits to change are near the top of empeg-car.c. If you want more than
+one empeg (lucky you!) create another with minor 1. Not that I've
+tested it with more than one empeg (attempt at your own peril!)
+
+Notes
+-----
+
+I've had to use a rather ugly hack to get tty_flip_buffer_push(tty) to
+work in a useful way. I'd like to know a nicer way of doing this
+without having to set it low_latency and directly accessing the
+flip_count variable.
+
+"emptool" is using a rather small buffer for use with USB, but it
+doesn't seem to impact performance much.
+
+Installation
+------------
+
+1) Edit the Makefile to suit your system (you probably won't need to).
+
+2) Run "make". This just builds the module.
+
+3) Run "make try". This builds the module (if necessary), removes any
+old empeg-car module and insmod's a the new one.
+
+From now on, you can access the empeg-car's USB on /dev/empeg-car as
+if it were any normal tty (provided you followed the steps in
+'Requirements'). This means you can run emptool with:
+
+emptool /dev/empeg-car
+
+Enjoy!
+
+Credits
+-------
+
+This driver is based largely off the 'ACM' Linux USB driver, sponsored
+by SuSE, with credits (as taken from the file) to:
+
+Copyright (c) 1999 Armin Fuerst	<fuerst@in.tum.de>
+Copyright (c) 1999 Pavel Machek	<pavel@suse.cz>
+Copyright (c) 1999 Johannes Erdfelt <jerdfelt@valinux.com>
+Copyright (c) 1999 Vojtech Pavlik <vojtech@suse.cz>
+
+The remaining code is written by:
+
+Copyright (c) 2000 John Ripley	<john@empeg.com>
+
+The empeg car player is a product of empeg ltd, http://www.empeg.com.
+
+All trademarks are the property of their respective owners.
+
+License
+-------
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA

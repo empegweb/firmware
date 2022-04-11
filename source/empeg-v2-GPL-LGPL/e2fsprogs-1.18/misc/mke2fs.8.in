@@ -1,0 +1,273 @@
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH MKE2FS 8 "@E2FSPROGS_MONTH@ @E2FSPROGS_YEAR@" "E2fsprogs version @E2FSPROGS_VERSION@"
+.SH NAME
+mke2fs \- create a Linux second extended file system
+.SH SYNOPSIS
+.B mke2fs
+[
+.B \-c
+| 
+.\" .B \-t
+.\" .I test
+.\" |
+.B \-l
+.I filename
+]
+[
+.B \-b
+.I block-size
+]
+[
+.B \-f
+.I fragment-size
+]
+[
+.B \-i
+.I bytes-per-inode
+]
+[
+.B \-N
+.I number-of-inodes
+]
+[
+.B -n
+]
+[
+.B \-m
+.I reserved-blocks-percentage
+]
+[
+.B \-o
+.I creator-os
+]
+[
+.B \-O 
+.IR feature [,...]
+]
+[
+.B \-q
+]
+[
+.B \-r
+.I fs-revision-level
+]
+[
+.B \-R
+.I raid_options
+]
+[
+.B \-s
+.I sparse-super-flag
+]
+[
+.B \-v
+]
+[
+.B \-F
+]
+[
+.B \-L
+.I volume-label
+]
+[
+.B \-M
+.I last-mounted-directory
+]
+[
+.B \-S
+]
+[
+.B \-T
+.I filesystem-type
+]
+[
+.B \-V
+]
+.I device
+[
+.I blocks-count
+]
+.SH DESCRIPTION
+.B mke2fs
+is used to create a Linux second extended file system on a device (usually
+a disk partition).
+.I device
+is the special file corresponding to the device (e.g 
+.IR /dev/hdXX ).
+.I blocks-count
+is the number of blocks on the device.  If omitted,
+.B mke2fs
+automagically figures the file system size.
+.SH OPTIONS
+.TP
+.BI \-b " block-size"
+Specify the size of blocks in bytes.  Valid block size vales are 1024, 
+2048 and 4096 bytes per block.  If omitted,
+.B mke2fs
+block-size is determined by the file system size and the expected usage
+of the filesystem (see the
+.B \-T
+option).
+.TP
+.B \-c
+Check the device for bad blocks before creating the file system, using a
+fast read-only test.
+.TP
+.BI \-f " fragment-size"
+Specify the size of fragments in bytes.
+.TP
+.BI \-i " bytes-per-inode"
+Specify the bytes/inode ratio. 
+.B mke2fs
+creates an inode for every
+.I bytes-per-inode
+bytes of space on the disk.  
+The larger the 
+.I bytes-per-inode
+ratio, the fewer inodes will be created.
+This value generally shouldn't be smaller than
+the blocksize of the filesystem, since then too many inodes will be made.  
+Be warned that is not possible to expand the number of inodes on a 
+filesystem after it is created, so be careful decided the correct
+value for this parameter. 
+.TP
+.B \-n
+causes mke2fs to not actually create a filesystem, but display what it 
+would do if it were to create a filesystem.
+.TP
+.BI \-N " number-of-inodes"
+overrides the default calculation of the number of inodes that should be 
+reserved for the filesystem (which is based on the number of blocks and 
+the 
+.I bytes-per-inode
+ratio).  This allows the user to specify the number 
+of desired inodes directly.
+.TP
+.BI \-O " feature\fR[,...]"
+Create the filesystem with the listed set of features 
+(filesystem options).  The following features are supported: 
+.IR sparse_super ,
+which cause the filesystem to use sparse superblocks, and
+.IR filetype ,
+which will cause the filesystem to store file type information in 
+directory entries.   Currently, both features are turned on by default
+unless 
+.B mke2fs
+is run on a system with a pre-2.2 Linux kernel.
+.B Warning:
+Pre-2.2 Linux kernels do not properly 
+support the filesystems that use either of these two features.   Filesystems 
+that may need to mounted on pre-2.2 kernels should be created with 
+.B -O
+.I none
+which will disable both of these features, even if 
+.B mke2fs 
+is run on a system which can support these features.
+.TP
+.BI \-l " filename"
+Read the bad blocks list from
+.I filename.
+\.
+.TP
+.BI -m " reserved-blocks-percentage"
+Specify the percentage of reserved blocks for the super-user.  This value
+defaults to 5%.
+.\" .TP
+.\" .BI \-t " test"
+.\" Check the device for bad blocks before creating the file system
+.\" using the specified test.
+.TP
+.B \-o
+Manually override the default value of the "creator os" field of the 
+filesystem.  Normally the creator field is set by default to the native OS
+of the
+.B mke2fs
+executable.
+.TP
+.B \-q
+Quiet execution.  Useful if 
+.B mke2fs
+is run in a script.
+.TP
+.BI \-s " sparse-super-flag"
+If 
+.I sparse-super-flag
+is 1, then turn on the sparse superblock flag in the superblock.  
+.B Note:
+This option is deprecated; use the 
+.B \-O
+option instead.
+.TP
+.B \-v
+Verbose execution.
+.TP
+.B \-F
+Force 
+.B mke2fs
+to run, even if the specified device is not a 
+block special device, or appears to be mounted.
+.TP
+.B \-L
+Set the volume label for the filesystem.
+.TP
+.B \-M
+Set the last mounted directory for the filesystem.  This might be useful 
+for the sake of utilities that key off of the last mounted directory to 
+determine where the filesytem should be mounted.
+.TP
+.BI -r " revision"
+Set the filesystem revision for the new filesystem.  Note that 1.2
+kernels only support revision 0 filesystems.
+.TP
+.BI \-R " raid_options"
+Set raid-related options for the filesystem.  Raid options are comma
+separated, and may take an argument using the equals ('=')  sign.
+Currently the only supported argument is 
+.I stride
+which takes as its argument the number of blocks in a RAID stripe.
+.TP
+.B \-S
+Write superblock and group descriptors only.  This is useful if all of
+the superblock and backup superblocks are corrupted, and a last-ditch
+recovery method is desired.  It causes 
+.B mke2fs
+to reinitialize the 
+superblock and group descriptors, while not touching the inode table
+and the block and inode bitmaps.  The
+.B e2fsck
+program should be run immediately after this option is used, and there
+is no guarantee that any data will be salvageable.
+.TP
+.BI \-T " fs-type"
+Specify how the filesystem is going to be used, so that mke2fs can 
+automatically determine the optimal filesystem parameters.  The only
+filesystem type which is currently supported is "news".
+.TP
+.B \-V
+Print the version number of 
+.B mke2fs
+and exit.
+.SH AUTHOR
+This version of
+.B mke2fs
+has been written by Theodore Ts'o <tytso@mit.edu>.
+.SH BUGS
+.B mke2fs
+accepts the
+.B \-f
+option but currently ignores it because the second
+extended file system does not support fragments yet.
+.br
+There may be some other ones.  Please, report them to the author.
+.SH AVAILABILITY
+.B mke2fs
+is part of the e2fsprogs package and is available for anonymous 
+ftp from tsx-11.mit.edu in /pub/linux/packages/ext2fs.
+.SH SEE ALSO
+.BR badblocks (8),
+.BR dumpe2fs (8),
+.BR e2fsck (8),
+.BR tune2fs (8)

@@ -1,0 +1,127 @@
+## Making libraries
+#
+# See the 'predeps' target in, for example, car-support/emptool/Makefile
+#
+# (C) 1999-2000 empeg ltd.
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release  01-Apr-2003 18:52 rob:)
+
+.lib-empeg_core:
+	@$(MAKE) -q -C $(TOP)/lib/core || $(MAKE) -C $(TOP)/lib/core
+
+.lib-empeg_core_nothreads:
+	@$(MAKE) -q -C $(TOP)/lib/core || $(MAKE) -C $(TOP)/lib/core
+
+.lib-empeg_ui: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/ui || $(MAKE) -C $(TOP)/lib/ui
+
+.lib-empeg_util: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/util || $(MAKE) -C $(TOP)/lib/util
+
+.lib-empeg_protocol: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/protocol || $(MAKE) -C $(TOP)/lib/protocol
+
+.lib-empeg_cdrom: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/cdrom || $(MAKE) -C $(TOP)/lib/cdrom
+
+.lib-empeg_db: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/db || $(MAKE) -C $(TOP)/lib/db
+
+.lib-berkeley_db: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/berkeley_db -f Makefile.empeg \
+		|| $(MAKE) -C $(TOP)/lib/berkeley_db -f Makefile.empeg
+
+.lib-empeg_mercury: .lib-empeg_core .lib-empeg_net
+	@$(MAKE) -q -C $(TOP)/lib/mercury || $(MAKE) -C $(TOP)/lib/mercury
+
+.lib-empeg_async: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/async
+
+.lib-empeg_mercuryserver: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/mercury-server/unix lib || $(MAKE) -C $(TOP)/mercury-server/unix lib
+
+.lib-empeg_source: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/source
+
+.lib-empeg_dhcpd: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/dhcpd || $(MAKE) -C $(TOP)/lib/dhcpd
+
+.lib-empeg_nfscore: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/nfsd || $(MAKE) -C $(TOP)/lib/nfsd
+
+.lib-empeg_httpcore: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/httpd/core || $(MAKE) -C $(TOP)/lib/httpd/core
+
+.lib-empeg_tunedb: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/mercury_db
+
+.lib-empeg_tarfile: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/tarfile || $(MAKE) -C $(TOP)/lib/tarfile
+
+.lib-empeg_tags: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/tags
+
+.lib-empeg_cppunit:
+	@$(MAKE) -C $(TOP)/lib/CppUnit
+
+.lib-empeg_net: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/net || $(MAKE) -C $(TOP)/lib/net
+
+.lib-empeg_codec: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/codec || $(MAKE) -C $(TOP)/lib/codec
+
+.lib-empeg_thread: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/thread || $(MAKE) -C $(TOP)/lib/thread
+
+.lib-empeg_nglog:
+	@$(MAKE) -C $(TOP)/lib/NgLog
+
+.lib-NgLog:
+	@$(MAKE) -C $(TOP)/lib/NgLog
+
+.lib-empeg_dsp: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/dsp || $(MAKE) -C $(TOP)/lib/dsp
+
+.lib-xaudio:
+	@$(MAKE) -C $(TOP)/lib/xaudio
+
+.lib-empeg_model: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/model
+
+.lib-freetype:
+	@$(MAKE) -q -C $(TOP)/lib/freetype -f Makefile.empeg \
+		|| $(MAKE) -C $(TOP)/lib/freetype -f Makefile.empeg
+
+.lib-riocom: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/riocom || $(MAKE) -C $(TOP)/lib/riocom
+
+.lib-cddb_abstract: .lib-empeg_core
+	@$(MAKE) -q -C $(TOP)/lib/cddb || $(MAKE) -C $(TOP)/lib/cddb
+
+.lib-empeg_win32_config: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/win32_config
+
+.lib-empeg_win32_ui: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/win32_ui
+
+.lib-empeg_win32: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/win32
+
+.lib-empeg_profile: .lib-empeg_core
+	@$(MAKE) -C $(TOP)/lib/profile
+
+.lib-empeg_image:
+	@$(MAKE) -q -C $(TOP)/lib/image || $(MAKE) -C $(TOP)/lib/image
+
+# Just ignore ones we know we never have to build ourselves.
+.lib-pthread:
+	@
+.lib-dl:
+	@
+
+# Catch-all rule for libraries that aren't ours (e.g. Electric Fence)
+.lib-%:
+	@echo "Don't need to build $(@:.lib-%=lib%)"

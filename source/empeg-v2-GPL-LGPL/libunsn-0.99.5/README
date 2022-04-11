@@ -1,0 +1,111 @@
+                          README for libunsn
+                          ==================
+
+Introduction
+------------
+
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+Overview
+--------
+
+There are two parts to the libunsn package.
+
+Firstly, there is the libunsn library itself.  This contains various
+functions dealing with Universal Network Socket Names (UNSNs), and
+provides interfaces to perform operations on sockets using UNSNs.
+
+Secondly, there is a set of utility programs.  These perform
+socket-related actions (e.g., talking to a remote process), with an
+interface that means they can easily be used in shell scripts.  This makes
+it possible to write fairly significant clients and servers for network
+protocols without the hassle that comes from writing in C.  The utilities
+are also useful in their own right; uclient, for example, is preferable
+to telnet when connecting to services that do not use Telnet protocol.
+
+The utilities always handle addresses as UNSNs, via the libunsn library,
+and so, in addition to their inherent utility, they also serve as a
+demonstration of how to use UNSNs, and as a test case for their usability.
+
+Building and Installing
+-----------------------
+
+To build the package, you must first run `./configure'.  If you wish
+to build in a separate directory from the source, you must have a `make'
+that supports the `VPATH' mechanism, such as GNU make.  To initiate such
+a build, make an empty directory to build in, and then *in that directory*
+run `/path/to/libunsn/configure'.
+
+The `configure' script takes some options.  Use the option `--prefix'
+to determine where everything will be installed.  For example,
+`--prefix=/usr'.  The default is /usr/local.  Finer control over
+the installation is possible with the options such as `--bindir' and
+`--mandir'.
+
+You can specify the compiler to use, flags, and so on, by exporting
+the usual variables to configure in its environment.  For example,
+`CFLAGS=-O ./configure' will cause the optimisation flag `-O' to be
+passed to the compiler, instead of the default of `-O3'.
+
+After running configure, you can build the library and utilities by typing
+`make'.  To install the library, the utilities and their manual pages,
+type `make install'.
+
+Bug Reporting
+-------------
+
+If you find a bug, please report the details to the author (see below).
+Be sure to include the output of configure, and any error messages from
+the compiler.
+
+Author
+------
+
+libunsn has been written entirely by Andrew Main <zefram@fysh.org>.
+
+Packaging Modified Versions
+---------------------------
+
+If you modify libunsn and want to distribute the modified version, first
+change the VERSION string in version.vars.  (Multiple versions with the
+same version number quickly get confusing.)  Use `+' rather than `-' in
+the version string; in the RPM naming scheme of `name-version-release',
+dashes are already overloaded.
+
+The make target `tarballs' will tar up a source distribution, putting
+compressed tar archives in the dist/ subdirectory.  The target `rpms' will
+build source and binary RPM packages from the tarball, putting them in
+the dist/ subdirectory.  The target `binrpm' is similar, but only builds
+a binary RPM.  You will need bzip2 as well as gzip to use these targets.
+
+Copyright
+---------
+
+This package is free software, and can be freely redistributed under
+the terms of the appropriate license as described below.
+
+The utility programs are distributed under the GPL (the GNU General
+Public License).  This is included in the distribution in the file `GPL'.
+This license essentially means that you can freely redistribute the code,
+either modified or unmodified, in any form, provided that you provide
+source when redistributing, and you distribute it under the same license.
+
+The libunsn library is distributed under the LGPL (the GNU Lesser General
+Public License).  This is included in the distribution in the file `LGPL'.
+This license allows everything that the GPL allows, but also gives you
+one additional right: you can incorporate LGPLed code into software to be
+distributed under a different license, provided that you provide source
+for the LGPLed code, and provide the capability for someone receiving
+your software to modify the LGPLed code and rebuild your software using
+the modified version.
+
+This has only been a summary; see the `GPL' and `LGPL' files and the
+copyright notices in each source file for greater detail.
+
+Copyright (C) 1996, 2000  Andrew Main

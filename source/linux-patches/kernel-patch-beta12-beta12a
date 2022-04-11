@@ -1,0 +1,287 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.30 empeg/kernel/Makefile:1.31
+--- empeg/kernel/Makefile:1.30	Sat Jul 15 17:58:04 2000
++++ empeg/kernel/Makefile	Tue Jul 18 00:50:58 2000
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg29
++EXTRAVERSION = -rmk5-np17-empeg30
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_display.c
+diff -u empeg/kernel/arch/arm/special/empeg_display.c:1.29 empeg/kernel/arch/arm/special/empeg_display.c:1.30
+--- empeg/kernel/arch/arm/special/empeg_display.c:1.29	Tue Jul  4 19:00:08 2000
++++ empeg/kernel/arch/arm/special/empeg_display.c	Mon Jul 17 19:35:29 2000
+@@ -125,6 +125,8 @@
+ #include <asm/arch/empeg.h>
+ #include <asm/uaccess.h>
+ 
++//#define DEBUG_DISPLAY 1
++
+ /* The empeg logo for the splash screen: includes tux :) */
+ #include "empeg_logo.h"
+ 
+@@ -1054,5 +1056,7 @@
+ 	}
+ 	GPSR=EMPEG_DSPPOM;
+ #endif
+-	printk("Display now brought back to life.\n");
++	/*
++	  printk("Display now brought back to life.\n");
++	*/
+ }
+Index: empeg/kernel/arch/arm/special/empeg_power.c
+diff -u empeg/kernel/arch/arm/special/empeg_power.c:1.8 empeg/kernel/arch/arm/special/empeg_power.c:1.10
+--- empeg/kernel/arch/arm/special/empeg_power.c:1.8	Sat Jul 15 17:11:25 2000
++++ empeg/kernel/arch/arm/special/empeg_power.c	Mon Jul 17 19:36:52 2000
+@@ -83,6 +83,9 @@
+ /* First boot state */
+ static int power_firstboot=0;
+ 
++/* Boot time temperature */
++int power_firsttemperature=0;
++
+ static struct file_operations power_fops = {
+   NULL, /* power_lseek */
+   NULL, /* power_read */
+@@ -96,6 +99,15 @@
+   power_release,
+ };
+ 
++/* Get current temperature from bootloader */
++void empeg_power_settemperature(char *str, int *ints)
++{
++	/* Should be 1 parameter */
++	if (ints!=NULL && ints[0]==1) {
++		power_firsttemperature=ints[1];
++	}
++}
++
+ /* Actual communication routine */
+ static void powercontrol(int b)
+ {
+@@ -159,7 +171,7 @@
+ 		if (gplr&EMPEG_ACCSENSE)  bitset|=4;
+ 		if (power_firstboot)      bitset|=8;
+ 		if (gplr&EMPEG_SERIALDCD) bitset|=16; /* Tel mute */
+-		if (gplr&EMPEG_SERIALCTS) bitset|=32; /* Dimmer sense */
++		if (!(gplr&EMPEG_SERIALCTS)) bitset|=32; /* Dimmer sense - inverted */
+ 	}
+ 
+ 	return bitset;
+@@ -184,12 +196,51 @@
+ 	queue_task(&dev->poller, &tq_timer);
+ }
+ 
+-/* First boot time? */
+-int empeg_power_firstboot(void)
++static int power_read_procmem(char *buf, char **start, off_t offset,
++			      int len, int unused)
+ {
+-	return(power_firstboot);
++	int state=getbitset();
++	len = 0;
++	if (state & EMPEG_POWER_FLAG_DC)
++		len += sprintf(buf + len, "1 (Battery Power)\n");
++	else
++		len += sprintf(buf + len, "0 (AC Power)\n");
++	if (state & EMPEG_POWER_FLAG_FAILENABLED)
++		len += sprintf(buf + len, "1 (Powerfail enabled)\n");
++	else
++		len += sprintf(buf + len, "0 (Powerfail disabled)\n");
++	if (empeg_hardwarerevision() >= 6) {
++		if (state & EMPEG_POWER_FLAG_ACCESSORY)
++			len += sprintf(buf + len, "1 (Accessory line high)\n");
++		else
++			len += sprintf(buf + len, "0 (Accessory line low)\n");
++		if (state & EMPEG_POWER_FLAG_FIRSTBOOT)
++			len += sprintf(buf + len, "1 (First boot)\n");
++		else
++			len += sprintf(buf + len, "0 (Subsequent boot)\n");
++		if (state & EMPEG_POWER_FLAG_EXTMUTE)
++			len += sprintf(buf + len, "1 (External mute high)\n");
++		else
++			len += sprintf(buf + len, "0 (External mute low)\n");
++		if (state & EMPEG_POWER_FLAG_LIGHTS)
++			len += sprintf(buf + len, "1 (Lights sense high)\n");
++		else
++			len += sprintf(buf + len, "0 (Lights sense low)\n");
++	}
++	len += sprintf(buf + len, "All flags: 0x%x\n", state);
++	return len;
+ }
+ 
++static struct proc_dir_entry power_proc_entry = {
++	0,			/* inode (dynamic) */
++	11, "empeg_power",  	/* length and name */
++	S_IFREG | S_IRUGO, 	/* mode */
++	1, 0, 0, 		/* links, owner, group */
++	0, 			/* size */
++	NULL, 			/* use default operations */
++	&power_read_procmem, 	/* function used to read data */
++};
++
+ /* Device initialisation */
+ void __init empeg_power_init(void)
+ {
+@@ -234,6 +285,9 @@
+ 	dev->poller.data=dev;
+ 	queue_task(&dev->poller,&tq_timer);
+ 	
++#ifdef CONFIG_PROC_FS
++	proc_register(&proc_root, &power_proc_entry);
++#endif
+ 	/* Print init message */
+ 	if (empeg_hardwarerevision()>=6) {
+ 		printk("empeg power-pic driver initialised%s\n",power_firstboot?" (first boot)":"");
+@@ -324,8 +378,15 @@
+ 		   b4 = 0 tel mute low, 1 tel mute high
+ 		   b5 = 0 lights off, 1 lights on
+ 		*/
+-		dev->laststate=dev->newstate;
+-		put_user_ret(dev->laststate, (int*)arg, -EFAULT);
++		unsigned long flags;
++		int returnstate;
++
++		/* Swap over with IRQs disabled */
++		save_flags_cli(flags);
++		returnstate=dev->laststate=dev->newstate;
++		restore_flags(flags);
++
++		put_user_ret(returnstate, (int*)arg, -EFAULT);
+ 
+ 		return 0;
+ 	}
+Index: empeg/kernel/arch/arm/special/empeg_proc.c
+diff -u empeg/kernel/arch/arm/special/empeg_proc.c:1.10 empeg/kernel/arch/arm/special/empeg_proc.c:1.11
+--- empeg/kernel/arch/arm/special/empeg_proc.c:1.10	Thu Jun 29 12:52:29 2000
++++ empeg/kernel/arch/arm/special/empeg_proc.c	Mon Jul 17 19:35:06 2000
+@@ -37,34 +37,6 @@
+ 	return len;
+ }
+ 
+-extern int empeg_power_firstboot(void);
+-static int power_read_procmem(char *buf, char **start, off_t offset,
+-			      int len, int unused)
+-{
+-	len = 0;
+-	if (GPLR & EMPEG_EXTPOWER)
+-		len += sprintf(buf+len, "1 (Battery Power)\n");
+-	else
+-		len += sprintf(buf+len, "0 (AC Power)\n");
+-	if (powerfail_enabled())
+-		len += sprintf(buf+len, "1 (Powerfail enabled)\n");
+-	else
+-		len += sprintf(buf+len, "0 (Powerfail disabled)\n");
+-
+-#ifdef CONFIG_EMPEG_POWER
+-	/* Extra bits for Mk2 with power control PIC */
+-	if (GPLR & EMPEG_ACCSENSE)
+-		len += sprintf(buf+len, "1 (Accessory line high)\n");
+-	else
+-		len += sprintf(buf+len, "0 (Accessory line low)\n");
+-	if (empeg_power_firstboot())
+-		len += sprintf(buf+len, "1 (First boot)\n");
+-	else
+-		len += sprintf(buf+len, "0 (Second or later boot)\n");
+-#endif
+-	return len;
+-}
+-
+ static int therm_read_procmem(char *buf, char **start, off_t offset,
+ 			      int len, int unused)
+ {
+@@ -104,16 +76,6 @@
+ 	&therm_read_procmem, 	/* function used to read data */
+ };
+ 
+-static struct proc_dir_entry power_proc_entry = {
+-	0,			/* inode (dynamic) */
+-	11, "empeg_power",  	/* length and name */
+-	S_IFREG | S_IRUGO, 	/* mode */
+-	1, 0, 0, 		/* links, owner, group */
+-	0, 			/* size */
+-	NULL, 			/* use default operations */
+-	&power_read_procmem, 	/* function used to read data */
+-};
+-
+ void __init empeg_proc_init(void)
+ {
+ 	unsigned long flags;
+@@ -126,6 +88,5 @@
+ #ifdef CONFIG_PROC_FS
+ 	proc_register(&proc_root, &id_proc_entry);
+ 	proc_register(&proc_root, &therm_proc_entry);
+-	proc_register(&proc_root, &power_proc_entry);
+ #endif
+ }
+Index: empeg/kernel/arch/arm/special/empeg_state.c
+diff -u empeg/kernel/arch/arm/special/empeg_state.c:1.22 empeg/kernel/arch/arm/special/empeg_state.c:1.23
+--- empeg/kernel/arch/arm/special/empeg_state.c:1.22	Mon Jul 10 10:21:28 2000
++++ empeg/kernel/arch/arm/special/empeg_state.c	Mon Jul 17 19:37:15 2000
+@@ -402,7 +402,9 @@
+ 		
+ 		/* Something so we can see how close the actual
+                    powerfail *is*! */
+-		printk("The quick brown fox jumped over the lazy dog.\n");
++		/*
++		  printk("The quick brown fox jumped over the lazy dog.\n");
++		*/
+ 
+ 		/* Queue up a powerfail timeout call just in case the
+ 		 * power hasn't really gone away. */
+@@ -432,7 +434,9 @@
+ 
+ 	unsigned long dis;
+ 	save_flags_cli(dis);
+-	printk("The power doesn't seem to have gone away after all.\n");
++	/*
++	  printk("The power doesn't seem to have gone away after all.\n");
++	*/
+ 
+ #ifdef CONFIG_EMPEG_DISPLAY
+ 	/* Re-enable powerfail processing */
+@@ -461,7 +465,9 @@
+ 	save_flags_cli(dis);
+ 	
+ 	if (erroneous_interrupts) {
+-		printk("The power interrupt is happening too often. Can't enable it.\n");
++		/*
++		  printk("The power interrupt is happening too often. Can't enable it.\n");
++		*/
+ 		if (timer_pending(&dev->powerfail_timer))
+ 			del_timer(&dev->powerfail_timer);
+ 		dev->powerfail_timer.expires = jiffies + POWERFAIL_TIMEOUT * HZ;
+@@ -469,7 +475,9 @@
+ 		add_timer(&dev->powerfail_timer);
+ 		erroneous_interrupts = 0;
+ 	} else {
+-		printk("The power hasn't failed for a while - reenabling actions.\n");
++		/*
++		  printk("The power hasn't failed for a while - reenabling actions.\n");
++		*/
+ 
+ 		if (timer_pending(&dev->powerfail_timer))
+ 			del_timer(&dev->powerfail_timer);
+Index: empeg/kernel/include/asm-arm/arch-sa1100/ide.h
+diff -u empeg/kernel/include/asm-arm/arch-sa1100/ide.h:1.10 empeg/kernel/include/asm-arm/arch-sa1100/ide.h:1.11
+--- empeg/kernel/include/asm-arm/arch-sa1100/ide.h:1.10	Mon Jun  5 12:12:54 2000
++++ empeg/kernel/include/asm-arm/arch-sa1100/ide.h	Mon Jul 17 15:55:16 2000
+@@ -46,8 +46,12 @@
+ 	hw_regs_t hw;
+ 
+ #if defined( CONFIG_SA1100_EMPEG )
+-	/* Take hard drives out of reset */
+-	GPSR=(EMPEG_IDERESET);
++	/* Are HDDs still in reset? If so, we're out of temperature range.
++	   Don't scan for HDDs */
++	if ((GPLR&EMPEG_IDERESET)==0) {
++		printk("empeg ide: outside environmental limits, skipping\n");
++		return;
++	}
+ 
+ 	/* Check hardware revision */
+ 	switch(empeg_hardwarerevision()) {

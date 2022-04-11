@@ -1,0 +1,157 @@
+Rio Car Alpha Release 10-Jul-2004
+Version 3.00-alpha8, Receiver Edition
+
+Copyright (c) Digital Networks North America, Inc. 2003, 2004
+
+
+* Notes
+
+This is the first alpha release of the Receiver Edition firmware for the
+Rio Car (but it's called alpha 8, because it matches alpha 8 of the
+standard edition). As a preview release, this firmware may not be stable.
+
+The Receiver Edition firmware turns your Empeg or Rio car-player into a
+Rio Receiver: that is, a thin-client audio player which plays files which
+are kept on a server computer and accessed via Ethernet. The Receiver
+Edition can NOT play files from your car-player's hard disks: the disk is
+used only to load the player software, and then is spun down.
+
+This firmware is NO USE to people who use their car-player in an actual
+car -- where there's no Ethernet and no server -- and is made available
+only for those who've got a spare car-player and would like to turn it
+into a home audio player.
+
+If you wish to use your car-player in a car, you should avoid the Receiver
+Edition and use the stable 2.x standard edition, or, for the adventurous,
+an alpha release of the 3.x standard edition.
+
+
+* General
+
+If you are not an alpha tester, please hold back on reporting bugs until
+a public Beta is released - unless it is something really critical!
+
+As always, the Unofficial Empeg BBS at http://empegbbs.com is a good
+place for discussing this alpha, or the Receiver Edition in general, or
+indeed the car-player in general.
+
+
+* Installation
+
+You will need a music server on a PC on your home network. The original
+Rio music-server as shipped with the Rio Receiver, "Rio Audio Receiver
+Manager" (for Windows only), can be downloaded from www.rioaudio.com --
+
+ http://www.digitalnetworksna.com/support/rio/product.asp?prodID=99&locSup=USA
+
+-- but frankly it's a bit clunky and many people will be better off
+with one of the third-party ones. The FAQ in the Rio Receiver section of
+the Empeg BBS, http://empegbbs.com, lists some.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only. Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* Uninstallation
+
+To turn a Receiver Edition car-player back into a standard one usable
+in a car, apply a standard edition firmware upgrade to it (either v2
+or v3). The Receiver Edition will not have touched the music files or
+the database, so everything will be back to normal.
+
+
+* Receiver Edition: What You Get
+
+You get almost all the features of the standard edition car-player v3.00
+alpha 8 firmware (consult those release notes too), including:
+
+  - MP3, WMA, Vorbis, and Flac playback
+  - Gapless playback
+  - Crossfade and pitchbend
+  - Insert, Enqueue, Append into the running-order
+  - Find matching artist/Hate artist etc
+  - Extended Latin, Greek and Cyrillic in both font sizes
+  - A full set of visuals and info modes
+
+The few things you don't get are those related to dynamic data, as a
+Rio Receiver's view of the server's database is regrettably read-only:
+
+  - No biased shuffles (as play counts can't be stored)
+  - No wendy filters (the server database doesn't have this field)
+  - Emplode/Jemplode/Emptool can't connect to the player (just add the
+    files on your server instead)
+  - No bookmarks
+
+As is the usual way with Rio Receivers, you get automatically-generated
+menus for artist, album, and genre -- sometimes called "soup menus".
+Actual playlists are in their own menu, one level deeper than in the
+standard edition firmware. Pressing down-down-down no longer does what
+you think it does.
+
+Some server software portrays folders on the server as playlists; other
+software only displays M3U and similar playlist files. Consult the
+documentation for your chosen server software.
+
+Because the Receiver Edition loads its firmware from disk, you don't
+need to set up a "software server" as well as a "music server" (but
+many server packages include both anyway).
+
+In summary, what you get is the best of both worlds:
+
+   - Like a Rio Receiver but with a much nicer screen and better software
+   - Like a car-player but with unlimited capacity and no disk noise
+
+
+* Known Issues
+
+The Receiver functionality depends on Ethernet, of course, so won't work
+on Mark 1 players.
+
+The networking settings -- DHCP or static IP address -- are taken from
+your existing setup. Make sure these are correct before applying the
+upgrade, as there's currently no way of changing these settings on a
+Receiver Edition player (without manually editing config.ini, or
+changing back to the standard edition).
+
+The search windows don't work (but you get "soup menus" which do work).
+
+Long-press of "down" for the Insert/Append/Enqueue menu doesn't work in
+the autogenerated "soup" menus, only in the Playlists menu.
+
+Large playlist menus -- e.g. Artists -- take a while to come up. It's no
+slower than a real Rio Receiver, but it's still slower than car-player
+owners will be used to.
+
+As a Unicode-enabled application, the Receiver Edition expects tag data
+from the music server to be in the UTF-8 encoding. All existing server
+software -- even Rio's -- hands the client tag data in the Latin-1
+encoding, as that's what all previous clients have expected. This means
+that accented characters, Greek, and Cyrillic in tags will display
+incorrectly until server authors update their software. Server software
+can tell what to do in order to support both types of client correctly,
+because the Receiver Edition adds a new "_utf8=1" tag to all its queries.
+
+Although the Receiver Edition supports Vorbis and Flac, most server
+software, including Rio's, does not; similarly for nested playlists.
+
+It's likely that some third-party car-player software will become very
+confused by Receiver Edition operation. Sadly there was no time to
+involve the third-party developers in the release process, so please
+don't be too hard on them, as they didn't see this coming.
+
+
+Peter Hartley 2004-Jul-10
+pdhartley@rioaudio.com

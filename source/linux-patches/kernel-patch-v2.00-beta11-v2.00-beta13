@@ -1,0 +1,178 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.48 empeg/kernel/Makefile:1.48.2.1
+--- empeg/kernel/Makefile:1.48	Thu Oct 25 18:55:19 2001
++++ empeg/kernel/Makefile	Wed Jul 24 18:12:01 2002
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg50
++EXTRAVERSION = -rmk5-np17-empeg51
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_input.c
+diff -u empeg/kernel/arch/arm/special/empeg_input.c:1.8 empeg/kernel/arch/arm/special/empeg_input.c:1.8.2.1
+--- empeg/kernel/arch/arm/special/empeg_input.c:1.8	Tue Jan  8 17:27:12 2002
++++ empeg/kernel/arch/arm/special/empeg_input.c	Wed Jul 24 18:11:44 2002
+@@ -194,7 +194,7 @@
+ };
+ 
+ /* Rotary control deglitching support. When the rotary controls get
+- * hold and worn out they start giving false codes in the opposite
++ * old and worn out they start giving false codes in the opposite
+  * direction at the end or possibly in the middle of rotation - this
+  * causes odd behaviour. So we arrange to ignore the codes indicating
+  * an opposite direction if they occur within a certain time of the
+@@ -202,7 +202,7 @@
+ 
+ #define ROTARY_CLOCKWISE_CODE (0xa)
+ #define ROTARY_ANTICLOCKWISE_CODE (0xb)
+-#define ROTARY_GLITCH_TIMEOUT_JIFFIES (HZ/8)
++#define ROTARY_GLITCH_TIMEOUT_JIFFIES (HZ/4)
+ 
+ static struct input_dev input_devices[1];
+ 
+Index: empeg/kernel/drivers/block/flash-empeg.c
+diff -u empeg/kernel/drivers/block/flash-empeg.c:1.5 empeg/kernel/drivers/block/flash-empeg.c:1.5.2.1
+--- empeg/kernel/drivers/block/flash-empeg.c:1.5	Thu Jan 17 18:55:18 2002
++++ empeg/kernel/drivers/block/flash-empeg.c	Tue Mar 12 20:37:07 2002
+@@ -87,9 +87,9 @@
+ /*
+  *  Macros to toggle WP pin for programming flash
+  */
+-#define WP_ON()		GPCR = EMPEG_FLASHWE
+-#define WP_OFF()	GPSR = EMPEG_FLASHWE
+-
++static struct semaphore flash_busy = MUTEX;
++#define WP_ON()		do {down(&flash_busy); GPCR = EMPEG_FLASHWE;} while (0)
++#define WP_OFF()	do {up(&flash_busy); GPSR = EMPEG_FLASHWE;} while (0)
+ 
+ /* Flash commands.. */
+ #define FlashCommandRead            0x00FF
+@@ -166,16 +166,17 @@
+ 	return TRUE;
+ }                     
+ 
+-
+ /*********************************************************************
+  *  Function:   erase_flash_sector
+  *  Author:     Stephane Dalton
+  *  History:    1999/02/18 -> creation
+  *  Parameters: in->    address within the flash sector to erase
+  *              out->   TRUE: sector erase FALSE otherwise
+- *  Abstract:	DO NOT REMOVE the udelay call, because we have to 
+- *		disable the interrupts to prevent further access to 
+- *		the flash during erase
++ *  Abstract:	//DO NOT REMOVE the udelay call, because we have to 
++ *		//disable the interrupts to prevent further access to 
++ *		//the flash during erase
++ *              I've added a semaphore to control flash access,
++ *              so we can sleep instead of busy waiting.  -M.Lord
+  *********************************************************************/
+ static int erase_flash_sector(unsigned short *ptr)
+ {
+@@ -207,7 +208,9 @@
+ 	erase_loop_ctr = 0;
+ 
+ 	while (!(*flash_ptr & STATUS_BUSY)) {
+-		udelay(1000L);
++		//udelay(1000L);
++		current->state = TASK_INTERRUPTIBLE;
++		schedule_timeout(1*HZ);
+ 
+ 		if(++erase_loop_ctr == ERASE_TIME_LIMIT) {
+ 			panic("Flash seems dead... too bad!\n");
+@@ -241,9 +244,11 @@
+  *			data addr to read from
+  *                      size to write
+  *              out->   TRUE: sector written FALSE otherwise
+- *  Abstract:   DO NOT REMOVE the udelay call, because we have to
+- *              disable the interrupts to prevent further access to
+- *              the flash during write
++ *  Abstract:   //DO NOT REMOVE the udelay call, because we have to
++ *              //disable the interrupts to prevent further access to
++ *              //the flash during write
++ *              I've added a semaphore to control flash access,
++ *              so we can sleep instead of busy waiting.  -M.Lord
+  *********************************************************************/
+ static int write_flash_sector(unsigned short *ptr,const char* data,const int size)
+ {
+@@ -279,6 +284,7 @@
+ 		write_loop_ctrl = 0;
+ 
+ 		while (!(*flash_ptr&STATUS_BUSY)) {
++		        schedule();
+ 			udelay(10L);
+ 
+ 			if(++write_loop_ctrl==WRITE_TIME_LIMIT) {
+@@ -327,7 +333,6 @@
+ 		(flash_cache.state == CLEAN) ? "clean" : 
+ 		(flash_cache.state == UNUSED) ? "unused":"" );
+ #endif
+-
+ 	if(flash_cache.state == DIRTY){
+ 		flash_ptr = (unsigned short *)
+ 			(flash_start[flash_cache.minor] + flash_cache.start);
+@@ -389,7 +394,9 @@
+ 			/*
+ 			 *	Otherwise we read the data directly from flash
+ 			 */
++			down(&flash_busy);			 
+ 			memcpy( buf, flash_start[minor] + offset, size );
++			up(&flash_busy);			
+ #ifdef FLASH_DEBUG
+ 			printk("flash: READ from flash\n");
+ #endif
+@@ -462,9 +469,11 @@
+ 				 */
+ 				flash_cache.size=flash_sectorsizes[minor];
+ 				flash_cache.start=(offset&~(flash_cache.size-1));
+-				memcpy(	flash_cache.buf, 
++				down(&flash_busy);
++    				memcpy(	flash_cache.buf, 
+ 					flash_start[minor] + flash_cache.start, 
+ 					flash_cache.size );
++				up(&flash_busy);
+ 				flash_cache.minor = minor;
+ #ifdef FLASH_DEBUG
+ 				printk("flash.start = %d, minor = %d, size = %x, flash.buf = 0x%p\n",
+Index: empeg/kernel/include/asm-arm/arch-sa1100/time.h
+diff -u empeg/kernel/include/asm-arm/arch-sa1100/time.h:1.10 empeg/kernel/include/asm-arm/arch-sa1100/time.h:1.10.18.2
+--- empeg/kernel/include/asm-arm/arch-sa1100/time.h:1.10	Tue Mar 14 16:13:53 2000
++++ empeg/kernel/include/asm-arm/arch-sa1100/time.h	Tue Mar  5 12:10:12 2002
+@@ -3,6 +3,7 @@
+  *
+  * Copyright (C) 1998 Deborah Wallach.
+  * Twiddles  (C) 1999 Hugo Fiennes <hugo@empeg.com>
++ * Fixed lockups 2002 Mark Lord <mlord@pobox.com>
+  *
+  */
+ 
+@@ -41,7 +42,7 @@
+ 	/* Time at which we can safely set a timer match interrupt - not too
+ 	   close to current time for safety */
+ 	const unsigned long safeperiod = 2;
+-	unsigned long safetime = OSCR+safeperiod;
++	unsigned long safetime;
+ 
+ 	/* Disable IRQs during this timer update: this is done because
+ 	   previously problems could occur with an IRQ from another source
+@@ -49,7 +50,7 @@
+ 	   been passed by the time the OSMR was written to.
+ 	   hugo@empeg.com
+         */
+-	save_flags_cli(flags);
++	save_flags_clif(flags);       // was save_flags_cli()  --M.Lord
+ 	last_os_timer_match=OSMR0;
+ 
+         /* Clear match on timer 0 */
+@@ -67,7 +68,7 @@
+ 		break;
+ #endif
+ 
+-	while (((next_os_timer_match >= safetime) && (next_os_timer_match - safetime > 0x80000000))
++	while (((next_os_timer_match >= (safetime = OSCR+safeperiod)) && (next_os_timer_match - safetime > 0x80000000))
+ 	       || ((next_os_timer_match < safetime) && (safetime - next_os_timer_match < 0x80000000))) {
+ 		/* Too close to next interrupt, back off one. Reset last_os_timer_match to
+ 		   the timer value which we would have set if it wasn't too close as we've

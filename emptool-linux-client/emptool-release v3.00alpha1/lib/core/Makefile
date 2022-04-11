@@ -1,0 +1,195 @@
+# empeg core library Makefile
+#
+# (C) 1999-2000 empeg ltd.
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.85 13-Mar-2003 18:15 rob:)
+#
+# Authors:
+#   Mike Crowe <mac@empeg.com>
+
+TOP=../..
+
+include $(TOP)/Make.rules
+
+TARGET_CXXFLAGS+=-D "_LIB" -D__ENABLE_WSTRING
+
+SRC_COMMON:= \
+	asx_playlist.cpp \
+	bit_bucket.cpp \
+	dynamic_config_file.cpp \
+	empeg_bitrate.cpp \
+	empeg_time.cpp \
+	file.cpp \
+	file_stream.cpp \
+	format_error.cpp \
+	line_chopper.cpp \
+	md5.cpp \
+	memory_stream.cpp \
+	null_stream.cpp \
+	pstring.cpp \
+	reblocker.cpp \
+	serial.cpp \
+	stream.cpp \
+	stream_in_memory.cpp \
+	stringops.cpp \
+	string_flag_set.cpp \
+	timeout.cpp \
+	test_assert.cpp \
+	trace_buffer.cpp \
+	utf8.cpp \
+	var_string.cpp \
+	wildcard.cpp \
+	xml.cpp
+
+SRC_THREADS:= \
+	cyclecheck.cpp \
+	mutex.cpp \
+	mutex_posix.cpp \
+	thread_pid.cpp
+
+SRC_NOTHREADS:= \
+	thread_pid_fake.cpp
+
+SRC_UNIX:= \
+	dnew.cpp \
+	dospath2.cpp \
+	mutexcycle.cpp \
+	refcount_posix.cpp \
+	time_calc.cpp \
+	trace.cpp \
+	frame_pointer_stack.cpp
+
+SRC_WIN32:= \
+	dospath2.cpp \
+	mutex_win32.cpp \
+	trace_win32.cpp
+
+SRC_ECOS:= \
+	dnew.cpp \
+	dospath2.cpp \
+	mutexcycle.cpp \
+	refcount_posix.cpp \
+	time_calc.cpp \
+	trace.cpp \
+	mutex_ecos.cpp \
+	frame_pointer_stack.cpp
+
+ifeq ($(ARCH), win32)
+TARGET_THREADS_SRC:=$(SRC_COMMON) $(SRC_WIN32) $(SRC_THREADS)
+TARGET_NOTHREADS_SRC:=$(SRC_COMMAND) $(SRC_WIN32) $(SRC_NOTHREADS)
+else
+ifeq ($(ARCH), armecos)
+TARGET_THREADS_SRC:=$(SRC_COMMON) $(SRC_ECOS) $(SRC_THREADS)
+TARGET_NOTHREADS_SRC:=$(SRC_COMMON) $(SRC_ECOS) $(SRC_NOTHREADS)
+else
+TARGET_THREADS_SRC:=$(SRC_COMMON) $(SRC_UNIX) $(SRC_THREADS)
+TARGET_NOTHREADS_SRC:=$(SRC_COMMON) $(SRC_UNIX) $(SRC_NOTHREADS)
+endif
+endif
+
+TARGET_HEADERS=dnew.h trace.h filemagic.h pstring.h wildcard.h
+
+TARGET_THREADS_OBJS:=$(TARGET_THREADS_SRC:%.c=$(TARGET_PREFIX)%$(OBJ_SUFFIX))
+TARGET_THREADS_OBJS:=$(TARGET_THREADS_OBJS:%.cpp=$(TARGET_PREFIX)%$(OBJ_SUFFIX))
+TARGET_THREADS_DEPS:=$(TARGET_THREADS_OBJS:$(OBJ_SUFFIX)=.d)
+
+TARGET_NOTHREADS_OBJS:=$(TARGET_NOTHREADS_SRC:%.c=$(TARGET_PREFIX)%$(OBJ_SUFFIX))
+TARGET_NOTHREADS_OBJS:=$(TARGET_NOTHREADS_OBJS:%.cpp=$(TARGET_PREFIX)%$(OBJ_SUFFIX))
+TARGET_NOTHREADS_DEPS:=$(TARGET_NOTHREADS_OBJS:$(OBJ_SUFFIX)=.d)
+
+THIS_TARGET=$(TARGET_GENERIC)
+
+THREADS_TARGET=$(TARGET_GENERIC_LIBDIR)$(LIB_PREFIX)empeg_core$(LIB_SUFFIX)
+NOTHREADS_TARGET=$(TARGET_GENERIC_LIBDIR)$(LIB_PREFIX)empeg_core_nothreads$(LIB_SUFFIX)
+
+.PHONY: all
+
+all : $(THREADS_TARGET) $(NOTHREADS_TARGET)
+
+# Implicit rules will take care of this
+$(THREADS_TARGET) : $(TARGET_THREADS_OBJS)
+
+# Implicit rules will take care of this
+$(NOTHREADS_TARGET) : $(TARGET_NOTHREADS_OBJS)
+
+.PHONY: downloadable-root
+downloadable-root: $(THREADS_TARGET) $(NOTHREADS_TARGET)
+
+clean :
+	$(RM) -rf $(TARGET_PREFIX) $(THREADS_TARGET) $(NOTHREADS_TARGET) .force-header-generation
+	$(RM) core_errors.h wildcard
+	$(RM) core *~
+
+distclean : clean
+
+cyclecheck: cyclecheck.cpp
+	$(TARGET_CXX) cyclecheck.cpp $(TARGET_CXXFLAGS) -o cyclecheck-test.o -DTEST
+	$(TARGET_LD) cyclecheck-test.o $(TARGET_LDFLAGS) -o cyclecheck
+
+mutexcheck: mutexcycle.cpp $(THREADS_TARGET)
+	$(TARGET_CXX) mutexcycle.cpp $(TARGET_CXXFLAGS) -o mutexcheck-test.o -DTEST
+	$(TARGET_LD) mutexcheck-test.o $(TARGET_LDFLAGS) -o mutexcheck $(THREADS_TARGET) -lpthread
+
+serial: serial.cpp
+	$(TARGET_CXX) serial.cpp $(TARGET_CXXFLAGS) -o serial-test.o -DTEST
+	$(TARGET_LD) serial-test.o $(TARGET_LDFLAGS) -o serial
+
+# Automated testing: We support two types of test, internal and
+# external.  This refers to whether the tests are in the .cpp file
+# where the class is implemented, or in a different .cpp file.
+# External tests are in foo_test.cpp.
+# Internal tests are in foo.cpp.  You're expected to provide a main()
+# if TEST is defined.
+# Both types of test are built to foo_test$(EXE_SUFFIX) and then run.
+
+# Test everything.
+TEST_SRC := $(TARGET_THREADS_SRC)
+
+.PHONY: tests
+
+tests : internal_tests external_tests
+
+# Look for .cpp files with a corresponding _test.cpp file.
+EXTERNAL_TESTS := $(wildcard $(TEST_SRC:%.cpp=%_test.cpp))
+FILES_WITH_EXTERNAL_TESTS := $(EXTERNAL_TESTS:%_test.cpp=%.cpp)
+INTERNAL_TESTS := $(filter-out $(FILES_WITH_EXTERNAL_TESTS),$(TEST_SRC))
+
+internal_tests : $(patsubst %.cpp,$(TARGET_PREFIX)test_%,$(INTERNAL_TESTS))
+
+external_tests : $(patsubst %.cpp,$(TARGET_PREFIX)test_%,$(EXTERNAL_TESTS))
+
+$(TARGET_PREFIX)test_%: %.cpp $(THREADS_TARGET)
+	$(CC_PRE)$(TARGET_CXX) $< $(TARGET_CXXFLAGS) -o $@.o -DTEST
+	$(TARGET_LD_PRE)$(TARGET_LD) $@.o $(THREADS_TARGET) $(TARGET_LDFLAGS) -lpthread -o $@
+	$@ || rm $@
+
+runtests: tests
+
+core_errors.h: core_errors.mes $(ERRBUILD)
+	$(ERRBUILD) -h -o core_errors core_errors.mes
+
+# Automatically-generated headers
+#
+# These cause a problem, as they must exist before compilation starts, yet
+# without these rules no dependency on them would exist except for the ones
+# generated by compilation. We break this vicious circle by creating an (empty)
+# sub-makefile; make remakes sub-makefiles before doing any real work and we
+# can subvert this mechanism to make our generated headers too.
+
+.force-header-generation: core_errors.h
+	touch .force-header-generation
+
+ifneq ($(CLEANING),1)
+-include .force-header-generation
+endif
+
+ifneq ($(CLEANING),1)
+TARGET_DEPS:=$(TARGET_THREADS_DEPS) $(TARGET_NOTHREADS_DEPS) $(TEST_OBJS:%$(OBJ_SUFFIX)=%.d)
+TARGET_DEPS:=$(wildcard $(TARGET_DEPS))
+ifneq ($(TARGET_DEPS),)
+-include $(TARGET_DEPS)
+endif
+endif

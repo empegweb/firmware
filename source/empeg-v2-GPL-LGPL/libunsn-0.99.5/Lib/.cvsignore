@@ -1,0 +1,19 @@
+Makefile
+libunsn.a libunsn.s[ol] libunsn.s[ol].*
+manpages.list
+man
+*.o
+getpeeraddr.c getpeerunsn.c getpeerunsnh.c
+getsockaddr.c getsockunsn.c getsockunsnh.c
+aitounsn.s.ic
+p_local.i.ic
+errcmp.l.ic
+strerror.m.ic
+ilayers.h
+ilayers.i.ic
+ilayers.t.ic
+features.c
+features.sh
+libunsn_f.h
+edit_header.sed
+libunsn.h

@@ -1,0 +1,8 @@
+Makefile
+uclient
+userver
+ustat
+manpages.list
+man
+*.o
+ustat.s.ic

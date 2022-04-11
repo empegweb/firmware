@@ -1,0 +1,113 @@
+Rio Car Alpha Release 10-Jul-2004
+Version 3.00-alpha8
+
+Copyright (c) Digital Networks North America, Inc. 2003, 2004
+
+
+* Notes
+
+This is a Rio Car Alpha Release. This release may not be stable, and is
+for empeg Mark 2 and Rio Car hardware only. Mark 1 support is problematic
+and will be addressed for a future release.
+
+Those who value stability over excitement should steer well clear of
+this version, in favour of the v2.00 release.
+
+
+* General
+
+If you are not an alpha tester, please hold back on reporting bugs until
+a public Beta is released - unless it is something really critical!
+
+As always, the Unofficial Empeg BBS at http://empegbbs.com is a good
+place for discussing this alpha.
+
+
+* Installation
+
+You should install the new emplode before installing this release. If
+you fail to do so your empeg-car unit may not function and it will be
+necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+This release contains an interim emplode build, which does not yet
+have an installer.  Install the v2.00 version of emplode, unzip the
+new executable and library to another folder, and execute from there.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your empeg car using the supplied serial
+cable.  Switch off your player at the wall or unplug the IEC cable
+from the brick power supply.
+
+The upgrade can be installed by serial only. Run the Upgrade Wizard
+and either enter or browse for the upgrade file. Click Next and select
+the serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and
+brick power supply. If you have an all-in-one power supply then switch
+it on at the wall ifc possible or plug into the wall. The upgrade
+should then be applied. If it fails, try again.
+
+
+* What's New Since 3.00-alpha7 - Player
+
+Automatic EQ setting.
+
+Automatic detection of memory size (for upgraded players). The kernel
+changes for this feature were done by Mark Lord and originally came
+from his "Hijack" replacement kernel project.
+
+New visual "LogDiff 128".
+
+Both font sizes now contain glyphs for Latin Extended-A
+(U+0100..U+017F), Greek (U+0386..U+03CE), and Cyrillic
+(U+0400..U+045F), plus some of the extra punctuation at U+2000..U+203F
+-- basically all of WGL-4 except the dingbats and box-drawing
+characters. With these additions, the car-player now supports tags in
+all the languages of Europe, except Georgian and Armenian (and they
+might count as Asia anyway).
+
+Many further fixes inherited from Rio Karma, too numerous to identify.
+
+
+* What's New Since 2.10 - Emplode
+
+No new release.
+
+
+* What's New Since 3.00-alpha1 - Emptool
+
+No new release.
+
+
+* Known Issues
+
+Probably doesn't work on Mark 1 players (untested).
+
+Reportedly, there are problems using Mark Lord's "Hijack" with this
+release. This almost certainly our fault, not Hijack's, but we were
+unable to properly characterise or fix the problem by release time.
+
+The giant font used in InfoTex and related visuals is Latin-1 only and
+does not correctly display accented characters, Greek, or Cyrillic.
+
+The "Toilet Floor" visual was unstable in testing and has been
+temporarily removed for this release.
+
+Reportedly, using the search features can cause audio glitching. This
+has yet to be addressed.
+
+Long bursts of fast-forwarding or rewinding can cause a lockup.
+
+Searching doesn't work properly for accented characters, Greek, or
+Cyrillic.
+
+Although Emplode 2.10 will correctly transfer ID3 and other tags
+containing characters above U+00FF, including Greek and Cyrillic, such
+characters don't appear correctly in Emplode's own UI.
+
+
+Peter Hartley 2004-Jul-10
+pdhartley@rioaudio.com

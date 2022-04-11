@@ -1,0 +1,475 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.47 empeg/kernel/Makefile:1.48
+--- empeg/kernel/Makefile:1.47	Wed Oct 17 16:00:51 2001
++++ empeg/kernel/Makefile	Thu Oct 25 18:55:19 2001
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg49
++EXTRAVERSION = -rmk5-np17-empeg50
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_display.c
+diff -u empeg/kernel/arch/arm/special/empeg_display.c:1.48 empeg/kernel/arch/arm/special/empeg_display.c:1.54
+--- empeg/kernel/arch/arm/special/empeg_display.c:1.48	Wed Oct 17 15:52:25 2001
++++ empeg/kernel/arch/arm/special/empeg_display.c	Mon Nov 26 11:36:31 2001
+@@ -1,4 +1,5 @@
+ #undef CONFIG_EMPEG_LCD
++#undef COMPOSITE_BOARD 
+ 
+ /*
+  * linux/arch/arm/drivers/char/console-empeg.c
+@@ -67,6 +68,8 @@
+  *                (in the empeg_power driver) as issue 9 boards no longer
+  *                use a GPIO to control this.
+  *
++ * 2001/11/08 MAC Added minimal support for Patrick's composite board.
++ *
+  * This is the very basic console mapping code: we only provide a mmap()able
+  * area at the moment - there is no linkup with the VT code.
+  *
+@@ -375,6 +378,249 @@
+ }
+ #endif
+ 
++#ifdef COMPOSITE_BOARD
++#define COMPOSITE_IDE_BASE ((volatile __u16 *)(0xe0000020))
++static volatile __u16 *const composite_command = COMPOSITE_IDE_BASE + 0;
++static volatile __u16 *const composite_data = COMPOSITE_IDE_BASE + 2;
++#define OPTION_COMPOSITE_HANDSHAKE 1
++
++static char convert_lookup[255];
++
++static char twobpp_buffer[1024];
++
++static void make_pixel_lookup()
++{
++    int a, b;
++    for (a=0; a<16; a++)
++    {
++	for (b=0; b<16; b++)
++	{
++	    convert_lookup[(a*16)+b] = (((b&3)<<2)|(a&3));
++	    printk("lookup[%d] = %d | %d\n", (a*16)+b, b&3, a&3);
++	}
++    }
++}
++
++static void convert_to_2bpp(unsigned char *source_buffer, unsigned char *dest_buffer)
++{
++    int p;
++    char o, c, l;
++    for (p=0; p<((EMPEG_SCREEN_WIDTH/2)*EMPEG_SCREEN_HEIGHT); p+=2)
++    {
++	o = source_buffer[p];
++	c = convert_lookup[o];
++	o = source_buffer[p+1];
++	l = convert_lookup[o];
++	c = (c<<4)|l;
++	dest_buffer[p/2] = c;
++    }
++}
++
++
++#ifdef OPTION_COMPOSITE_HANDSHAKE
++
++// This version uses a simple handshaking system to talk to the board
++
++
++
++static void composite_board_output(unsigned char *source_buffer)
++{
++	const __u16 START_SEQUENCE = 1;
++	const __u16 END_SEQUENCE = 2;
++	const __u16 DATA_UNAVAILABLE = 3;
++	const __u16 DATA_AVAILABLE = 4;
++	const __u16 START_HLINE = 5;
++
++	const __u16 MAGIC_COMMAND = 0xdead;
++	const __u16 MAGIC_DATA = 0xbead;
++
++	const int TIMEOUT = 0xff;
++
++	u16 icom = *composite_command;
++	u16 idat = *composite_data;
++//	__u16 *word_buffer = (__u16 *)source_buffer;
++	u32 *int_buffer = (u32 *)&twobpp_buffer;
++	u32 x, y, timeout, chunk;
++	u16 com, data;
++	char extra1, extra2;
++
++	// Check for presence of the board
++	// This actually checks whether the board is ready and waiting for a frame
++	// Therefore if the board software is slow, the result is missed frames
++	if ((icom != MAGIC_COMMAND) || (idat != MAGIC_DATA)) 
++	    return;
++
++	convert_to_2bpp(source_buffer, &twobpp_buffer); 
++
++	// Send start sequence command
++	*composite_command = START_SEQUENCE;
++	// Wait for start sequence to be acknowledged
++	com = *composite_command;
++	timeout = 0;
++	while (com != START_SEQUENCE && timeout < TIMEOUT)
++	{
++	    com = *composite_command;
++	    timeout += 1;
++	}
++
++	// This loop sends an entire frame
++	for(y = 0; y < 32; ++y) {
++	    for(x = 0; x < EMPEG_SCREEN_WIDTH/16; ++x) {
++		// Prepare the data
++		chunk = int_buffer[y * (EMPEG_SCREEN_WIDTH/16) + x];
++		data = ((chunk>>8) & 0xffff);   // This goes through the data register
++		extra1 = chunk>>24;             // This goes through the upper 8 bits of the command register
++		extra2 = (chunk & 0xff);        // This also passed through upper 8 bits of command register
++		// Send data unavailable command and 8 bits of data
++		*composite_command = (DATA_UNAVAILABLE | (extra1<<8));
++		// Send the data
++		*composite_data = data;
++		// Wait for data unavailable to be acknowledged
++		com = *composite_command;
++		timeout = 0;
++		while (com != DATA_UNAVAILABLE && timeout < TIMEOUT)
++		{
++		    com = *composite_command;
++		    timeout += 1;
++		}
++		
++		// Send data available command and 8 bits of data
++		*composite_command = (DATA_AVAILABLE | (extra2<<8));
++		// Wait for the data available to be acknowledged
++		com = *composite_command;
++		timeout = 0;
++		while (com != DATA_AVAILABLE && timeout < TIMEOUT)
++		{
++		    com = *composite_command;
++		    timeout += 1;
++		}
++	    }
++	}
++	// Send end sequence command
++	*composite_command = END_SEQUENCE;
++//	com = *composite_command;
++//	while (com != END_SEQUENCE)
++//	    com = *composite_command;
++}
++
++#else
++#if 1
++
++static int seqnum_lookup[512];
++
++static void composite_board_output(unsigned char *source_buffer)
++{
++	const __u16 START_SEQUENCE = 1;
++	const __u16 END_SEQUENCE = 2;
++	const __u16 DATA_UNAVAILABLE = 3;
++	const __u16 DATA_AVAILABLE = 4;
++
++	const __u16 MAGIC_COMMAND = 0xdead;
++	const __u16 MAGIC_DATA = 0xbead;
++
++	__u16 *word_buffer = (__u16 *)twobpp_buffer;
++//	__u16 *word_buffer = (__u16 *)source_buffer;
++
++	const int TIMEOUT = 0xf00;
++
++	int x, y, timeout, seqnum, badseqnums;
++	u16 com, dat;
++//	printk("Composite board frame sent blind\n");
++
++	*composite_command = START_SEQUENCE;
++	com = *composite_command;
++	timeout = 0;
++	while (com != START_SEQUENCE && timeout < TIMEOUT)  // Wait for START_SEQUENCE ack
++	{
++	    com= *composite_command;
++	    timeout += 1;
++	}
++	if (com != START_SEQUENCE)
++	    return;
++//	printk("Sending frame via IRQ mechanism\n");
++	badseqnums = 0;
++	convert_to_2bpp(source_buffer, &twobpp_buffer);
++	for(y = 0; y < 32; ++y) {
++		for(x = 0; x < EMPEG_SCREEN_WIDTH/8; ++x) {
++		    seqnum = (y * (EMPEG_SCREEN_WIDTH/8)) + x;
++		    dat = word_buffer[seqnum];
++		    *composite_data = dat;
++		    *composite_command = (seqnum<<4) | DATA_UNAVAILABLE;
++		    com = *composite_command;
++		    timeout = 0;
++		    while (com != seqnum && timeout<TIMEOUT)
++		    {
++			com = *composite_command;
++			timeout += 1;
++		    }
++		    if (com != seqnum)
++		    {
++			seqnum_lookup[badseqnums] = seqnum;
++			badseqnums += 1;
++		    }
++		}
++	}
++	if (badseqnums > 0)
++	{
++	    printk("%d bad seqnums\n", badseqnums);
++	    y = 0;
++	    for(x=0; x<badseqnums; ++x) {
++		seqnum = seqnum_lookup[x];
++		dat = word_buffer[seqnum];
++		*composite_data = dat;
++		*composite_command = (seqnum<<4) | DATA_UNAVAILABLE;
++		com = *composite_command;
++		timeout = 0;
++		while (com != seqnum && timeout<TIMEOUT)
++		{
++		    com = *composite_command;
++		    timeout += 1;
++		}
++		if (com != seqnum)
++		{
++		    y += 1;
++		}
++	    }
++	    printk("%d bad seqnums after retry\n", y);
++	}
++	*composite_command = END_SEQUENCE;
++}
++
++#else
++// This version sends the data blindly to the board (useful to test writing to the ide does't have side effects)
++
++static void composite_board_output(unsigned char *source_buffer)
++{
++	const __u16 START_SEQUENCE = 1;
++	const __u16 END_SEQUENCE = 2;
++	const __u16 DATA_UNAVAILABLE = 3;
++	const __u16 DATA_AVAILABLE = 4;
++
++	const __u16 MAGIC_COMMAND = 0xdead;
++	const __u16 MAGIC_DATA = 0xbead;
++
++	__u16 *word_buffer = (__u16 *)source_buffer;
++
++	int x, y;
++	u16 com;
++//	printk("Composite board frame sent blind\n");
++
++	*composite_command = START_SEQUENCE;
++	for(y = 0; y < 32; ++y) {
++		for(x = 0; x < EMPEG_SCREEN_WIDTH/4; ++x) {
++		    *composite_command = DATA_UNAVAILABLE;
++		    *composite_data = word_buffer[y * (EMPEG_SCREEN_WIDTH/4) + x];		    
++		    *composite_command = DATA_AVAILABLE;			
++		    udelay(1);
++		}
++	}
++	*composite_command = END_SEQUENCE;
++
++}
++#endif
++#endif       // OPTION_COMPOSITE_HANDSHAKE
++#endif
++
+ /* Do a direct refresh straight to the screen */
+ 
+ /* Plot a pixel on the actual display */
+@@ -410,6 +656,9 @@
+ #ifdef CONFIG_EMPEG_LCD
+ 	lcd(source_buffer);
+ #endif
++#ifdef COMPOSITE_BOARD
++	composite_board_output(source_buffer);
++#endif
+ 
+ 	/* The main body of the screen is logical */
+ 	for(c=0;c<63;c++) {
+@@ -993,6 +1242,10 @@
+ {
+ 	struct display_dev *dev = devices;
+ 	int result,delay;
++
++#ifdef COMPOSITE_BOARD
++	make_pixel_lookup();
++#endif
+ 	
+ 	/* Firstly, we need to locate the LCD DMA buffer to a 4k page
+ 	   boundary to ensure that the SA1100 DMA controller can do
+Index: empeg/kernel/arch/arm/special/empeg_input.c
+diff -u empeg/kernel/arch/arm/special/empeg_input.c:1.3 empeg/kernel/arch/arm/special/empeg_input.c:1.7
+--- empeg/kernel/arch/arm/special/empeg_input.c:1.3	Mon Oct  1 18:22:29 2001
++++ empeg/kernel/arch/arm/special/empeg_input.c	Mon Oct 29 10:39:04 2001
+@@ -47,6 +47,13 @@
+  * 2000/09/19 MAC Complete overhaul to send button up and button down
+  *                codes rather that doing all the repeat stuff here.
+  *
++ * 2001/10/24 MAC Added anti-glitch support for rotary control. It's a
++ *                bit of a hack but it might just work. See later for
++ *                full details of * the problem.
++ *
++ * 2001/10/25 MAC Honed rotary anti-glitch support by testing against
++ *                a player that suffered from it.
++ *
+  * */
+ 
+ /* Output format.
+@@ -170,6 +177,10 @@
+ 	unsigned long current_button_down;
+ 	unsigned long last_code_received;
+ 
++	/* Rotary deglitching support */
++	unsigned long last_rotary_jiffies;
++	input_code last_rotary_code;
++	
+ 	/* Statistics */
+ 	unsigned long count_valid;
+ 	unsigned long count_repeat;
+@@ -182,6 +193,17 @@
+ #endif
+ };
+ 
++/* Rotary control deglitching support. When the rotary controls get
++ * hold and worn out they start giving false codes in the opposite
++ * direction at the end or possibly in the middle of rotation - this
++ * causes odd behaviour. So we arrange to ignore the codes indicating
++ * an opposite direction if they occur within a certain time of the
++ * previous one. */
++
++#define ROTARY_CLOCKWISE_CODE (0xa)
++#define ROTARY_ANTICLOCKWISE_CODE (0xb)
++#define ROTARY_GLITCH_TIMEOUT_JIFFIES (HZ/8)
++
+ static struct input_dev input_devices[1];
+ 
+ /* Used to disallow multiple opens. */
+@@ -303,7 +325,7 @@
+ #endif
+ 
+ static inline void input_buttons_interrupt(struct input_dev *dev, int level,
+-					unsigned long span)
++					   unsigned long span)
+ {
+ 	static int state = IR_STATE_IDLE;
+ 	static int unit_time = 1; /* not zero in case we accidentally use it */
+@@ -378,8 +400,6 @@
+ 		/* Going high, that should be after 4T */
+ 		unit_time = span / 4;
+ 		if (unit_time > US_TO_TICKS(50) && unit_time < US_TO_TICKS(550))
+-		//if (unit_time > US_TO_TICKS(150) && unit_time < US_TO_TICKS(350)) << original
+-		//if (unit_time > 225 && unit_time < 275)
+ 			state = IR_STATE_START2;
+ 		else
+ 			state = IR_STATE_IDLE; /* There's no point in recovering immediately
+@@ -453,6 +473,39 @@
+ 			{
+ 				/* We don't do anything with repeats so go
+ 				   straight to the real code */
++
++				input_code code = (data >> 4);
++
++				if ((code == ROTARY_CLOCKWISE_CODE) || (code == ROTARY_ANTICLOCKWISE_CODE)) {
++					/* We need to do special
++					 * handling here 'cos when the
++					 * rotary controls get old and
++					 * worn out they start giving
++					 * false codes in the opposite
++					 * direction sometimes.
++					 */
++					
++					input_code previous_rotary_code = dev->last_rotary_code;
++					unsigned long previous_rotary_jiffies = dev->last_rotary_jiffies;
++
++					/* We want to do multiple
++                                         * codes within the timeout
++                                         * because it appears that
++                                         * now I've seen a player
++                                         * that really suffered from
++                                         * the problem it may
++                                         * generate up to two bad
++                                         * codes in a row.
++					 */
++					dev->last_rotary_jiffies = jiffies;
++					
++					if ((code != previous_rotary_code)
++					    && (jiffies_since(previous_rotary_jiffies) < ROTARY_GLITCH_TIMEOUT_JIFFIES)) {
++						/* Don't use the code then. */
++						break;
++					}
++					dev->last_rotary_code = code;
++				}
+ 				input_append_code(dev, data >> 4);
+ 				ON_VALID;
+ 			        state = IR_STATE_IDLE;
+@@ -1008,6 +1061,13 @@
+ 	dev->wq = NULL;
+ 	dev->remote_type = IR_TYPE_DEFAULT;
+ 
++	dev->last_ir_jiffies = 0;
++	dev->current_button_down = 0;
++	dev->last_code_received = 0;
++	
++	dev->last_rotary_jiffies = 0;
++	dev->last_rotary_code = 0;
++	
+ 	dev->count_valid = 0;
+ 	dev->count_repeat = 0;
+ 	dev->count_badrepeat = 0;
+Index: empeg/kernel/arch/arm/special/empeg_mixer.c
+diff -u empeg/kernel/arch/arm/special/empeg_mixer.c:1.6 empeg/kernel/arch/arm/special/empeg_mixer.c:1.7
+--- empeg/kernel/arch/arm/special/empeg_mixer.c:1.6	Wed Sep 12 18:05:32 2001
++++ empeg/kernel/arch/arm/special/empeg_mixer.c	Tue Dec  4 11:16:25 2001
+@@ -480,7 +480,6 @@
+ 		return 0;
+ 	}
+ 	case EMPEG_MIXER_READ_SOURCE:
+-		dev->input=SOUND_MASK_PCM;
+ 		put_user_ret(dev->input, (int *)arg, -EFAULT);
+ #if MIXER_DEBUG
+ 		printk(MIXER_NAME
+Index: empeg/kernel/arch/arm/special/empeg_proc.c
+diff -u empeg/kernel/arch/arm/special/empeg_proc.c:1.12 empeg/kernel/arch/arm/special/empeg_proc.c:1.13
+--- empeg/kernel/arch/arm/special/empeg_proc.c:1.12	Fri Dec 22 17:24:28 2000
++++ empeg/kernel/arch/arm/special/empeg_proc.c	Fri Nov  2 16:09:31 2001
+@@ -45,8 +45,8 @@
+ 	int temp;
+ 	unsigned long flags;
+ 
+-	/* Need to disable IRQs during temperature read */
+-	save_flags_cli(flags);
++	/* Need to disable IRQs & FIQs during temperature read */
++	save_flags_clif(flags);
+ 	temp=empeg_readtherm(&OSMR0,&GPLR);
+ 	restore_flags(flags);
+ 
+Index: empeg/kernel/arch/arm/special/empeg_therm.S
+diff -u empeg/kernel/arch/arm/special/empeg_therm.S:1.2 empeg/kernel/arch/arm/special/empeg_therm.S:1.3
+--- empeg/kernel/arch/arm/special/empeg_therm.S:1.2	Fri Dec 17 17:08:36 1999
++++ empeg/kernel/arch/arm/special/empeg_therm.S	Fri Nov  2 16:04:27 2001
+@@ -175,7 +175,7 @@
+ 	@ Wait for 10us for line to be pulled high if necessary
+ 1:	ldr	r0,[r9,#OSCR]
+ 	cmp	r0,r3
+-	bne	1b
++	blt	1b
+ 
+ 	@ Read bit
+ 	ldr	r1,[r10,#GPLR]
+Index: empeg/kernel/fs/super.c
+diff -u empeg/kernel/fs/super.c:1.2 empeg/kernel/fs/super.c:1.3
+--- empeg/kernel/fs/super.c:1.2	Wed Oct 17 15:51:36 2001
++++ empeg/kernel/fs/super.c	Thu Oct 18 11:02:15 2001
+@@ -1237,7 +1237,7 @@
+ 			panic("VFS: add_vfsmnt failed for root fs");
+ 		}
+ 	}
+-#ifdef CONFIG_SA1100_EMPEG
++#ifdef CONFIG_EMPEG_DISPLAY
+ 	display_bootfail();
+ #endif
+ 	panic("VFS: Unable to mount root fs on %s",

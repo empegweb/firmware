@@ -1,0 +1,40 @@
+# http_stream_errors.mes
+#
+# Error declarations specific to HTTP support
+#
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.4 01-Apr-2003 18:52 rob:)
+#
+
+#
+# Failure codes
+#
+
+Facility=4
+Component=13
+Severity=2
+Language=English
+
+# HTTP_E_MALFORMEDSTATUSLINE
+Symbol=HTTP_E_MALFORMEDSTATUSLINE
+Code=10
+Text=Malformed Status-Line in HTTP Response
+
+# HTTP_E_UNSUPPORTEDPROTOCOL
+Symbol=HTTP_E_UNSUPPORTEDPROTOCOL
+Code=11
+Text=Unsupported protocol
+
+# HTTP_E_LOGINNOTIMPL
+Symbol=HTTP_E_LOGINNOTIMPL
+Code=12
+Text=HTTP logins are not implemented
+
+# HTTP_E_MALFORMEDHEADER
+Symbol=HTTP_E_MALFORMEDHEADER
+Code=13
+Text=Malformed HTTP Response Header

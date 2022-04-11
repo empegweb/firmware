@@ -1,0 +1,96 @@
+1999-11-10    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.18
+
+1999-10-26    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.17
+
+1999-10-25    <tytso@valinux.com>
+
+	* ext2_fs.h (i_reserved2): Use __GNU__ instead of __hurd__ to
+		detect the Hurd OS.  To protect against future
+		irrationality on the part of the FSF concerning whether
+		Linux is GNU or not, on a system which defines both
+		__linux__ and __GNU___, __linux__ takes precedence.
+
+1999-10-22    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.16
+
+1999-07-18  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.15
+
+1999-01-09  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.14
+
+1998-12-15  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.13
+
+1998-07-09  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.12
+
+1998-03-30  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* types.h.in: Add a signed keyword to the __s64 definition.
+
+1998-03-23  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* ext2_fs.h: Update to latest 2.1.90+diffs version of ext2_fs.h
+
+Sun Oct 19 19:08:03 1997  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* ext2_fs.h: #if 0 out the EXT2_DEBUG code, since it's only needed
+		for the kernel and the ... notation makes some cpp's complain.
+
+	* types.h.in: Fix the type definitions of __s64 and __u64 if long
+	 	long is used.
+
+Tue Jun 17 01:33:20 1997  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.11
+
+Thu Apr 24 12:16:42 1997  Theodre Ts'o  <tytso@localhost.mit.edu>
+
+	* Release of E2fsprogs version 1.10
+
+Thu Apr 17 12:23:38 1997  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.09
+
+Fri Apr 11 18:56:26 1997  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.08
+
+Wed Mar 12 13:32:05 1997  Theodore Y. Ts'o  <tytso@mit.edu>
+
+	* Release of E2fsprogs version 1.07
+
+Tue Oct  8 02:02:03 1996  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.06
+
+Thu Sep 12 15:23:07 1996  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.05
+
+Thu May 16 11:12:30 1996  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.04
+
+Wed Mar 27 00:33:40 1996    <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.03
+
+Wed Jan 31 11:06:08 1996    <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs version 1.02
+
+Mon Sep  4 21:50:12 1995  Remy Card  <card@bbj>
+
+	* ext2_fs.h: Updated to latest version.
+

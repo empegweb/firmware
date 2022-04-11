@@ -1,0 +1,144 @@
+.\"
+.\" Utils/libunsn.1in -- manual page for libunsn utilities
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: libunsn.1
+.TH LIBUNSN 1 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+libunsn \- utilities for manipulating sockets, using UNSNs
+.SH SYNOPSIS
+.B ustat
+.RI [ options ]
+.PP
+.B uclient
+.RI [ options ]
+.I remote-address
+[
+.I command
+.RI [ arg " ...]"
+]
+.PP
+.B userver
+.RI [ options ]
+.I local-address command
+.RI [ arg " ...]"
+.PP
+.B inetd2userver
+.RI [ conf-file ]
+.SH DESCRIPTION
+The
+.IR libunsn (3)
+library is accompanied by this set of shell utilities for manipulating sockets.
+These provide something that has been largely missing: a way to set up
+sockets on the command line and in shell scripts.  These bring down the
+barrier to entry to sockets; where previously it was necessary to write
+a lengthy C program to do anything non-trivial, these utilities do the
+socket-specific parts of what simple applications require in the way
+of network access.
+.PP
+In keeping with the Unix shell philosophy, these utilities are designed to
+interact with other programs.  While they are marginally useful on their own
+.RI ( uclient (1)
+is useful on its own in lots of places where one used to use
+.IR telnet (1)),
+their real power lies in allowing non-sockets-aware programs to do
+things with networks.  A pair of
+.IR uclient (1)
+and
+.IR userver (1)
+provides basic remote communication between shell scripts.
+.SS "Summary of the utilities"
+.IR ustat (1)
+returns information about an existing socket.
+.IR uclient (1)
+creates a connected socket, and is the basic way to open communication
+with a remote process.
+.IR userver (1)
+maintains a passive socket, handling connections from remote processes.
+.IR inetd2userver (1)
+translates an
+.IR inetd (8)
+configuration file into a script that uses
+.IR userver (1)
+.RI ( userver (1)
+can be used in place of
+.IR inetd (8)).
+.SH "QUICK HACKS"
+You can invoke
+.IR ustat (1)
+directly from
+.IR userver (1)
+(or
+.IR inetd (8)),
+thus providing a service that returns information
+about the connection back to anyone that connects.
+This is useful for debugging.
+.PP
+You can invoke
+.IR uclient (1)
+directly from
+.IR userver (1)
+(or
+.IR inetd (8))
+to implement direct port forwarding for connection-oriented protocols.
+Anyone that connects to this service
+is effectively connected to whatever service you tell
+.IR uclient (1)
+to connect to.  To do authentication or whatever else you want in a
+port forwarder, just wrap the
+.IR uclient (1)
+invocation in a shell script that does whatever you need.
+.PP
+You can invoke
+.IR uclient (1)
+from another
+.IR uclient (1)
+to implement direct port forwarding for connectionless protocols.
+.SH "SHELL SCRIPT USAGE"
+In a ksh-like shell, the most comfortable way to use
+.IR uclient (1)
+is to run it as a coprocess.  This provides the shell script
+with a pair of redirectable file descriptors which effectively refer to the
+socket, connected to the remote process.
+(This only works fully for byte-stream protocols.)
+.PP
+.B userver -1d
+has the effect of accepting one connection and handling it synchronously,
+such that waiting for the
+.IR userver (1)
+process to terminate actually waits for the connection-handling program to
+terminate.
+.PP
+.BR "userver " ... " sh -c '" ... "'"
+will execute arbitrary shell commands for each connection, so you do not have
+to wrap up the subordinate commands into a separate script.
+.PP
+Low-security cooperative file transfers can be performed by a combination of
+.nf
+        \fIfoo%\fR \fBuserver -1d\fP \fIaddress\fR \fBcat >\fP \fIoutput-file\fR
+.fi
+and
+.nf
+        \fIbar%\fR \fBuclient\fP \fIaddress\fR \fB<\fP \fIinput-file\fR
+.fi
+.SH "SEE ALSO"
+.IR inetd (8),
+.IR inetd2userver (1),
+.IR libunsn (3),
+.IR uclient (1),
+.IR userver (1),
+.IR ustat (1)

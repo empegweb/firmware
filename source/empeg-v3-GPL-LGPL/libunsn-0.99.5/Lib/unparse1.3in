@@ -1,0 +1,50 @@
+.\"
+.\" Lib/unparse1.3in -- manual page for unsn_unparse1()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_unparse1.3
+.TH UNSN_UNPARSE1 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_unparse1 \- unparse a single alternative of a UNSN
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char *unsn_unparse1(struct unsn_alt_iterator const *" i );
+.fi
+.SH DESCRIPTION
+Takes the current alternative referenced by the iterator
+.IR i ,
+and outputs it in the form of a canonical UNSN.
+.SH "RETURN VALUE"
+Returns freshly
+.IR malloc (3)ed
+storage, containing a NUL-terminated UNSN in canonical format
+corresponding to the current alternative of the iterator.
+The caller is responsible for
+.IR free (3)ing
+this storage.  On error, NULL is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to build the string to be returned.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_alt_iterator (3)

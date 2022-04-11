@@ -1,0 +1,4 @@
+Makefile
+libobjs.list shlibobjs.list
+stamp-h
+*.o

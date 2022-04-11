@@ -1,0 +1,241 @@
+#
+# Utils/Makefile.in -- Makefile for libunsn utilities
+# Copyright (C) 2000  Andrew Main
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# Paths
+
+SHELL = /bin/sh
+@SET_MAKE@
+
+srcdir      = @srcdir@
+VPATH       = @srcdir@
+
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+mandir      = @mandir@
+libdir      = @libdir@
+includedir  = @includedir@
+
+CC          = @CC@
+CPPFLAGS    = @CPPFLAGS@
+DEFS        = @DEFS@
+CFLAGS      = @CFLAGS@
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@
+
+SHLIB_CFLAGS = @SHLIB_CFLAGS@
+SHLIB_LDFLAGS = @SHLIB_LDFLAGS@
+SHLIB_SONAME_LDFLAG = @SHLIB_SONAME_LDFLAG@
+SHLIB_EXT = @SHLIB_EXT@
+
+RANLIB      = @RANLIB@
+
+INSTALL     = @INSTALL@
+
+MAKEDEFS    = \
+prefix='$(prefix)' exec_prefix='$(exec_prefix)' \
+bindir='$(bindir)' mandir='$(mandir)' libdir='$(libdir)' \
+includedir='$(includedir)' \
+CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' DEFS='$(DEFS)' \
+CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS='$(LIBS)' \
+SHLIB_CFLAGS='$(SHLIB_CFLAGS)' SHLIB_LDFLAGS='$(SHLIB_LDFLAGS)' \
+SHLIB_SONAME_LDFLAG='$(SHLIB_SONAME_LDFLAG)' SHLIB_EXT='$(SHLIB_EXT)' \
+RANLIB='$(RANLIB)'
+
+DISTFILES   = Makefile.in .cvsignore \
+libunsn.1in \
+utils.h \
+i2u.1in i2u.pl \
+uclient.1in uclient.c \
+userver.1in userver.c \
+ustat.1in ustat.c \
+pollto.c time.c \
+
+UTILS = inetd2userver uclient userver ustat
+
+MANPAGES = libunsn.1in i2u.1in uclient.1in userver.1in ustat.1in
+
+# Build targets
+
+all: $(UTILS) manpages.list
+
+check: $(UTILS)
+	@echo 'There are no tests.'
+
+install: install.shlib install.devel install.utils
+uninstall: uninstall.shlib uninstall.devel uninstall.utils
+
+install.shlib uninstall.shlib instlist.shlib:
+install.devel uninstall.devel instlist.devel:
+
+install.utils: $(UTILS) manpages.list
+	$(srcdir)/../mkinstalldirs $(DESTDIR)$(bindir)
+	set -e; \
+	for util in $(UTILS); do \
+		$(INSTALL) -m 755 $$util $(DESTDIR)$(bindir); \
+	done
+	set -e; \
+	for manpage in `cat manpages.list`; do \
+		sect=`echo $$manpage | sed 's/^.*\.//'`; \
+		$(srcdir)/../mkinstalldirs $(DESTDIR)$(mandir)/man$$sect; \
+		$(INSTALL) -m 644 man/$$manpage $(DESTDIR)$(mandir)/man$$sect; \
+	done
+
+uninstall.utils: manpages.list
+	if cd $(DESTDIR)$(bindir); then \
+		rm -f $(UTILS); \
+	else :; fi
+	set -e; \
+	for manpage in `cat manpages.list`; do \
+		sect=`echo $$manpage | sed 's/^.*\.//'`; \
+		rm -f $(DESTDIR)$(mandir)/man$$sect/$$manpage; \
+	done
+
+instlist.utils: manpages.list
+	set -e; \
+	( \
+		for util in $(UTILS); do \
+			echo $(bindir)/$$util; \
+		done; \
+		for manpage in `cat manpages.list`; do \
+			sect=`echo $$manpage | sed 's/^.*\.//'`; \
+			echo %doc $(mandir)/man$$sect/$$manpage; \
+		done \
+	) >> $(INSTLIST)
+
+install-strip: install
+
+# Cleaning
+
+clean:
+	rm -f ustat.s.ic *.o $(UTILS)
+	rm -f manpages.list
+	rm -rf man
+
+distclean: clean
+	rm -f Makefile
+
+superclean: distclean
+
+mostlyclean: clean
+maintainer-clean: distclean
+
+# Distributions
+
+dist: $(DISTFILES)
+	mkdir $(DISTDIR)
+	list=`echo '' $(DISTFILES) | sed 's" \([^ ]\)" '$(srcdir)'/\1"g'`; \
+	ln $$list $(DISTDIR) || cp -p $$list $(DISTDIR)
+
+# Configuration
+
+../config.status: ../configure
+	cd .. && ./config.status --recheck
+
+../configure: ../configure.in ../aclocal.m4
+	cd $(srcdir)/.. && autoconf
+
+../config.h: ../stamp-h
+	@: Getting round a bug in GNU make
+
+../stamp-h: ../config.h.in ../config.status
+	cd .. && CONFIG_FILES= CONFIG_HEADERS=config.h ./config.status
+
+../config.h.in: ../stamp-h.in
+	@: Getting round a bug in GNU make
+
+../stamp-h.in: ../acconfig.h ../configure.in ../aclocal.m4
+	cd $(srcdir)/.. && autoheader
+	echo > $(srcdir)/../stamp-h.in
+
+../acconfig.h: ../configure.in ../mkacconfigh
+	cd $(srcdir)/.. && ./mkacconfigh > acconfig.h
+
+Makefile: Makefile.in ../config.status
+	cd .. && CONFIG_FILES=Utils/Makefile CONFIG_HEADERS= ./config.status
+
+# Man pages
+
+manpages.list: $(MANPAGES) ../version.vars
+	test -d man || mkdir man
+	$(srcdir)/../mkmanpages $(srcdir)/../version.vars man \
+		`echo '' $(MANPAGES) | sed 's| | '$(srcdir)'/|g'` > $@ || \
+		( rm -f $@; exit 1 )
+
+# Source generation
+
+ustat.o: ustat.s.ic
+ustat.s.ic: ustat.c
+	$(srcdir)/../mksocktlist $(srcdir)/ustat.c $@
+
+# Compiling
+
+INCLUDES = -I. -I$(srcdir) -I../Lib -I$(srcdir)/../Lib
+COMPBASE = $(CC) $(INCLUDES) $(CPPFLAGS) $(DEFS) $(CFLAGS)
+COMPILE = $(COMPBASE) -c
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+.c.o:
+	$(COMPILE) $<
+
+OBJS = pollto.o time.o uclient.o userver.o ustat.o
+$(OBJS): utils.h ../Lib/libunsn.h ../Lib/Compat/stamp-h
+
+../Lib/Compat/stamp-h: FORCE
+	cd ../Lib/Compat && $(MAKE) $(MAKEDEFS) stamp-h
+
+# Utility linking
+
+LIB_DEPS = ../Lib/libunsn.$(SHLIB_EXT)
+NIB_DEPS = ../Lib/libunsn.a
+
+SETUP_LDRUNPATH = case $(libdir) in /lib|/usr/lib) ;; *) case ":$${LD_RUN_PATH}:" in *:$(libdir):*) ;; *) LD_RUN_PATH=$(libdir)$${LD_RUN_PATH+:$$LD_RUN_PATH}; export LD_RUN_PATH ;; esac ;; esac
+SETUP_NDRUNPATH = :
+LINK = $(SETUP_@L@DRUNPATH); $(CC) $(LDFLAGS) @SHLIB_LDRUNPATH_LDFLAG@ -o $@
+
+STDDEPS = $(@L@IB_DEPS)
+STDOBJS = -L../Lib -lunsn $(LIBS)
+
+uclient: uclient.o pollto.o time.o $(STDDEPS)
+	$(LINK) uclient.o pollto.o time.o $(STDOBJS)
+
+userver: userver.o pollto.o time.o $(STDDEPS)
+	$(LINK) userver.o pollto.o time.o $(STDOBJS)
+
+ustat: ustat.o $(STDDEPS)
+	$(LINK) ustat.o $(STDOBJS)
+
+inetd2userver: i2u.pl
+	if sed 's|@PATH_TO_PERL@|@PERL_PATH@|g' < $(srcdir)/i2u.pl > $@; then \
+		chmod 755 $@; \
+	else \
+		rm -f $@; \
+		false; \
+	fi
+
+# Library
+
+../Lib/libunsn.h $(@L@IB_DEPS):
+	cd ../Lib && $(MAKE) $(MAKEDEFS) `echo $@ | sed 's|^\.\./Lib/||'`
+
+# Forcing pseudo-target
+
+FORCE:

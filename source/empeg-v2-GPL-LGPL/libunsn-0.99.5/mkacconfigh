@@ -1,0 +1,137 @@
+#! /bin/sh -e
+
+#
+# mkacconfigh -- generate acconfig.h
+# Copyright (C) 2000  Andrew Main
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+echo '#ifndef UNSN_CONFIG_H'
+echo '#define UNSN_CONFIG_H 1'
+echo '@TOP@'
+
+sed -n '
+/zefram_CHECK_TYPE(/{
+	s/^.*zefram_CHECK_TYPE( *\([a-zA-Z0-9_]*\) *, *\([^,]*\),.*$/\1,\2/
+	/,$/!{
+		i\
+
+		h
+		s|^.*,\(.*\)$|/* Define to \1 if not defined by headers. */|
+		p
+		g
+		s|^\(.*\),.*$|#undef \1|
+		p
+	}
+}
+/zefram_GUESS_SOCKLEN_T/{
+	i\
+
+	i\
+/* Define appropriately if not defined by headers. */
+	i\
+#undef socklen_t
+}
+/zefram_CHECK_STRUCT(/{
+	s/^.*zefram_CHECK_STRUCT( *\([a-zA-Z0-9_]*\) *,.*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define if you have struct \1. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^|#undef HAVE_STRUCT_|
+	p
+}
+/zefram_CHECK_STRUCT_MEMBER(/{
+	s/^.*zefram_CHECK_STRUCT_MEMBER( *\([a-zA-Z0-9_]*\) *, *\([a-zA-Z0-9_]*\) *,.*$/\1,\2/
+	i\
+
+	h
+	s|^\(.*\),\(.*\)$|/* Define if struct \1 has a member named \2. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^\(.*\),\(.*\)$|#undef HAVE_STRUCTMEM_\1_\2|
+	p
+}
+/zefram_CHECK_VAR(/{
+	s/^.*zefram_CHECK_VAR( *\([a-zA-Z0-9_]*\) *,.*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define if you have the \1 variable. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^|#undef HAVE_VAR_|
+	p
+}
+/zefram_CHECK_VAR_DECLARED_*I*F*E*X*I*S*T*(/{
+	s/^.*zefram_CHECK_VAR_DECLARED_*I*F*E*X*I*S*T*( *\([a-zA-Z0-9_]*\) *,.*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define if the \1 variable is declared by headers. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^|#undef HAVE_DECLARATION_|
+	p
+}
+/zefram_CHECK_FUNC_DECLARED_*I*F*E*X*I*S*T*(/{
+	s/^.*zefram_CHECK_FUNC_DECLARED_*I*F*E*X*I*S*T*( *\([a-zA-Z0-9_]*\) *,.*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define if the \1 function is declared by headers. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^|#undef HAVE_PROTOTYPE_|
+	p
+}
+/zefram_CHECK_BINDCONNECT_PROTOTYPE(/{
+	s/^.*zefram_CHECK_BINDCONNECT_PROTOTYPE( *\([a-zA-Z0-9_]*\) *).*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define if the prototype for \1 has a non-const pointer argument. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^\(.*\)$|#undef \1_HAS_NONCONST_PROTOTYPE|
+	p
+}
+/zefram_CHECK_FUNC_FLAVOR_NETDBR_*I*F*E*X*I*S*T*(/{
+	s/^.*zefram_CHECK_FUNC_FLAVOR_NETDBR_*I*F*E*X*I*S*T*( *\([a-zA-Z0-9_]*\) *).*$/\1/
+	i\
+
+	h
+	s|^\(.*\)$|/* Define according to the style of the \1 function. */|
+	p
+	g
+	y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+	s|^|#undef FUNC_FLAVOR_|
+	p
+}
+' < configure.in
+
+echo ''
+echo '@BOTTOM@'
+echo ''
+echo '#endif /* !UNSN_CONFIG_H */'

@@ -1,0 +1,107 @@
+.\"
+.\" Lib/saitounsn.3in -- manual page for unsn_saitounsn()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_saitounsn.3
+.TH UNSN_SAITOUNSN 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_saitounsn \- convert unsn_sockaddrinfo structure to UNSN string
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char *unsn_saitounsn(struct unsn_sockaddrinfo const *" sai ,
+.BI "        unsigned " opts );
+.fi
+.SH DESCRIPTION
+This function converts a socket address information structure
+to a Universal Network Socket Name (UNSN) string.
+.PP
+This provides exactly the same functionality as the
+.IR unsn_aitounsn (3)
+function, except that the address information arguments are packaged into
+a single structure, and the
+.B struct sockaddr
+pointer (the
+.B sai_addr
+structure member) is a
+.RI non- const
+pointer whereas it is a
+.I const
+pointer in
+.IR unsn_aitounsn (3)
+(where it is the
+.B addr
+function argument).
+.PP
+If
+.IB src ->sai_addr
+is a null pointer, meaning that
+.I src
+represents an error condition rather than a socket address (see
+.IR unsn_sockaddrinfo (3)),
+then it is as if that error condition occurred in this call.
+.SH "RETURN VALUE"
+.B unsn_saitounsn
+returns freshly
+.IR malloc (3)ed
+storage, containing a NUL-terminated UNSN in canonical format
+corresponding to the specified
+socket address.  The caller is responsible for
+.IR free (3)ing
+this storage.  On error, NULL is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+If
+.I sai
+represents an error condition, rather than a socket address, then
+.IR errno (3)
+is set to the error number corresponding to that condition,
+which could be anything.  In particular, it would be likely to be
+a non-standard error number; see
+.IR unsn_errno (3)
+for more information.
+.TP
+.B EINVAL
+The specified address structure length
+was not valid for this type of socket address structure.
+.TP
+.B EPFNOSUPPORT
+The specified socket family is not supported.
+.TP
+.B ESOCKTNOSUPPORT
+The specified socket type is not supported for
+the specified socket family.
+.TP
+.B EPROTONOSUPPORT
+The specified protocol is not supported for
+the specified socket family and type.
+.TP
+.B EAFNOSUPPORT
+The specified address family is not supported for
+the specified socket family, type and protocol.
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to build the string to be returned.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR socket (2),
+.IR unsn_addrtounsn (3),
+.IR unsn_aitounsn (3),
+.IR unsn_sockaddrinfo (3)

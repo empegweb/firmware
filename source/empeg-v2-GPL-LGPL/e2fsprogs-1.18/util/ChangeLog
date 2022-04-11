@@ -1,0 +1,64 @@
+1999-11-10    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.18
+
+1999-10-26    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.17
+
+1999-10-26    <tytso@valinux.com>
+
+	* subst.c (substitute_line): Removed some unused variables.
+
+1999-10-22    <tytso@valinux.com>
+
+	* Release of E2fsprogs 1.16
+
+1999-07-18  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.15
+
+1999-07-03    <tytso@valinux.com>
+
+	* Makefile.in (subst): Build subst using $(BUILD_CC), since it's a
+		helper program which must be built using the native C
+		compiler during a cross-compilation.
+
+1999-01-09  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.14
+
+1998-12-15  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.13
+
+1998-12-15  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* subst.c (get_subst_symbol): Add [0-9] to the list of valid
+		characters for a substitution symbol.
+
+1998-08-01  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* subst.c: Add the ability to substitute apparent shell/make
+		variables such as ${prefix}, since this is needed to make
+		the shell scripts work correctly.
+
+	* subst.conf.in: Add ${prefix} to the list of substitutions which
+		subst should make.
+
+1998-07-09  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* Release of E2fsprogs 1.12
+
+1998-03-31  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* subst.conf.in: Add substitution for @datadir@
+
+Mon Jan 19 09:25:24 1998  Theodore Ts'o  <tytso@rsts-11.mit.edu>
+
+	* subst.c: Rename "new" to "new_f" to avoid C++ reserved word
+ 		clash.
+	
+	* subst.c: Explicitly cast all assignments from void * to be
+ 	 	compatible with C++.
+	

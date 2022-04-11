@@ -1,0 +1,667 @@
+Index: empeg/kernel/arch/arm/mm/mm-sa1100.c
+diff -u empeg/kernel/arch/arm/mm/mm-sa1100.c:1.7 empeg/kernel/arch/arm/mm/mm-sa1100.c:1.8
+--- empeg/kernel/arch/arm/mm/mm-sa1100.c:1.7	Fri Jul  6 16:27:17 2001
++++ empeg/kernel/arch/arm/mm/mm-sa1100.c	Tue Jan  8 17:27:12 2002
+@@ -41,7 +41,7 @@
+ #define FLASH_MAPPING \
+ 	{ 0xd0000000, 0x00000000, 0x00200000, DOMAIN_IO, 1, 1 }, /* flash */
+ #elif defined(CONFIG_SA1100_EMPEG)
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ #define FLASH_MAPPING \
+         { EMPEG_FLASHBASE, 0x00000000, 0x00200000, DOMAIN_IO, 1, 1 }, /* flash */
+ #elif defined(CONFIG_SA1100_THINCLIENT)
+Index: empeg/kernel/arch/arm/special/empeg_audio3.c
+diff -u empeg/kernel/arch/arm/special/empeg_audio3.c:1.6 empeg/kernel/arch/arm/special/empeg_audio3.c:1.7
+--- empeg/kernel/arch/arm/special/empeg_audio3.c:1.6	Mon Sep 17 15:19:21 2001
++++ empeg/kernel/arch/arm/special/empeg_audio3.c	Tue Jan  8 17:27:12 2002
+@@ -82,7 +82,7 @@
+ #endif
+ 
+ /* For the userspace interface */
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "empeg_dsp.h"
+ #include "empeg_dsp_i2c.h"
+Index: empeg/kernel/arch/arm/special/empeg_cs4231a.c
+diff -u empeg/kernel/arch/arm/special/empeg_cs4231a.c:1.15 empeg/kernel/arch/arm/special/empeg_cs4231a.c:1.16
+--- empeg/kernel/arch/arm/special/empeg_cs4231a.c:1.15	Tue Sep 25 12:22:37 2001
++++ empeg/kernel/arch/arm/special/empeg_cs4231a.c	Tue Jan  8 17:27:12 2002
+@@ -50,7 +50,7 @@
+ #include <linux/poll.h>
+ 
+ /* For the userspace interface */
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "empeg_cs4231a.h"
+ 
+Index: empeg/kernel/arch/arm/special/empeg_dac.c
+diff -u empeg/kernel/arch/arm/special/empeg_dac.c:1.15 empeg/kernel/arch/arm/special/empeg_dac.c:1.16
+--- empeg/kernel/arch/arm/special/empeg_dac.c:1.15	Fri Aug 24 11:28:32 2001
++++ empeg/kernel/arch/arm/special/empeg_dac.c	Tue Jan  8 17:27:12 2002
+@@ -84,7 +84,7 @@
+ #include <asm/uaccess.h>
+ 
+ /* For the userspace interface */
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #ifdef	CONFIG_PROC_FS
+ #include <linux/stat.h>
+Index: empeg/kernel/arch/arm/special/empeg_display.c
+diff -u empeg/kernel/arch/arm/special/empeg_display.c:1.54 empeg/kernel/arch/arm/special/empeg_display.c:1.55
+--- empeg/kernel/arch/arm/special/empeg_display.c:1.54	Mon Nov 26 11:36:31 2001
++++ empeg/kernel/arch/arm/special/empeg_display.c	Tue Jan  8 17:27:12 2002
+@@ -135,7 +135,7 @@
+ #include <asm/segment.h>
+ #include <asm/irq.h>
+ #include <asm/io.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ #include <asm/uaccess.h>
+ 
+ #ifdef NO_ANIMATION
+Index: empeg/kernel/arch/arm/special/empeg_dsp.c
+diff -u empeg/kernel/arch/arm/special/empeg_dsp.c:1.1 empeg/kernel/arch/arm/special/empeg_dsp.c:1.2
+--- empeg/kernel/arch/arm/special/empeg_dsp.c:1.1	Tue Oct 17 12:40:50 2000
++++ empeg/kernel/arch/arm/special/empeg_dsp.c	Tue Jan  8 17:27:12 2002
+@@ -14,7 +14,7 @@
+ #include <linux/init.h>
+ #include <linux/fs.h>
+ #include <asm/arch/hardware.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "empeg_audio3.h"
+ #include "empeg_mixer.h"
+Index: empeg/kernel/arch/arm/special/empeg_dsp_i2c.c
+diff -u empeg/kernel/arch/arm/special/empeg_dsp_i2c.c:1.2 empeg/kernel/arch/arm/special/empeg_dsp_i2c.c:1.4
+--- empeg/kernel/arch/arm/special/empeg_dsp_i2c.c:1.2	Thu Aug 23 16:27:50 2001
++++ empeg/kernel/arch/arm/special/empeg_dsp_i2c.c	Wed Jan 16 14:04:02 2002
+@@ -364,7 +364,7 @@
+ int dsp_write(unsigned short address, unsigned int data)
+ {
+ #if AUDIO_DEBUG
+-	printk(AUDIO_NAME ": dsp_write %x=%x\n",address,data);
++	printk("DSP_WRITE %x=%x\n",address,data);
+ #endif
+ 	return(i2c_write1(IICD_DSP,address,data));
+ }  
+Index: empeg/kernel/arch/arm/special/empeg_input.c
+diff -u empeg/kernel/arch/arm/special/empeg_input.c:1.7 empeg/kernel/arch/arm/special/empeg_input.c:1.8
+--- empeg/kernel/arch/arm/special/empeg_input.c:1.7	Mon Oct 29 10:39:04 2001
++++ empeg/kernel/arch/arm/special/empeg_input.c	Tue Jan  8 17:27:12 2002
+@@ -92,7 +92,7 @@
+ #include <asm/arch/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/io.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ #include <asm/uaccess.h>
+ #include <linux/proc_fs.h>
+ #include <linux/poll.h>
+Index: empeg/kernel/arch/arm/special/empeg_mixer.c
+diff -u empeg/kernel/arch/arm/special/empeg_mixer.c:1.7 empeg/kernel/arch/arm/special/empeg_mixer.c:1.9
+--- empeg/kernel/arch/arm/special/empeg_mixer.c:1.7	Tue Dec  4 11:16:25 2001
++++ empeg/kernel/arch/arm/special/empeg_mixer.c	Thu Jan 31 18:39:27 2002
+@@ -31,7 +31,7 @@
+ #include <asm/uaccess.h>
+ #include <asm/delay.h>
+ 
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #ifdef	CONFIG_PROC_FS
+ #include <linux/stat.h>
+@@ -167,9 +167,9 @@
+ 	memset((void *) dev, 0, sizeof(mixer_dev));
+ 	
+ 	if(empeg_hardwarerevision() < 6)
+-		radio_sensitivity = 0x1000;
++		radio_sensitivity = 0;
+ 	else
+-/*		radio_sensitivity = 0x1024; */
++/*		radio_sensitivity = 2; */
+ 		/*
+ 		 * actually, it seems that:
+ 		 * stereo detect triggers at 4kHz out of 75kHz stereo pilot
+@@ -183,7 +183,7 @@
+ 		 * so lowest sensitivity is 40/75 * 111 = 59mV
+ 		 * sensitivity 0 is 65mV
+ 		 */
+-		radio_sensitivity = 0x1024;
++		radio_sensitivity = 2;
+ 
+ 	dev->input = SOUND_MASK_PCM;
+ 	dev->flags = 0;
+@@ -543,8 +543,8 @@
+ 		copy_from_user_ret((void *) &four_chan, (const void *) arg,
+ 				   sizeof(int), -EFAULT);
+ 
+-		eq_reg_last &= 0xefff;
+-		eq_reg_last |= ((four_chan & 1) ^ 1) << 12;
++		eq_reg_last &= ~0x1000;
++		eq_reg_last |= ((four_chan ^ 1) & 1) << 12;
+ 		if(four_chan)
+ 			dsp_write(Y_OutSwi, 0xa85);
+ 		else
+@@ -650,8 +650,10 @@
+ 				   sizeof(int), -EFAULT);
+ 		if(val < 0 || val > 7)
+ 			return -EINVAL;
+-		radio_sensitivity = (val << 1) | (val << 4) | 0x1000;
+-		dsp_write(0xffd, radio_sensitivity);
++		radio_sensitivity = val;
++		eq_reg_last &= 0x1000; /* Preserve EQ num bands bit */
++		eq_reg_last |= (radio_sensitivity << 1) | (radio_sensitivity << 4);
++		dsp_write(0xffd, eq_reg_last);
+ 		return 0;
+ 	}
+ 	case EMPEG_MIXER_READ_SIGNAL_STRENGTH:
+@@ -898,7 +900,8 @@
+ 
+ 	mixer_dev *dev = &mixer_global;
+ 
+-	eq_reg_last = radio_sensitivity;
++	eq_reg_last &= 0x1000; /* Preserve EQ num bands bit */
++	eq_reg_last |= (radio_sensitivity << 1) | (radio_sensitivity << 4);
+ 	dsp_patchmulti(fm_setup, 0xffd, eq_reg_last);
+ 	dsp_patchmulti(mpeg_setup, 0xffd, eq_reg_last);
+ 	dsp_patchmulti(aux_setup, 0xffd, eq_reg_last);
+Index: empeg/kernel/arch/arm/special/empeg_power.c
+diff -u empeg/kernel/arch/arm/special/empeg_power.c:1.19 empeg/kernel/arch/arm/special/empeg_power.c:1.20
+--- empeg/kernel/arch/arm/special/empeg_power.c:1.19	Thu Aug 23 16:27:50 2001
++++ empeg/kernel/arch/arm/special/empeg_power.c	Tue Jan  8 17:27:12 2002
+@@ -77,7 +77,7 @@
+ #include <linux/poll.h>
+ 
+ /* For the userspace interface */
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "empeg_power.h"
+ 
+Index: empeg/kernel/arch/arm/special/empeg_rds.c
+diff -u empeg/kernel/arch/arm/special/empeg_rds.c:1.16 empeg/kernel/arch/arm/special/empeg_rds.c:1.17
+--- empeg/kernel/arch/arm/special/empeg_rds.c:1.16	Thu Aug 23 16:27:50 2001
++++ empeg/kernel/arch/arm/special/empeg_rds.c	Tue Jan  8 17:27:12 2002
+@@ -54,7 +54,7 @@
+ #include <linux/poll.h>
+ 
+ /* For the userspace interface */
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "empeg_rds.h"
+ 
+Index: empeg/kernel/arch/arm/special/empeg_state.c
+diff -u empeg/kernel/arch/arm/special/empeg_state.c:1.28 empeg/kernel/arch/arm/special/empeg_state.c:1.29
+--- empeg/kernel/arch/arm/special/empeg_state.c:1.28	Fri Jul  6 16:27:17 2001
++++ empeg/kernel/arch/arm/special/empeg_state.c	Tue Jan  8 17:27:12 2002
+@@ -71,7 +71,7 @@
+ #include <asm/arch/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/io.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ #include <asm/uaccess.h>
+ #include <linux/proc_fs.h>
+ #include <linux/reboot.h>
+Index: empeg/kernel/drivers/block/flash-empeg.c
+diff -u empeg/kernel/drivers/block/flash-empeg.c:1.3 empeg/kernel/drivers/block/flash-empeg.c:1.5
+--- empeg/kernel/drivers/block/flash-empeg.c:1.3	Thu Jun 29 12:48:42 2000
++++ empeg/kernel/drivers/block/flash-empeg.c	Thu Jan 17 18:55:18 2002
+@@ -3,6 +3,7 @@
+  * driver, but with variable flash sector sizes (8k below 64k, 64k above).
+  *
+  * Tweaks by Hugo Fiennes <hugo@empeg.com>
++ * Bug fixes by Mark Lord <mlord@pobox.com>
+  * Copyright (C) 1999 Nicolas Pitre <nico@cam.org>
+  *
+  *  1999-02-21	Stephane Dalton		Added write functions
+@@ -24,7 +25,7 @@
+ #include <asm/uaccess.h>
+ #include <asm/delay.h>
+ #include <asm/arch/hardware.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #define MAJOR_NR 60
+ #define DEVICE_NAME "flash"
+@@ -181,6 +182,7 @@
+ 	volatile unsigned short *flash_ptr;
+ 	int erase_loop_ctr;
+ 	unsigned short status;
++	int rc;
+ 
+ 	flash_ptr = ptr;
+ 
+@@ -223,9 +225,11 @@
+ 
+ 	*flash_ptr =  FlashCommandClear;
+ 	*flash_ptr =  FlashCommandRead;
++
++	rc = full_status_check(status);
+ 	WP_OFF();
+ 
+-   	return(full_status_check(status));
++   	return rc;
+ }
+ 
+ 
+Index: empeg/kernel/drivers/char/empeg_flash.c
+diff -u empeg/kernel/drivers/char/empeg_flash.c:1.1 empeg/kernel/drivers/char/empeg_flash.c:1.2
+--- empeg/kernel/drivers/char/empeg_flash.c:1.1	Wed Jun  9 13:41:43 1999
++++ empeg/kernel/drivers/char/empeg_flash.c	Tue Jan  8 17:27:12 2002
+@@ -26,7 +26,7 @@
+ #include <asm/system.h>
+ #include <asm/spinlock.h>
+ #include <asm/leds.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ /*****************************************************************************/
+ #define FLASH_MINOR     160             /* MAJOR is 10 - miscdevice */
+Index: empeg/kernel/drivers/char/radio-empeg.c
+diff -u empeg/kernel/drivers/char/radio-empeg.c:1.15 empeg/kernel/drivers/char/radio-empeg.c:1.16
+--- empeg/kernel/drivers/char/radio-empeg.c:1.15	Tue Oct 17 17:03:07 2000
++++ empeg/kernel/drivers/char/radio-empeg.c	Tue Jan  8 17:27:12 2002
+@@ -17,7 +17,7 @@
+ #include <asm/uaccess.h>	/* copy to/from user		*/
+ #include <linux/videodev.h>	/* kernel radio structs		*/
+ #include <linux/config.h>
+-#include <asm/arch/empeg.h>
++#include <linux/empeg.h>
+ 
+ #include "../arch/arm/special/empeg_mixer.h"
+ 
+Index: empeg/kernel/include/asm-arm/arch-sa1100/empeg.h
+diff -u empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:1.51 empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:removed
+--- empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:1.51	Thu Aug 23 16:29:06 2001
++++ empeg/kernel/include/asm-arm/arch-sa1100/empeg.h	Fri Feb  8 19:19:48 2002
+@@ -1,189 +0,0 @@
+-/*
+- * empeg-car hardware-specifics
+- *
+- * (C) 1999/2000 empeg ltd, http://www.empeg.com
+- *
+- * Authors:
+- *   Hugo Fiennes, <hugo@empeg.com>
+- *   Mike Crowe, <mac@empeg.com>
+- *
+- * This is the kernel/userspace interaction interface. This header
+- * file should not be included from any kernel header files, if it is
+- * then there is a great risk that the wrong version of this file
+- * could be used sometimes.
+- *
+- * Only userspace code and kernel driver implementation (i.e. *.c)
+- * files should include this file.
+- *
+- */
+-
+-#ifndef _INCLUDE_EMPEG_H
+-#define _INCLUDE_EMPEG_H 1
+-
+-/* Empeg IR ioctl values */
+-#define EMPEG_IR_MAGIC			'i'
+-
+-/* Set/get the remote control type */
+-#define EMPEG_IR_WRITE_TYPE		_IOW(EMPEG_IR_MAGIC, 1, int)
+-#define EMPEG_IR_READ_TYPE		_IOR(EMPEG_IR_MAGIC, 2, int)
+-
+-#define IR_TYPE_COUNT			1
+-
+-#define IR_TYPE_CAPTURE			0
+-#define IR_TYPE_KENWOOD			1
+-
+-/* Empeg Display ioctl values */
+-#define EMPEG_DISPLAY_MAGIC		'd'
+-
+-/* Deprecated ioctl codes */
+-#define DIS_IOCREFRESH			_IO(EMPEG_DISPLAY_MAGIC, 0)
+-#define DIS_IOCSPOWER			_IOW(EMPEG_DISPLAY_MAGIC, 1, int)
+-#define DIS_IOCSPALETTE			_IOW(EMPEG_DISPLAY_MAGIC, 4, int)
+-#define DIS_IOCCLEAR			_IO(EMPEG_DISPLAY_MAGIC, 5)
+-#define DIS_IOCENQUEUE			_IO(EMPEG_DISPLAY_MAGIC, 6)
+-#define DIS_IOCPOPQUEUE			_IO(EMPEG_DISPLAY_MAGIC, 7)
+-#define DIS_IOCFLUSHQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 8)
+-
+-/* Should use these ioctl codes instead */
+-#define EMPEG_DISPLAY_REFRESH		_IO(EMPEG_DISPLAY_MAGIC, 0)
+-#define EMPEG_DISPLAY_POWER		_IOW(EMPEG_DISPLAY_MAGIC, 1, int)
+-#define EMPEG_DISPLAY_WRITE_PALETTE	_IOW(EMPEG_DISPLAY_MAGIC, 4, int)
+-#define EMPEG_DISPLAY_CLEAR		_IO(EMPEG_DISPLAY_MAGIC, 5)
+-#define EMPEG_DISPLAY_ENQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 6)
+-#define EMPEG_DISPLAY_POPQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 7)
+-#define EMPEG_DISPLAY_FLUSHQUEUE	_IO(EMPEG_DISPLAY_MAGIC, 8)
+-#define EMPEG_DISPLAY_QUERYQUEUEFREE	_IOR(EMPEG_DISPLAY_MAGIC, 9, int)
+-#define EMPEG_DISPLAY_SENDCONTROL	_IOW(EMPEG_DISPLAY_MAGIC, 10, int)
+-#define EMPEG_DISPLAY_SETBRIGHTNESS	_IOW(EMPEG_DISPLAY_MAGIC, 11, int)
+-
+-/* Sound IOCTLs */
+-/* Make use of the bitmasks in soundcard.h, we only support.
+- * PCM, RADIO and LINE. */
+-
+-#define EMPEG_MIXER_MAGIC 'm'
+-#define EMPEG_DSP_MAGIC 'a'
+-
+-#define EMPEG_MIXER_READ_SOURCE		_IOR(EMPEG_MIXER_MAGIC, 0, int)
+-#define EMPEG_MIXER_WRITE_SOURCE	_IOW(EMPEG_MIXER_MAGIC, 0, int)
+-#define EMPEG_MIXER_READ_FLAGS		_IOR(EMPEG_MIXER_MAGIC, 1, int)
+-#define EMPEG_MIXER_WRITE_FLAGS		_IOW(EMPEG_MIXER_MAGIC, 1, int)
+-#define EMPEG_MIXER_READ_DB		_IOR(EMPEG_MIXER_MAGIC, 2, int)
+-#define EMPEG_MIXER_WRITE_LOUDNESS	_IOW(EMPEG_MIXER_MAGIC, 4, int)
+-#define EMPEG_MIXER_READ_LOUDNESS	_IOR(EMPEG_MIXER_MAGIC, 4, int)
+-#define EMPEG_MIXER_READ_LOUDNESS_DB	_IOR(EMPEG_MIXER_MAGIC, 5, int)
+-#define EMPEG_MIXER_WRITE_BALANCE	_IOW(EMPEG_MIXER_MAGIC, 6, int)
+-#define EMPEG_MIXER_READ_BALANCE	_IOR(EMPEG_MIXER_MAGIC, 6, int)
+-#define EMPEG_MIXER_READ_BALANCE_DB	_IOR(EMPEG_MIXER_MAGIC, 7, int)
+-#define EMPEG_MIXER_WRITE_FADE		_IOW(EMPEG_MIXER_MAGIC, 8, int)
+-#define EMPEG_MIXER_READ_FADE		_IOR(EMPEG_MIXER_MAGIC, 8, int)
+-#define EMPEG_MIXER_READ_FADE_DB	_IOR(EMPEG_MIXER_MAGIC, 9, int)
+-#define EMPEG_MIXER_SET_EQ		_IOW(EMPEG_MIXER_MAGIC, 10, int)
+-#define EMPEG_MIXER_GET_EQ		_IOR(EMPEG_MIXER_MAGIC, 11, int)
+-#define EMPEG_MIXER_SET_EQ_FOUR_CHANNEL	_IOW(EMPEG_MIXER_MAGIC, 12, int)
+-#define EMPEG_MIXER_GET_EQ_FOUR_CHANNEL	_IOR(EMPEG_MIXER_MAGIC, 13, int)
+-#define EMPEG_MIXER_GET_COMPRESSION	_IOR(EMPEG_MIXER_MAGIC, 14, int)
+-#define EMPEG_MIXER_SET_COMPRESSION	_IOW(EMPEG_MIXER_MAGIC, 14, int)
+-#define EMPEG_MIXER_SET_SAM		_IOW(EMPEG_MIXER_MAGIC, 15, int)
+-#define EMPEG_MIXER_RAW_I2C_READ	_IOR(EMPEG_MIXER_MAGIC, 16, int)
+-#define EMPEG_MIXER_RAW_I2C_WRITE	_IOW(EMPEG_MIXER_MAGIC, 16, int)
+-#define EMPEG_MIXER_WRITE_SENSITIVITY	_IOW(EMPEG_MIXER_MAGIC, 17, int)
+-#define EMPEG_MIXER_READ_SIGNAL_STRENGTH _IOR(EMPEG_MIXER_MAGIC, 18, int)
+-#define EMPEG_MIXER_READ_SIGNAL_STEREO	_IOR(EMPEG_MIXER_MAGIC, 19, int)
+-#define EMPEG_MIXER_READ_LEVEL_ADJUST	_IOR(EMPEG_MIXER_MAGIC, 20, int)
+-#define EMPEG_MIXER_WRITE_LEVEL_ADJUST	_IOW(EMPEG_MIXER_MAGIC, 20, int)
+-#define EMPEG_MIXER_READ_SIGNAL_NOISE	_IOR(EMPEG_MIXER_MAGIC, 21, int)
+-#define EMPEG_MIXER_READ_SIGNAL_MULTIPATH _IOR(EMPEG_MIXER_MAGIC, 22, int)
+-#define EMPEG_MIXER_READ_FM_AM_SELECT	_IOR(EMPEG_MIXER_MAGIC, 23, int)
+-#define EMPEG_MIXER_WRITE_FM_AM_SELECT	_IOW(EMPEG_MIXER_MAGIC, 23, int)
+-#define EMPEG_MIXER_READ_SIGNAL_STRENGTH_FAST _IOR(EMPEG_MIXER_MAGIC, 24, int)
+-#define EMPEG_MIXER_READ_FM_DEEMPHASIS	_IOR(EMPEG_MIXER_MAGIC, 25, int)
+-#define EMPEG_MIXER_WRITE_FM_DEEMPHASIS	_IOW(EMPEG_MIXER_MAGIC, 25, int)
+-
+-/* Retrieve volume level corresponding to 0dB */
+-#define EMPEG_MIXER_READ_ZERO_LEVEL _IOR(EMPEG_MIXER_MAGIC, 3, int)
+-#define EMPEG_MIXER_SELECT_FM		0
+-#define EMPEG_MIXER_SELECT_AM		1
+-
+-#define EMPEG_MIXER_FLAG_MUTE		(1<<0)
+-/*#define EMPEG_MIXER_FLAG_LOUDNESS (1<<1)*/
+-
+-/* Radio IOCTLs */
+-/* These are in addition to those provided by the Video4Linux API */
+-/* Hmm, not sure why we started at 73 but might as well stick to it */
+-#define EMPEG_RADIO_MAGIC		'r'
+-#define EMPEG_RADIO_READ_MONO		_IOR(EMPEG_RADIO_MAGIC, 73, int)
+-#define EMPEG_RADIO_WRITE_MONO		_IOW(EMPEG_RADIO_MAGIC, 73, int)
+-#define EMPEG_RADIO_READ_DX		_IOR(EMPEG_RADIO_MAGIC, 74, int)
+-#define EMPEG_RADIO_WRITE_DX		_IOW(EMPEG_RADIO_MAGIC, 74, int)
+-#define EMPEG_RADIO_READ_SENSITIVITY	_IOR(EMPEG_RADIO_MAGIC, 75, int)
+-#define EMPEG_RADIO_WRITE_SENSITIVITY	_IOW(EMPEG_RADIO_MAGIC, 75, int)
+-#define EMPEG_RADIO_SEARCH		_IO(EMPEG_RADIO_MAGIC, 76) /* Pass in direction in *arg */
+-#define EMPEG_RADIO_GET_MULTIPATH	_IOR(EMPEG_RADIO_MAGIC, 77, int)
+-#define EMPEG_RADIO_SET_STEREO		_IOW(EMPEG_RADIO_MAGIC, 78, int)
+-#define EMPEG_RADIO_READ_RAW		_IOR(EMPEG_RADIO_MAGIC, 79, int)
+-
+-#define EMPEG_DSP_BEEP			_IOW(EMPEG_DSP_MAGIC, 0, int)
+-#define EMPEG_DSP_PURGE			_IOR(EMPEG_DSP_MAGIC, 1, int)
+-#define EMPEG_DSP_GRAB_OUTPUT		_IOR(EMPEG_DSP_MAGIC, 3, int) /* must be the same in 2.4 */
+-
+-/* Audio input IOCTLs */
+-#define EMPEG_AUDIOIN_MAGIC		'c'
+-#define EMPEG_AUDIOIN_READ_SAMPLERATE	_IOR(EMPEG_AUDIOIN_MAGIC, 0, int)
+-#define EMPEG_AUDIOIN_WRITE_SAMPLERATE	_IOW(EMPEG_AUDIOIN_MAGIC, 1, int)
+-#define EMPEG_AUDIOIN_READ_CHANNEL	_IOR(EMPEG_AUDIOIN_MAGIC, 2, int)
+-#define EMPEG_AUDIOIN_WRITE_CHANNEL	_IOW(EMPEG_AUDIOIN_MAGIC, 3, int)
+-#define EMPEG_AUDIOIN_READ_STEREO	_IOR(EMPEG_AUDIOIN_MAGIC, 4, int)
+-#define EMPEG_AUDIOIN_WRITE_STEREO	_IOW(EMPEG_AUDIOIN_MAGIC, 5, int)
+-#define EMPEG_AUDIOIN_READ_GAIN		_IOR(EMPEG_AUDIOIN_MAGIC, 6, int)
+-#define EMPEG_AUDIOIN_WRITE_GAIN	_IOW(EMPEG_AUDIOIN_MAGIC, 7, int)
+-#define EMPEG_AUDIOIN_CHANNEL_DSPOUT	0
+-#define EMPEG_AUDIOIN_CHANNEL_AUXIN	1
+-#define EMPEG_AUDIOIN_CHANNEL_MIC	2
+-
+-/* Power control IOCTLs */
+-#define EMPEG_POWER_MAGIC		'p'
+-#define EMPEG_POWER_TURNOFF		_IO(EMPEG_POWER_MAGIC, 0)
+-#define EMPEG_POWER_WAKETIME		_IOW(EMPEG_POWER_MAGIC, 1, int)
+-#define EMPEG_POWER_READSTATE		_IOR(EMPEG_POWER_MAGIC, 2, int)
+-
+-#define EMPEG_POWER_FLAG_DC 		0x01
+-#define EMPEG_POWER_FLAG_FAILENABLED	0x02
+-#define EMPEG_POWER_FLAG_ACCESSORY	0x04
+-#define EMPEG_POWER_FLAG_FIRSTBOOT	0x08
+-#define EMPEG_POWER_FLAG_EXTMUTE	0x10
+-#define EMPEG_POWER_FLAG_LIGHTS		0x20
+-#define EMPEG_POWER_FLAG_DISPLAY       	0x40
+-
+-/* State storage ioctls */
+-/* Shouldn't need either of these in normal use. */
+-#define EMPEG_STATE_MAGIC		's'
+-#define EMPEG_STATE_FORCESTORE		_IO(EMPEG_STATE_MAGIC, 74)
+-#define EMPEG_STATE_FAKEPOWERFAIL	_IO(EMPEG_STATE_MAGIC, 75)
+-
+-/* RDS ioctls */
+-#define EMPEG_RDS_MAGIC			'R'
+-#define EMPEG_RDS_GET_INTERFACE		_IOR(EMPEG_RDS_MAGIC, 0, int)
+-#define EMPEG_RDS_SET_INTERFACE		_IOW(EMPEG_RDS_MAGIC, 0, int)
+-
+-#define EMPEG_RDS_INTERFACE_OFF		0
+-#define EMPEG_RDS_INTERFACE_COOKED	1
+-#define EMPEG_RDS_INTERFACE_RAW		2
+-
+-#define EMPEG_RAMTEST_MAGIC		'T'
+-#define EMPEG_RAMTEST_TEST_PAGE		_IOW(EMPEG_RAMTEST_MAGIC, 0, unsigned long)
+-
+-#ifndef __ASSEMBLY__
+-struct empeg_eq_section_t
+-{
+-	unsigned int word1;
+-	unsigned int word2;
+-};
+-
+-struct empeg_ramtest_args_t
+-{
+-	unsigned long addr;
+-	unsigned long ret;
+-};
+-#endif /* !defined(__ASSEMBLY__) */
+-
+-#endif /* _INCLUDE_EMPEG_H */
+Index: empeg/kernel/include/linux/empeg.h
+diff -u /dev/null empeg/kernel/include/linux/empeg.h:1.1
+--- /dev/null	Fri Feb  8 19:19:48 2002
++++ empeg/kernel/include/linux/empeg.h	Tue Jan  8 17:27:12 2002
+@@ -0,0 +1,189 @@
++/*
++ * empeg-car hardware-specifics
++ *
++ * (C) 1999/2000 empeg ltd, http://www.empeg.com
++ *
++ * Authors:
++ *   Hugo Fiennes, <hugo@empeg.com>
++ *   Mike Crowe, <mac@empeg.com>
++ *
++ * This is the kernel/userspace interaction interface. This header
++ * file should not be included from any kernel header files, if it is
++ * then there is a great risk that the wrong version of this file
++ * could be used sometimes.
++ *
++ * Only userspace code and kernel driver implementation (i.e. *.c)
++ * files should include this file.
++ *
++ */
++
++#ifndef _INCLUDE_EMPEG_H
++#define _INCLUDE_EMPEG_H 1
++
++/* Empeg IR ioctl values */
++#define EMPEG_IR_MAGIC			'i'
++
++/* Set/get the remote control type */
++#define EMPEG_IR_WRITE_TYPE		_IOW(EMPEG_IR_MAGIC, 1, int)
++#define EMPEG_IR_READ_TYPE		_IOR(EMPEG_IR_MAGIC, 2, int)
++
++#define IR_TYPE_COUNT			1
++
++#define IR_TYPE_CAPTURE			0
++#define IR_TYPE_KENWOOD			1
++
++/* Empeg Display ioctl values */
++#define EMPEG_DISPLAY_MAGIC		'd'
++
++/* Deprecated ioctl codes */
++#define DIS_IOCREFRESH			_IO(EMPEG_DISPLAY_MAGIC, 0)
++#define DIS_IOCSPOWER			_IOW(EMPEG_DISPLAY_MAGIC, 1, int)
++#define DIS_IOCSPALETTE			_IOW(EMPEG_DISPLAY_MAGIC, 4, int)
++#define DIS_IOCCLEAR			_IO(EMPEG_DISPLAY_MAGIC, 5)
++#define DIS_IOCENQUEUE			_IO(EMPEG_DISPLAY_MAGIC, 6)
++#define DIS_IOCPOPQUEUE			_IO(EMPEG_DISPLAY_MAGIC, 7)
++#define DIS_IOCFLUSHQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 8)
++
++/* Should use these ioctl codes instead */
++#define EMPEG_DISPLAY_REFRESH		_IO(EMPEG_DISPLAY_MAGIC, 0)
++#define EMPEG_DISPLAY_POWER		_IOW(EMPEG_DISPLAY_MAGIC, 1, int)
++#define EMPEG_DISPLAY_WRITE_PALETTE	_IOW(EMPEG_DISPLAY_MAGIC, 4, int)
++#define EMPEG_DISPLAY_CLEAR		_IO(EMPEG_DISPLAY_MAGIC, 5)
++#define EMPEG_DISPLAY_ENQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 6)
++#define EMPEG_DISPLAY_POPQUEUE		_IO(EMPEG_DISPLAY_MAGIC, 7)
++#define EMPEG_DISPLAY_FLUSHQUEUE	_IO(EMPEG_DISPLAY_MAGIC, 8)
++#define EMPEG_DISPLAY_QUERYQUEUEFREE	_IOR(EMPEG_DISPLAY_MAGIC, 9, int)
++#define EMPEG_DISPLAY_SENDCONTROL	_IOW(EMPEG_DISPLAY_MAGIC, 10, int)
++#define EMPEG_DISPLAY_SETBRIGHTNESS	_IOW(EMPEG_DISPLAY_MAGIC, 11, int)
++
++/* Sound IOCTLs */
++/* Make use of the bitmasks in soundcard.h, we only support.
++ * PCM, RADIO and LINE. */
++
++#define EMPEG_MIXER_MAGIC 'm'
++#define EMPEG_DSP_MAGIC 'a'
++
++#define EMPEG_MIXER_READ_SOURCE		_IOR(EMPEG_MIXER_MAGIC, 0, int)
++#define EMPEG_MIXER_WRITE_SOURCE	_IOW(EMPEG_MIXER_MAGIC, 0, int)
++#define EMPEG_MIXER_READ_FLAGS		_IOR(EMPEG_MIXER_MAGIC, 1, int)
++#define EMPEG_MIXER_WRITE_FLAGS		_IOW(EMPEG_MIXER_MAGIC, 1, int)
++#define EMPEG_MIXER_READ_DB		_IOR(EMPEG_MIXER_MAGIC, 2, int)
++#define EMPEG_MIXER_WRITE_LOUDNESS	_IOW(EMPEG_MIXER_MAGIC, 4, int)
++#define EMPEG_MIXER_READ_LOUDNESS	_IOR(EMPEG_MIXER_MAGIC, 4, int)
++#define EMPEG_MIXER_READ_LOUDNESS_DB	_IOR(EMPEG_MIXER_MAGIC, 5, int)
++#define EMPEG_MIXER_WRITE_BALANCE	_IOW(EMPEG_MIXER_MAGIC, 6, int)
++#define EMPEG_MIXER_READ_BALANCE	_IOR(EMPEG_MIXER_MAGIC, 6, int)
++#define EMPEG_MIXER_READ_BALANCE_DB	_IOR(EMPEG_MIXER_MAGIC, 7, int)
++#define EMPEG_MIXER_WRITE_FADE		_IOW(EMPEG_MIXER_MAGIC, 8, int)
++#define EMPEG_MIXER_READ_FADE		_IOR(EMPEG_MIXER_MAGIC, 8, int)
++#define EMPEG_MIXER_READ_FADE_DB	_IOR(EMPEG_MIXER_MAGIC, 9, int)
++#define EMPEG_MIXER_SET_EQ		_IOW(EMPEG_MIXER_MAGIC, 10, int)
++#define EMPEG_MIXER_GET_EQ		_IOR(EMPEG_MIXER_MAGIC, 11, int)
++#define EMPEG_MIXER_SET_EQ_FOUR_CHANNEL	_IOW(EMPEG_MIXER_MAGIC, 12, int)
++#define EMPEG_MIXER_GET_EQ_FOUR_CHANNEL	_IOR(EMPEG_MIXER_MAGIC, 13, int)
++#define EMPEG_MIXER_GET_COMPRESSION	_IOR(EMPEG_MIXER_MAGIC, 14, int)
++#define EMPEG_MIXER_SET_COMPRESSION	_IOW(EMPEG_MIXER_MAGIC, 14, int)
++#define EMPEG_MIXER_SET_SAM		_IOW(EMPEG_MIXER_MAGIC, 15, int)
++#define EMPEG_MIXER_RAW_I2C_READ	_IOR(EMPEG_MIXER_MAGIC, 16, int)
++#define EMPEG_MIXER_RAW_I2C_WRITE	_IOW(EMPEG_MIXER_MAGIC, 16, int)
++#define EMPEG_MIXER_WRITE_SENSITIVITY	_IOW(EMPEG_MIXER_MAGIC, 17, int)
++#define EMPEG_MIXER_READ_SIGNAL_STRENGTH _IOR(EMPEG_MIXER_MAGIC, 18, int)
++#define EMPEG_MIXER_READ_SIGNAL_STEREO	_IOR(EMPEG_MIXER_MAGIC, 19, int)
++#define EMPEG_MIXER_READ_LEVEL_ADJUST	_IOR(EMPEG_MIXER_MAGIC, 20, int)
++#define EMPEG_MIXER_WRITE_LEVEL_ADJUST	_IOW(EMPEG_MIXER_MAGIC, 20, int)
++#define EMPEG_MIXER_READ_SIGNAL_NOISE	_IOR(EMPEG_MIXER_MAGIC, 21, int)
++#define EMPEG_MIXER_READ_SIGNAL_MULTIPATH _IOR(EMPEG_MIXER_MAGIC, 22, int)
++#define EMPEG_MIXER_READ_FM_AM_SELECT	_IOR(EMPEG_MIXER_MAGIC, 23, int)
++#define EMPEG_MIXER_WRITE_FM_AM_SELECT	_IOW(EMPEG_MIXER_MAGIC, 23, int)
++#define EMPEG_MIXER_READ_SIGNAL_STRENGTH_FAST _IOR(EMPEG_MIXER_MAGIC, 24, int)
++#define EMPEG_MIXER_READ_FM_DEEMPHASIS	_IOR(EMPEG_MIXER_MAGIC, 25, int)
++#define EMPEG_MIXER_WRITE_FM_DEEMPHASIS	_IOW(EMPEG_MIXER_MAGIC, 25, int)
++
++/* Retrieve volume level corresponding to 0dB */
++#define EMPEG_MIXER_READ_ZERO_LEVEL _IOR(EMPEG_MIXER_MAGIC, 3, int)
++#define EMPEG_MIXER_SELECT_FM		0
++#define EMPEG_MIXER_SELECT_AM		1
++
++#define EMPEG_MIXER_FLAG_MUTE		(1<<0)
++/*#define EMPEG_MIXER_FLAG_LOUDNESS (1<<1)*/
++
++/* Radio IOCTLs */
++/* These are in addition to those provided by the Video4Linux API */
++/* Hmm, not sure why we started at 73 but might as well stick to it */
++#define EMPEG_RADIO_MAGIC		'r'
++#define EMPEG_RADIO_READ_MONO		_IOR(EMPEG_RADIO_MAGIC, 73, int)
++#define EMPEG_RADIO_WRITE_MONO		_IOW(EMPEG_RADIO_MAGIC, 73, int)
++#define EMPEG_RADIO_READ_DX		_IOR(EMPEG_RADIO_MAGIC, 74, int)
++#define EMPEG_RADIO_WRITE_DX		_IOW(EMPEG_RADIO_MAGIC, 74, int)
++#define EMPEG_RADIO_READ_SENSITIVITY	_IOR(EMPEG_RADIO_MAGIC, 75, int)
++#define EMPEG_RADIO_WRITE_SENSITIVITY	_IOW(EMPEG_RADIO_MAGIC, 75, int)
++#define EMPEG_RADIO_SEARCH		_IO(EMPEG_RADIO_MAGIC, 76) /* Pass in direction in *arg */
++#define EMPEG_RADIO_GET_MULTIPATH	_IOR(EMPEG_RADIO_MAGIC, 77, int)
++#define EMPEG_RADIO_SET_STEREO		_IOW(EMPEG_RADIO_MAGIC, 78, int)
++#define EMPEG_RADIO_READ_RAW		_IOR(EMPEG_RADIO_MAGIC, 79, int)
++
++#define EMPEG_DSP_BEEP			_IOW(EMPEG_DSP_MAGIC, 0, int)
++#define EMPEG_DSP_PURGE			_IOR(EMPEG_DSP_MAGIC, 1, int)
++#define EMPEG_DSP_GRAB_OUTPUT		_IOR(EMPEG_DSP_MAGIC, 3, int) /* must be the same in 2.4 */
++
++/* Audio input IOCTLs */
++#define EMPEG_AUDIOIN_MAGIC		'c'
++#define EMPEG_AUDIOIN_READ_SAMPLERATE	_IOR(EMPEG_AUDIOIN_MAGIC, 0, int)
++#define EMPEG_AUDIOIN_WRITE_SAMPLERATE	_IOW(EMPEG_AUDIOIN_MAGIC, 1, int)
++#define EMPEG_AUDIOIN_READ_CHANNEL	_IOR(EMPEG_AUDIOIN_MAGIC, 2, int)
++#define EMPEG_AUDIOIN_WRITE_CHANNEL	_IOW(EMPEG_AUDIOIN_MAGIC, 3, int)
++#define EMPEG_AUDIOIN_READ_STEREO	_IOR(EMPEG_AUDIOIN_MAGIC, 4, int)
++#define EMPEG_AUDIOIN_WRITE_STEREO	_IOW(EMPEG_AUDIOIN_MAGIC, 5, int)
++#define EMPEG_AUDIOIN_READ_GAIN		_IOR(EMPEG_AUDIOIN_MAGIC, 6, int)
++#define EMPEG_AUDIOIN_WRITE_GAIN	_IOW(EMPEG_AUDIOIN_MAGIC, 7, int)
++#define EMPEG_AUDIOIN_CHANNEL_DSPOUT	0
++#define EMPEG_AUDIOIN_CHANNEL_AUXIN	1
++#define EMPEG_AUDIOIN_CHANNEL_MIC	2
++
++/* Power control IOCTLs */
++#define EMPEG_POWER_MAGIC		'p'
++#define EMPEG_POWER_TURNOFF		_IO(EMPEG_POWER_MAGIC, 0)
++#define EMPEG_POWER_WAKETIME		_IOW(EMPEG_POWER_MAGIC, 1, int)
++#define EMPEG_POWER_READSTATE		_IOR(EMPEG_POWER_MAGIC, 2, int)
++
++#define EMPEG_POWER_FLAG_DC 		0x01
++#define EMPEG_POWER_FLAG_FAILENABLED	0x02
++#define EMPEG_POWER_FLAG_ACCESSORY	0x04
++#define EMPEG_POWER_FLAG_FIRSTBOOT	0x08
++#define EMPEG_POWER_FLAG_EXTMUTE	0x10
++#define EMPEG_POWER_FLAG_LIGHTS		0x20
++#define EMPEG_POWER_FLAG_DISPLAY       	0x40
++
++/* State storage ioctls */
++/* Shouldn't need either of these in normal use. */
++#define EMPEG_STATE_MAGIC		's'
++#define EMPEG_STATE_FORCESTORE		_IO(EMPEG_STATE_MAGIC, 74)
++#define EMPEG_STATE_FAKEPOWERFAIL	_IO(EMPEG_STATE_MAGIC, 75)
++
++/* RDS ioctls */
++#define EMPEG_RDS_MAGIC			'R'
++#define EMPEG_RDS_GET_INTERFACE		_IOR(EMPEG_RDS_MAGIC, 0, int)
++#define EMPEG_RDS_SET_INTERFACE		_IOW(EMPEG_RDS_MAGIC, 0, int)
++
++#define EMPEG_RDS_INTERFACE_OFF		0
++#define EMPEG_RDS_INTERFACE_COOKED	1
++#define EMPEG_RDS_INTERFACE_RAW		2
++
++#define EMPEG_RAMTEST_MAGIC		'T'
++#define EMPEG_RAMTEST_TEST_PAGE		_IOW(EMPEG_RAMTEST_MAGIC, 0, unsigned long)
++
++#ifndef __ASSEMBLY__
++struct empeg_eq_section_t
++{
++	unsigned int word1;
++	unsigned int word2;
++};
++
++struct empeg_ramtest_args_t
++{
++	unsigned long addr;
++	unsigned long ret;
++};
++#endif /* !defined(__ASSEMBLY__) */
++
++#endif /* _INCLUDE_EMPEG_H */

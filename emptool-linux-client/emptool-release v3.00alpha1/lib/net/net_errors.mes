@@ -1,0 +1,49 @@
+# net_errors.mes
+#
+# Error declarations specific to lib/net
+#
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.5 13-Mar-2003 18:15 rob:)
+#
+
+#
+# Failure codes
+#
+
+Facility=4
+Component=13
+Severity=2
+Language=English
+
+# E_NTP_REQUEST
+Symbol=E_NTP_REQUEST
+Code=14
+Text=Ntp request failed
+
+Symbol=RESOLVER_E_NOTFOUND
+Code=15
+Text=Host not found
+
+Symbol=RESOLVER_E_SERVERUNAVAILABLE
+Code=16
+Text=DNS server is unavailable
+
+Symbol=RESOLVER_E_UNRECOVERABLE
+Code=17
+Text=Resolver suffered from an unrecoverable error
+
+Symbol=RESOLVER_E_NOADDRESS
+Code=18
+Text=No address is available for the hostname
+
+Symbol=RESOLVER_E_UNKNOWN
+Code=19
+Text=Unknown resolver error
+
+Symbol=WINSOCK_E_NOTPRESENT
+Code=20
+Text=Winsock not present

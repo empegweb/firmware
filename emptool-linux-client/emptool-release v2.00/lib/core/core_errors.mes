@@ -1,0 +1,156 @@
+# core_errors.mes
+#
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.21 01-Apr-2003 18:52 rob:)
+#
+
+# Global settings for this file
+Facility=4
+Component=0
+Language=English
+
+#
+# Success codes
+#
+
+Severity=0
+
+# S_AGAIN
+Symbol=S_AGAIN
+Code=4
+Text=S_AGAIN
+
+# S_CACHEFULL
+Symbol=S_CACHEFULL
+Code=5
+Text=Cache full.
+
+# S_REACHEDBOUND
+Symbol=S_REACHEDBOUND
+Code=6
+Text=Reached bound.
+
+# S_UNNECESSARY
+Symbol=S_UNNECESSARY
+Code=7
+Text=Action was unnecessary.
+
+#
+# Failure codes
+#
+
+Severity=3
+
+# E_NOTFOUND
+Symbol=E_NOTFOUND
+Code=2
+Text=Not found.
+
+# E_SEM_CREATEFAILED
+Symbol=E_SEM_CREATEFAILED
+Code=3
+Text=Failed to create semaphore
+
+# E_SEM_POSTFAILED
+Symbol=E_SEM_POSTFAILED
+Code=4
+Text=Failed to post semaphore
+
+# E_SEM_WAITFAILED
+Symbol=E_SEM_WAITFAILED
+Code=5
+Text=Failed to wait for semaphore
+
+# E_MUTEX_CREATEFAILED
+Symbol=E_MUTEX_CREATEFAILED
+Code=6
+Text=Failed to create mutex
+
+# E_MUTEX_LOCKFAILED
+Symbol=E_MUTEX_LOCKFAILED
+Code=7
+Text=Failed to lock mutex
+
+# E_MUTEX_UNLOCKFAILED
+Symbol=E_MUTEX_UNLOCKFAILED
+Code=8
+Text=Failed to unlock mutex
+
+# E_EXCEPTION
+Symbol=E_EXCEPTION
+Code=9
+Text=An unknown exception occurred
+
+# E_RANGE
+Symbol=E_RANGE
+Code=10
+Text=Out of range
+
+# E_TIMEOUT
+Symbol=E_TIMEOUT
+Code=11
+Text=Operation timed out
+
+# E_ENDOFFILE
+Symbol=E_ENDOFFILE
+Code=12
+Text=End of file
+
+# E_BADFILETYPE
+Symbol=E_BADFILETYPE
+Code=13
+Text=Bad file type
+
+# 14 and 15 have been moved to lib/tags
+
+# E_ALREADY
+Symbol=E_ALREADY
+Code=16
+Text=Already exists
+
+# E_SIGNALLED
+Symbol=E_SIGNALLED
+Code=17
+Text=Child process received signal
+
+# E_INVALID_MP3
+Symbol=E_INVALID_MP3
+Code=18
+Text=Unsupported/Invalid MP3 format.
+
+# E_CORRUPTED
+Symbol=E_CORRUPTED
+Code=19
+Text=Uncorrected corrupted data returned.
+
+#
+# Windows compatibility
+#
+
+# E_OUTOFMEMORY
+Facility=7
+Component=0
+Symbol=E_OUTOFMEMORY
+Code=0xE
+Text=Out of memory
+
+# E_NOTIMPL
+Symbol=E_NOTIMPL
+Facility=0
+Component=4
+Code=1
+Text=Not implemented
+
+# E_FAIL
+Symbol=E_FAIL
+Code=5
+Text=Unspecified error
+
+# E_USER_CANCELLED
+Symbol=E_USER_CANCELLED
+Code=6
+Text=Operation cancelled by user

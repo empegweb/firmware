@@ -1,0 +1,488 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+#ifndef UNSN_CONFIG_H
+#define UNSN_CONFIG_H 1
+
+/* Define to empty if the keyword does not work.  */
+#undef const
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef gid_t
+
+/* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
+#undef HAVE_SYS_WAIT_H
+
+/* Define as __inline if that's what the C compiler calls it.  */
+#undef inline
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef pid_t
+
+/* Define as the return type of signal handlers (int or void).  */
+#undef RETSIGTYPE
+
+/* Define to `unsigned' if <sys/types.h> doesn't define.  */
+#undef size_t
+
+/* Define if you can safely include both <sys/time.h> and <time.h>.  */
+#undef TIME_WITH_SYS_TIME
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef uid_t
+
+/* Define to int if not defined by headers. */
+#undef gid_t
+
+/* Define to uint32_t if not defined by headers. */
+#undef in_addr_t
+
+/* Define to uint16_t if not defined by headers. */
+#undef in_port_t
+
+/* Define to char if not defined by headers. */
+#undef int8_t
+
+/* Define to short if not defined by headers. */
+#undef int16_t
+
+/* Define to long if not defined by headers. */
+#undef int32_t
+
+/* Define to int if not defined by headers. */
+#undef pid_t
+
+/* Define to uint16_t if not defined by headers. */
+#undef sa_family_t
+
+/* Define to unsigned if not defined by headers. */
+#undef size_t
+
+/* Define appropriately if not defined by headers. */
+#undef socklen_t
+
+/* Define to int if not defined by headers. */
+#undef ssize_t
+
+/* Define to int if not defined by headers. */
+#undef uid_t
+
+/* Define to u_int8_t if not defined by headers. */
+#undef uint8_t
+
+/* Define to u_int16_t if not defined by headers. */
+#undef uint16_t
+
+/* Define to u_int32_t if not defined by headers. */
+#undef uint32_t
+
+/* Define to unsigned char if not defined by headers. */
+#undef u_int8_t
+
+/* Define to unsigned short if not defined by headers. */
+#undef u_int16_t
+
+/* Define to unsigned long if not defined by headers. */
+#undef u_int32_t
+
+/* Define if you have struct hostent. */
+#undef HAVE_STRUCT_HOSTENT
+
+/* Define if you have struct in_addr. */
+#undef HAVE_STRUCT_IN_ADDR
+
+/* Define if you have struct in6_addr. */
+#undef HAVE_STRUCT_IN6_ADDR
+
+/* Define if you have struct sigaction. */
+#undef HAVE_STRUCT_SIGACTION
+
+/* Define if you have struct sockaddr. */
+#undef HAVE_STRUCT_SOCKADDR
+
+/* Define if struct sockaddr has a member named sa_len. */
+#undef HAVE_STRUCTMEM_SOCKADDR_SA_LEN
+
+/* Define if you have struct sockaddr_in. */
+#undef HAVE_STRUCT_SOCKADDR_IN
+
+/* Define if you have struct sockaddr_in6. */
+#undef HAVE_STRUCT_SOCKADDR_IN6
+
+/* Define if struct sockaddr_in6 has a member named sin6_scope_id. */
+#undef HAVE_STRUCTMEM_SOCKADDR_IN6_SIN6_SCOPE_ID
+
+/* Define if you have struct sockaddr_un. */
+#undef HAVE_STRUCT_SOCKADDR_UN
+
+/* Define if the basename function is declared by headers. */
+#undef HAVE_PROTOTYPE_BASENAME
+
+/* Define if the bind function is declared by headers. */
+#undef HAVE_PROTOTYPE_BIND
+
+/* Define if the prototype for bind has a non-const pointer argument. */
+#undef BIND_HAS_NONCONST_PROTOTYPE
+
+/* Define if the bsearch function is declared by headers. */
+#undef HAVE_PROTOTYPE_BSEARCH
+
+/* Define if the connect function is declared by headers. */
+#undef HAVE_PROTOTYPE_CONNECT
+
+/* Define if the prototype for connect has a non-const pointer argument. */
+#undef CONNECT_HAS_NONCONST_PROTOTYPE
+
+/* Define if the errno variable is declared by headers. */
+#undef HAVE_DECLARATION_ERRNO
+
+/* Define if the exit function is declared by headers. */
+#undef HAVE_PROTOTYPE_EXIT
+
+/* Define if the free function is declared by headers. */
+#undef HAVE_PROTOTYPE_FREE
+
+/* Define according to the style of the gethostbyaddr_r function. */
+#undef FUNC_FLAVOR_GETHOSTBYADDR_R
+
+/* Define according to the style of the gethostbyname_r function. */
+#undef FUNC_FLAVOR_GETHOSTBYNAME_R
+
+/* Define according to the style of the gethostbyname2_r function. */
+#undef FUNC_FLAVOR_GETHOSTBYNAME2_R
+
+/* Define if the getopt function is declared by headers. */
+#undef HAVE_PROTOTYPE_GETOPT
+
+/* Define if the getpeername function is declared by headers. */
+#undef HAVE_PROTOTYPE_GETPEERNAME
+
+/* Define according to the style of the getprotobyname_r function. */
+#undef FUNC_FLAVOR_GETPROTOBYNAME_R
+
+/* Define according to the style of the getprotobynumber_r function. */
+#undef FUNC_FLAVOR_GETPROTOBYNUMBER_R
+
+/* Define according to the style of the getservbyname_r function. */
+#undef FUNC_FLAVOR_GETSERVBYNAME_R
+
+/* Define according to the style of the getservbyport_r function. */
+#undef FUNC_FLAVOR_GETSERVBYPORT_R
+
+/* Define if the getsockname function is declared by headers. */
+#undef HAVE_PROTOTYPE_GETSOCKNAME
+
+/* Define if you have the in6addr_any variable. */
+#undef HAVE_VAR_IN6ADDR_ANY
+
+/* Define if the in6addr_any variable is declared by headers. */
+#undef HAVE_DECLARATION_IN6ADDR_ANY
+
+/* Define if you have the in6addr_loopback variable. */
+#undef HAVE_VAR_IN6ADDR_LOOPBACK
+
+/* Define if the in6addr_loopback variable is declared by headers. */
+#undef HAVE_DECLARATION_IN6ADDR_LOOPBACK
+
+/* Define if the malloc function is declared by headers. */
+#undef HAVE_PROTOTYPE_MALLOC
+
+/* Define if the memchr function is declared by headers. */
+#undef HAVE_PROTOTYPE_MEMCHR
+
+/* Define if the memcpy function is declared by headers. */
+#undef HAVE_PROTOTYPE_MEMCPY
+
+/* Define if the memmove function is declared by headers. */
+#undef HAVE_PROTOTYPE_MEMMOVE
+
+/* Define if the optarg variable is declared by headers. */
+#undef HAVE_DECLARATION_OPTARG
+
+/* Define if the opterr variable is declared by headers. */
+#undef HAVE_DECLARATION_OPTERR
+
+/* Define if the optind variable is declared by headers. */
+#undef HAVE_DECLARATION_OPTIND
+
+/* Define if the optopt variable is declared by headers. */
+#undef HAVE_DECLARATION_OPTOPT
+
+/* Define if the poll function is declared by headers. */
+#undef HAVE_PROTOTYPE_POLL
+
+/* Define if the qsort function is declared by headers. */
+#undef HAVE_PROTOTYPE_QSORT
+
+/* Define if the realloc function is declared by headers. */
+#undef HAVE_PROTOTYPE_REALLOC
+
+/* Define if the setregid function is declared by headers. */
+#undef HAVE_PROTOTYPE_SETREGID
+
+/* Define if the setresgid function is declared by headers. */
+#undef HAVE_PROTOTYPE_SETRESGID
+
+/* Define if the setreuid function is declared by headers. */
+#undef HAVE_PROTOTYPE_SETREUID
+
+/* Define if the setresuid function is declared by headers. */
+#undef HAVE_PROTOTYPE_SETRESUID
+
+/* Define if the strchr function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRCHR
+
+/* Define if the strcmp function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRCMP
+
+/* Define if the strcpy function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRCPY
+
+/* Define if the strerror function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRERROR
+
+/* Define if the strrchr function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRRCHR
+
+/* Define if the strspn function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRSPN
+
+/* Define if the strtoul function is declared by headers. */
+#undef HAVE_PROTOTYPE_STRTOUL
+
+/* Define if the wait3 function is declared by headers. */
+#undef HAVE_PROTOTYPE_WAIT3
+
+/* Define if the wait4 function is declared by headers. */
+#undef HAVE_PROTOTYPE_WAIT4
+
+/* Define if the waitpid function is declared by headers. */
+#undef HAVE_PROTOTYPE_WAITPID
+
+/* Define if you have the basename function.  */
+#undef HAVE_BASENAME
+
+/* Define if you have the closelog function.  */
+#undef HAVE_CLOSELOG
+
+/* Define if you have the gethostbyaddr function.  */
+#undef HAVE_GETHOSTBYADDR
+
+/* Define if you have the gethostbyaddr_r function.  */
+#undef HAVE_GETHOSTBYADDR_R
+
+/* Define if you have the gethostbyname function.  */
+#undef HAVE_GETHOSTBYNAME
+
+/* Define if you have the gethostbyname2 function.  */
+#undef HAVE_GETHOSTBYNAME2
+
+/* Define if you have the gethostbyname2_r function.  */
+#undef HAVE_GETHOSTBYNAME2_R
+
+/* Define if you have the gethostbyname_r function.  */
+#undef HAVE_GETHOSTBYNAME_R
+
+/* Define if you have the getipnodebyaddr function.  */
+#undef HAVE_GETIPNODEBYADDR
+
+/* Define if you have the getipnodebyname function.  */
+#undef HAVE_GETIPNODEBYNAME
+
+/* Define if you have the getprotobyname function.  */
+#undef HAVE_GETPROTOBYNAME
+
+/* Define if you have the getprotobyname_r function.  */
+#undef HAVE_GETPROTOBYNAME_R
+
+/* Define if you have the getprotobynumber function.  */
+#undef HAVE_GETPROTOBYNUMBER
+
+/* Define if you have the getprotobynumber_r function.  */
+#undef HAVE_GETPROTOBYNUMBER_R
+
+/* Define if you have the getservbyname function.  */
+#undef HAVE_GETSERVBYNAME
+
+/* Define if you have the getservbyname_r function.  */
+#undef HAVE_GETSERVBYNAME_R
+
+/* Define if you have the getservbyport function.  */
+#undef HAVE_GETSERVBYPORT
+
+/* Define if you have the getservbyport_r function.  */
+#undef HAVE_GETSERVBYPORT_R
+
+/* Define if you have the htonl function.  */
+#undef HAVE_HTONL
+
+/* Define if you have the htons function.  */
+#undef HAVE_HTONS
+
+/* Define if you have the inet_ntop function.  */
+#undef HAVE_INET_NTOP
+
+/* Define if you have the inet_pton function.  */
+#undef HAVE_INET_PTON
+
+/* Define if you have the memcpy function.  */
+#undef HAVE_MEMCPY
+
+/* Define if you have the memmove function.  */
+#undef HAVE_MEMMOVE
+
+/* Define if you have the ntohl function.  */
+#undef HAVE_NTOHL
+
+/* Define if you have the ntohs function.  */
+#undef HAVE_NTOHS
+
+/* Define if you have the openlog function.  */
+#undef HAVE_OPENLOG
+
+/* Define if you have the poll function.  */
+#undef HAVE_POLL
+
+/* Define if you have the setregid function.  */
+#undef HAVE_SETREGID
+
+/* Define if you have the setresgid function.  */
+#undef HAVE_SETRESGID
+
+/* Define if you have the setresuid function.  */
+#undef HAVE_SETRESUID
+
+/* Define if you have the setreuid function.  */
+#undef HAVE_SETREUID
+
+/* Define if you have the setsid function.  */
+#undef HAVE_SETSID
+
+/* Define if you have the sigaction function.  */
+#undef HAVE_SIGACTION
+
+/* Define if you have the sigblock function.  */
+#undef HAVE_SIGBLOCK
+
+/* Define if you have the sigpause function.  */
+#undef HAVE_SIGPAUSE
+
+/* Define if you have the sigprocmask function.  */
+#undef HAVE_SIGPROCMASK
+
+/* Define if you have the sigsuspend function.  */
+#undef HAVE_SIGSUSPEND
+
+/* Define if you have the socket function.  */
+#undef HAVE_SOCKET
+
+/* Define if you have the strchr function.  */
+#undef HAVE_STRCHR
+
+/* Define if you have the strerror function.  */
+#undef HAVE_STRERROR
+
+/* Define if you have the strrchr function.  */
+#undef HAVE_STRRCHR
+
+/* Define if you have the syslog function.  */
+#undef HAVE_SYSLOG
+
+/* Define if you have the vsyslog function.  */
+#undef HAVE_VSYSLOG
+
+/* Define if you have the wait3 function.  */
+#undef HAVE_WAIT3
+
+/* Define if you have the wait4 function.  */
+#undef HAVE_WAIT4
+
+/* Define if you have the waitpid function.  */
+#undef HAVE_WAITPID
+
+/* Define if you have the <arpa/inet.h> header file.  */
+#undef HAVE_ARPA_INET_H
+
+/* Define if you have the <errno.h> header file.  */
+#undef HAVE_ERRNO_H
+
+/* Define if you have the <fcntl.h> header file.  */
+#undef HAVE_FCNTL_H
+
+/* Define if you have the <getopt.h> header file.  */
+#undef HAVE_GETOPT_H
+
+/* Define if you have the <grp.h> header file.  */
+#undef HAVE_GRP_H
+
+/* Define if you have the <malloc.h> header file.  */
+#undef HAVE_MALLOC_H
+
+/* Define if you have the <memory.h> header file.  */
+#undef HAVE_MEMORY_H
+
+/* Define if you have the <netdb.h> header file.  */
+#undef HAVE_NETDB_H
+
+/* Define if you have the <netinet/in.h> header file.  */
+#undef HAVE_NETINET_IN_H
+
+/* Define if you have the <pwd.h> header file.  */
+#undef HAVE_PWD_H
+
+/* Define if you have the <signal.h> header file.  */
+#undef HAVE_SIGNAL_H
+
+/* Define if you have the <stddef.h> header file.  */
+#undef HAVE_STDDEF_H
+
+/* Define if you have the <stdint.h> header file.  */
+#undef HAVE_STDINT_H
+
+/* Define if you have the <stdlib.h> header file.  */
+#undef HAVE_STDLIB_H
+
+/* Define if you have the <string.h> header file.  */
+#undef HAVE_STRING_H
+
+/* Define if you have the <strings.h> header file.  */
+#undef HAVE_STRINGS_H
+
+/* Define if you have the <sys/file.h> header file.  */
+#undef HAVE_SYS_FILE_H
+
+/* Define if you have the <sys/poll.h> header file.  */
+#undef HAVE_SYS_POLL_H
+
+/* Define if you have the <sys/select.h> header file.  */
+#undef HAVE_SYS_SELECT_H
+
+/* Define if you have the <sys/socket.h> header file.  */
+#undef HAVE_SYS_SOCKET_H
+
+/* Define if you have the <sys/sockio.h> header file.  */
+#undef HAVE_SYS_SOCKIO_H
+
+/* Define if you have the <sys/syslog.h> header file.  */
+#undef HAVE_SYS_SYSLOG_H
+
+/* Define if you have the <sys/types.h> header file.  */
+#undef HAVE_SYS_TYPES_H
+
+/* Define if you have the <sys/un.h> header file.  */
+#undef HAVE_SYS_UN_H
+
+/* Define if you have the <syslog.h> header file.  */
+#undef HAVE_SYSLOG_H
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the c library (-lc).  */
+#undef HAVE_LIBC
+
+/* Define if you have the nsl library (-lnsl).  */
+#undef HAVE_LIBNSL
+
+/* Define if you have the socket library (-lsocket).  */
+#undef HAVE_LIBSOCKET
+
+#endif /* !UNSN_CONFIG_H */

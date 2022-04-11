@@ -1,0 +1,104 @@
+Rio Car Release 10-Jul-2004
+Version 2.01
+
+Copyright (c) DNNA (UK) Ltd., 2004
+
+
+* Notes
+
+This is a new stable release of the car-player software, and users of
+v1.03 and of earlier beta versions are encouraged to upgrade. Users of
+v2.00 should not upgrade unless the single new feature -- support for
+RAM upgrades -- is required.
+
+
+* General
+
+Please submit bugs to the Bug Reports forum at the Unofficial Empeg
+BBS (http://empegbbs.com).  Be sure to check that the bug has not
+already been discussed.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool
+for Linux users) from the empeg-car upgrades site.
+
+(There is no Emplode or Emptool v2.01; you should use the v2.00 versions.
+If you already have v2.00 of Emplode or Emptool installed, you can skip
+ahead to the firmware installation.)
+
+If upgrading from v1.xx or from a beta release of v2, you should
+install the new emplode or emptool before installing this release. If
+you fail to do so your empeg-car unit may not function and it will be
+necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We recommend completely de-installing the previous emplode before
+installing the new one.
+
+The USB driver has been moved out of the emplode setup program since just
+placing it in the drivers directory wasn't advisable on modern operating
+systems. In order to improve reliability on Windows XP there is now a new
+USB driver specifically for Windows XP called RIOXDRV.SYS. Users of
+earlier operating systems (Windows 98, Windows 98SE, Windows ME and
+Windows 2000) should continue to use the RIOHD.SYS driver. Anyone who is
+still using the EMPEGCAR.SYS driver should consider switching to the
+RIOHD.SYS driver.
+
+Driver installation varies among various versions of Windows so these
+instructions are deliberately a little vague... :)
+
+In order to install the driver on a machine which already has the old
+driver you will need to run Device Manager (accessible by right clicking
+on My Computer and selecting Properties). You should select the properties
+for the "Rio Car" or "empeg-car" device and choose to Update Driver.
+Choose to install the driver from a specific location and point it at
+wherever you've unzipped the emplode installer.
+
+To install the driver on a machine that has not seen the device before you
+should choose to specify the location and point it at wherever you've
+unzipped the emplode installer.
+
+Once the driver is installed you should be able to check the driver details.
+On Windows XP it should show that you are using RIOXDRV.SYS and on older
+operating systems it should show that you are using RIOHD.SYS.
+
+Although the RIOXDRV.SYS driver has been through WHQL testing it has not yet
+been signed by Microsoft. On Windows XP you will be presented with a scary
+dialog box that warns you that the driver is unsigned; you should choose to
+continue installation.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 2.00 - Player
+
+The kernel and player will now take advantage of extra bonus RAM
+beyond the standard amount (8Mb Mark 1, 12Mb Mark 2, 16Mb Mark 2a) if
+present. Fitting bonus RAM requires precision hand-soldering of
+surface-mount components and is not for the even slightly
+faint-hearted! Several brave souls who have performed upgrades have
+posted to the Unofficial Empeg BBS in this thread:
+    http://empegbbs.com/ubbthreads/showflat.php/Cat/0/Number/195118
+
+The kernel changes were done by Mark Lord and originally came from his
+"Hijack" replacement kernel project.
+
+
+Peter Hartley 10-Jul-2004
+pdhartley@rioaudio.com

@@ -1,0 +1,451 @@
+# core_errors.mes
+#
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.25 13-Mar-2003 18:15 rob:)
+#
+
+# Global settings for this file
+Facility=4
+Component=0
+
+#
+# Success codes
+#
+
+Severity=0
+
+# S_AGAIN
+Symbol=S_AGAIN
+Code=4
+Language=English
+Text=S_AGAIN
+Language=French
+Text=S_AGAIN
+Language=German
+Text=S_AGAIN
+Language=Spanish
+Text=S_AGAIN
+Language=Italian
+Text=S_AGAIN
+Language=Japanese
+Text=S_AGAIN
+
+# S_CACHEFULL
+Symbol=S_CACHEFULL
+Code=5
+Language=English
+Text=Cache full.
+Language=French
+Text=Cache plein
+Language=German
+Text=Cache-Speicher voll.
+Language=Spanish
+Text=Caché completa.
+Language=Italian
+Text=Cache piena.
+Language=Japanese
+Text=ƒLƒƒƒbƒVƒ…‚ª‚¢‚Á‚Ï‚¢‚Å‚·B
+
+# S_REACHEDBOUND
+Symbol=S_REACHEDBOUND
+Code=6
+Language=English
+Text=Reached bound.
+Language=French
+Text=Limite atteinte
+Language=German
+Text=Grenze erreicht.
+Language=Spanish
+Text=Se alcanzó el límite.
+Language=Italian
+Text=Limite massimo raggiunto.
+Language=Japanese
+Text=‹«ŠE‚É’B‚µ‚Ü‚µ‚½B
+
+# S_UNNECESSARY
+Symbol=S_UNNECESSARY
+Code=7
+Language=English
+Text=Action was unnecessary.
+Language=French
+Text=L'action était inutile.
+Language=German
+Text=Aktion war unnötig.
+Language=Spanish
+Text=La acción no era necesaria.
+Language=Italian
+Text=L'azione non era necessaria
+Language=Japanese
+Text=‚±‚Ì‘€ì‚Í•s—v‚Å‚µ‚½B
+
+#
+# Failure codes
+#
+
+Severity=3
+
+# E_NOTFOUND
+Symbol=E_NOTFOUND
+Code=2
+Language=English
+Text=Not found.
+Language=French
+Text=Introuvable
+Language=German
+Text=Nicht gefunden.
+Language=Spanish
+Text=No encontrado.
+Language=Italian
+Text=Non trovato.
+Language=Japanese
+Text=Œ©‚Â‚©‚è‚Ü‚¹‚ñB
+
+# E_SEM_CREATEFAILED
+Symbol=E_SEM_CREATEFAILED
+Code=3
+Language=English
+Text=Failed to create semaphore
+Language=French
+Text=Échec de la création du sémaphore
+Language=German
+Text=Semaphor wurde nicht erstellt
+Language=Spanish
+Text=No se pudo crear el semáforo
+Language=Italian
+Text=Impossibile creare il semaforo
+Language=Japanese
+Text=ƒZƒ}ƒtƒH‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_SEM_POSTFAILED
+Symbol=E_SEM_POSTFAILED
+Code=4
+Language=English
+Text=Failed to post semaphore
+Language=French
+Text=Échec de la transmission du sémaphore
+Language=German
+Text=Semaphor wurde nicht eingestellt
+Language=Spanish
+Text=No se pudo poner el semáforo
+Language=Italian
+Text=Impossibile inviare il semaforo
+Language=Japanese
+Text=ƒZƒ}ƒtƒH‚Ìƒ|ƒXƒg‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_SEM_WAITFAILED
+Symbol=E_SEM_WAITFAILED
+Code=5
+Language=English
+Text=Failed to wait for semaphore
+Language=French
+Text=Échec de l'attente du sémaphore
+Language=German
+Text=Semaphor wurde nicht abgewartet
+Language=Spanish
+Text=No se pudo esperar al semáforo
+Language=Italian
+Text=Impossibile attendere il semaforo
+Language=Japanese
+Text=ƒZƒ}ƒtƒH‚Ì‘Ò‹@‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_MUTEX_CREATEFAILED
+Symbol=E_MUTEX_CREATEFAILED
+Code=6
+Language=English
+Text=Failed to create mutex
+Language=French
+Text=Échec de la création du mutex
+Language=German
+Text=Mutex wurde nicht erstellt
+Language=Spanish
+Text=No se pudo crear mutex
+Language=Italian
+Text=Impossibile creare il mutex
+Language=Japanese
+Text=ƒ~ƒ…[ƒeƒbƒNƒX‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_MUTEX_LOCKFAILED
+Symbol=E_MUTEX_LOCKFAILED
+Code=7
+Language=English
+Text=Failed to lock mutex
+Language=French
+Text=Échec du verrouillage du mutex
+Language=German
+Text=Mutex wurde nicht gesperrt
+Language=Spanish
+Text=No se pudo bloquear mutex
+Language=Italian
+Text=Impossibile bloccare il mutex
+Language=Japanese
+Text=ƒ~ƒ…[ƒeƒbƒN‚ÌƒƒbƒN‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_MUTEX_UNLOCKFAILED
+Symbol=E_MUTEX_UNLOCKFAILED
+Code=8
+Language=English
+Text=Failed to unlock mutex
+Language=French
+Text=Échec du déverrouillage du mutex
+Language=German
+Text=Mutex wurde nicht entsperrt
+Language=Spanish
+Text=No se pudo desbloquear mutex
+Language=Italian
+Text=Impossibile sbloccare il mutex
+Language=Japanese
+Text=ƒ~ƒ…[ƒeƒbƒNƒX‚ÌƒƒbƒN‰ğœ‚É¸”s‚µ‚Ü‚µ‚½
+
+# E_EXCEPTION
+Symbol=E_EXCEPTION
+Code=9
+Language=English
+Text=An unknown exception occurred
+Language=French
+Text=Une exception inconnue est survenue.
+Language=German
+Text=Eine unbekannte Ausnahme ist aufgetreten
+Language=Spanish
+Text=Se ha producido una excepción desconocida
+Language=Italian
+Text=Si è verificata un'eccezione sconosciuta
+Language=Japanese
+Text=•s–¾‚È—áŠO‚ª”­¶‚µ‚Ü‚µ‚½
+
+# E_RANGE
+Symbol=E_RANGE
+Code=10
+Language=English
+Text=Out of range
+Language=French
+Text=Hors limites
+Language=German
+Text=Außerhalb des Bereichs
+Language=Spanish
+Text=Fuera de límites
+Language=Italian
+Text=Non compreso nell'intervallo
+Language=Japanese
+Text=”ÍˆÍŠO‚Å‚·
+
+# E_TIMEOUT
+Symbol=E_TIMEOUT
+Code=11
+Language=English
+Text=Operation timed out
+Language=French
+Text=L'opération a expiré.
+Language=German
+Text=Zeitlimit des Vorgangs wurde überschritten
+Language=Spanish
+Text=Se ha excedido el tiempo de la operación 
+Language=Italian
+Text=Tempo esaurito per l'operazione
+Language=Japanese
+Text=‘€ì‚ªƒ^ƒCƒ€ƒAƒEƒg‚µ‚Ü‚µ‚½
+
+# E_ENDOFFILE
+Symbol=E_ENDOFFILE
+Code=12
+Language=English
+Text=End of file
+Language=French
+Text=Fin du fichier
+Language=German
+Text=Ende der Datei
+Language=Spanish
+Text=Final del archivo
+Language=Italian
+Text=Fine del file
+Language=Japanese
+Text=ƒtƒ@ƒCƒ‹‚ÌI‚í‚è‚Å‚·
+
+# E_BADFILETYPE
+Symbol=E_BADFILETYPE
+Code=13
+Language=English
+Text=Bad file type
+Language=French
+Text=Mauvais type de fichier
+Language=German
+Text=Ungültiger Dateityp
+Language=Spanish
+Text=Tipo de archivo incorrecto
+Language=Italian
+Text=Tipo file non valido
+Language=Japanese
+Text=ƒtƒ@ƒCƒ‹‚Ìí—Ş‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·
+
+# 14 and 15 have been moved to lib/tags
+
+# E_ALREADY
+Symbol=E_ALREADY
+Code=16
+Language=English
+Text=Already exists
+Language=French
+Text=Existe déjà
+Language=German
+Text=Existiert bereits
+Language=Spanish
+Text=Ya existe
+Language=Italian
+Text=Esiste già
+Language=Japanese
+Text=‚·‚Å‚É‘¶İ‚µ‚Ä‚¢‚Ü‚·
+
+# E_SIGNALLED
+Symbol=E_SIGNALLED
+Code=17
+Language=English
+Text=Child process received signal
+Language=French
+Text=Le processus enfant a reçu un signal.
+Language=German
+Text=Child-Prozess hat Signal empfangen
+Language=Spanish
+Text=El proceso secundario recibió la señal
+Language=Italian
+Text=Il processo secondario ha ricevuto il segnale
+Language=Japanese
+Text=qƒvƒƒZƒX‚ªM†‚ğóM‚µ‚Ü‚µ‚½
+
+# E_INVALID_MP3
+Symbol=E_INVALID_MP3
+Code=18
+Language=English
+Text=Unsupported/Invalid MP3 format.
+Language=French
+Text=Format MP3 non pris en charge/non valide
+Language=German
+Text=Nicht unterstütztes/Ungültiges MP3-Format.
+Language=Spanish
+Text=Formato MP3 no admitido o no válido
+Language=Italian
+Text=Formato MP3 non supportato oppure non valido.
+Language=Japanese
+Text=ƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢/–³Œø‚ÈMP3ƒtƒH[ƒ}ƒbƒg‚Å‚·B
+
+# E_CORRUPTED
+Symbol=E_CORRUPTED
+Code=19
+Language=English
+Text=Uncorrected corrupted data returned.
+Language=French
+Text=Des données endommagées non corrigées ont été retournées.
+Language=German
+Text=Zurückgegebene Daten enthalten immer noch Fehler.
+Language=Spanish
+Text=Devueltos datos corruptos incorrectos.
+Language=Italian
+Text=Sono stati restituiti dati danneggiati non validi.
+Language=Japanese
+Text=–¢C³‚Ì”j‰ó‚³‚ê‚½ƒf[ƒ^‚ª•Ô‚³‚ê‚Ü‚µ‚½B
+
+#
+# Windows compatibility
+#
+
+# E_OUTOFMEMORY
+Facility=7
+Component=0
+Symbol=E_OUTOFMEMORY
+Code=0xE
+Language=English
+Text=Out of memory
+Language=French
+Text=Mémoire insuffisante
+Language=German
+Text=Nicht genügend Speicherplatz
+Language=Spanish
+Text=Sin memoria
+Language=Italian
+Text=Memoria esaurita
+Language=Japanese
+Text=ƒƒ‚ƒŠ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·
+
+# E_NOTIMPL
+Symbol=E_NOTIMPL
+Facility=0
+Component=4
+Code=1
+Language=English
+Text=Not implemented
+Language=French
+Text=Non implémenté
+Language=German
+Text=Nicht implementiert
+Language=Spanish
+Text=No implementado
+Language=Italian
+Text=Non implementato
+Language=Japanese
+Text=À‘•‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ
+
+# E_FAIL
+Symbol=E_FAIL
+Code=5
+Language=English
+Text=Unspecified error
+Language=French
+Text=Erreur non spécifiée
+Language=German
+Text=Unbekannter Fehler
+Language=Spanish
+Text=Error sin especificar
+Language=Italian
+Text=Errore non specificato
+Language=Japanese
+Text=w’è‚³‚ê‚Ä‚¢‚È‚¢ƒGƒ‰[‚Å‚·
+
+# E_USER_CANCELLED
+Symbol=E_USER_CANCELLED
+Code=6
+Language=English
+Text=Operation cancelled by user
+Language=French
+Text=Opération annulée par l'utilisateur
+Language=German
+Text=Vorgang durch Benutzer abgebrochen
+Language=Spanish
+Text=Operación cancelada por el usuario
+Language=Italian
+Text=Operazione annullata dall'utente
+Language=Japanese
+Text=ƒ†[ƒU‚É‚æ‚Á‚Ä‘€ì‚ªƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½
+
+# E_BUSY
+Symbol=E_BUSY
+Code=7
+Language=English
+Text=The operation could not be completed since something was already busy
+Language=French
+Text=L'opération n'a pas pu être terminée car le système était déjà occupé.
+Language=German
+Text=Der Vorgang konnte nicht abgeschlossen werden, da eine Komponente bereits anderweitig beansprucht war.
+Language=Spanish
+Text=No se pudo finalizar la operación porque algo ya estaba ocupado
+Language=Italian
+Text=Impossibile completare l'operazione. Un elemento dell'operazione era già occupato
+Language=Japanese
+Text=‚·‚Å‚ÉƒrƒW[ó‘Ô‚É‚È‚Á‚Ä‚¢‚é‚à‚Ì‚ª‚ ‚é‚Ì‚ÅA‘€ì‚ğŠ®—¹‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½
+
+# E_NOTADMIN
+Symbol=E_NOTADMIN
+Code=8
+Language=English
+Text=You do not have administrator rights. You need to be logged on as a user with administrator privileges in order to continue.
+Language=French
+Text=Vous ne possédez pas de droits d'administrateur. Vous devez être connecté en tant qu'utilisateur possédant des privilèges d'administrateur pour pouvoir continuer.
+Language=German
+Text=Sie verfügen nicht über Administratorrechte. Sie müssen als Benutzer mit Administratorrechten angemeldet sein, um den Vorgang fortsetzen zu können.
+Language=Spanish
+Text=No tiene derechos de administrador. Para continuar, debe conectarse como usuario con privilegios de administrador.
+Language=Italian
+Text=L'utente non possiede diritti d'amministratore. Per continuare, è necessario accedere come amministratore.
+Language=Japanese
+Text=ŠÇ—ÒŒ ŒÀ‚ª‚ ‚è‚Ü‚¹‚ñB‘€ì‚ğŒp‘±‚·‚é‚½‚ß‚É‚ÍŠÇ—ÒŒ ŒÀ‚ğ‚Âƒ†[ƒU[‚Æ‚µ‚ÄƒƒOƒCƒ“‚µ‚Ä‚¢‚È‚¯‚ê‚Î‚È‚è‚Ü‚¹‚ñB

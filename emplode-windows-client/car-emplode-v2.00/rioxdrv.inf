@@ -1,0 +1,100 @@
+; Installation inf for SONICblue Rio products on XP and later versions of Windows
+;
+; (c) Copyright 2002 SONICblue Inc.
+;
+
+[Version]
+Signature="$CHICAGO$"
+Class=USB
+ClassGUID={36FC9E60-C465-11CF-8056-444553540000}
+provider=%SB%
+DriverVer=01/14/2003,2.0.3.6
+CatalogFile=RIOXDRV.CAT
+
+[SourceDisksNames]
+1=%DISK%,,,
+
+[SourceDisksFiles]
+RIOXDRV.sys = 1
+
+[Manufacturer]
+%MfgName%=SONICblue, NT.5.1
+
+[SONICblue]
+; We don't support earlier versions of Windows.
+
+[SONICblue.NT.5.1]
+%RioCar.DeviceDesc%=RioCar.Dev, USB\VID_084f&PID_0001
+%RioCentral.DeviceDesc%=RioCentral.Dev, USB\VID_045A&PID_5901
+
+;[PreCopySection]
+;HKR,,NoSetupUI,,1
+
+[DestinationDirs]
+RIOXDRV.Files.Ext = 10,System32\Drivers
+
+;
+; Rio Car
+;
+
+[RioCar.Dev.NT]
+CopyFiles=RIOXDRV.Files.Ext
+
+[RioCar.Dev.NT.hw]
+AddReg=RioCarhw.AddReg
+
+[RioCarhw.AddReg]
+HKR,,Label,,"%RioCar.DeviceDesc%"
+HKR,,DeviceGUID,,""{248F0D00-0F88-11d3-9129-00104B62B7D4}""
+HKR,,"VIDPID",,""084f:0001""
+HKR,,"EmpegStylePipes",,""
+
+[RioCar.Dev.NT.Services]
+AddService=RIOXDRV, 0x2, RIOXDRV.AddService
+
+;
+; Rio Central
+;
+
+[RioCentral.Dev.NT]
+CopyFiles=RIOXDRV.Files.Ext
+
+[RioCentral.Dev.NT.hw]
+AddReg=RioCentralhw.AddReg
+
+[RioCentralhw.AddReg]
+HKR,,Label,,"%RioCentral.DeviceDesc%"
+HKR,,DeviceGUID,,""{248F0D00-0F88-11d3-9129-00104B62B7D4}""
+HKR,,"VIDPID",,""045a:5901""
+HKR,,"EmpegStylePipes",,""
+
+[RioCentral.Dev.NT.Services]
+AddService=RIOXDRV, 0x2, RIOXDRV.AddService
+
+;
+; Service adding for all devices
+;
+[RIOXDRV.AddService]
+DisplayName    = %RIOXDRV.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\RIOXDRV.sys
+LoadOrderGroup = Base
+
+;
+; File names
+;
+[RIOXDRV.Files.Ext]
+RIOXDRV.sys
+
+;---------------------------------------------------------------;
+
+[Strings]
+SB="SONICblue"
+MfgName="SONICblue"
+RioCar.DeviceDesc="SONICblue Rio Car"
+RioCentral.DeviceDesc="SONICblue Rio Advanced Digital Audio Center"
+
+RIOXDRV.SvcDesc="SONICblue Rio generic driver XP+"
+DISK="SONICblue product Installation Disk"

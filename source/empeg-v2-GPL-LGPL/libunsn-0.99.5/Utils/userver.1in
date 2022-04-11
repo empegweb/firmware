@@ -1,0 +1,347 @@
+.\"
+.\" Utils/userver.1in -- manual page for userver
+.\" Copyright (C) 1996, 2000  Andrew Main
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: userver.1
+.TH USERVER 1 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+userver \- universal socket server
+.SH SYNOPSIS
+.B userver
+.RI [ options ]
+.I local-address command
+.RI [ arg " ...]"
+.SH DESCRIPTION
+.I userver
+creates a socket with the specified
+.IR local-address .
+It waits for remote sockets to communicate with it, then invokes the specified
+.I command
+(with the specified
+.IR arg s)
+to handle each remote process.
+.PP
+For connection-oriented protocols,
+.I userver
+waits for a connection to be established, and then for each connection
+invokes the
+.IR command ,
+passing it (as standard input and output)
+a socket referring to that connection.
+(For byte-stream protocols, the
+.I command
+does not necessarily need to know that it is dealing with a socket.)
+A new instance of
+.I command
+is created for each connection that is established, and several may be
+active at once.
+.PP
+For connectionless protocols,
+.I userver
+treats each incoming datagram analogously to a connection in a
+connection-oriented protocol.  The
+.I command
+is invoked with standard input and output being pipes;
+on the input pipe it can read a copy of a the received datagram.
+No other datagrams can be read.
+All the data written to the output pipe will be relayed, in a single datagram,
+to the originator of the received datagram.  The
+.I command
+does not have direct access to any socket concerned with the protocol that
+.I userver
+is using.  There is therefore no way for the
+.I command
+to directly determine where the received datagram originated; the
+.B -a
+option provides a way to resolve this problem.
+.PP
+The
+.B -w
+option provides an alternative to the connection-based server model.
+In this mode,
+.I userver
+doesn't handle connections itself, but invokes the
+.I command
+which will handle connections.  This is primarily useful with
+connectionless protocols, where it provides significant functionality
+not otherwise available.  However, rather than using the
+.B -w
+option, it is usually simpler for the
+.I command
+to be written as a complete server itself.  When
+.B -w
+is used, the most significant job being performed by
+.I userver
+is to set up the socket.  When
+.B -1
+is also used, that is almost all it is doing.
+.PP
+.I local-address
+must be specified as a
+Universal Network Socket Name (UNSN).
+See
+.IR unsn (7)
+for more information.
+.SS "Restricting the environment for the command"
+The options
+.BR -R ,
+.B -U
+and
+.B -C
+affect the environment in which the subordinate command is run.
+.B -U
+can be used to run the command as a different user, and
+.B -R
+can be used to restrict the command to a segregated part of the filesystem.
+.RB ( -C
+is needed with
+.BR -R .)
+.PP
+These options are processed
+.I after
+creating the socket to listen for connections, so they can be used to
+run an unprivileged daemon on a privileged address.  (For example,
+low-numbered TCP and UDP ports usually require privileges to use, but
+in many cases the daemons themselves do not need privileges to do their jobs.)
+It is, in fact, recommended to run daemons with the least possible privileges.
+.PP
+Much the same effect can be obtained by making the subordinate command actually
+be
+.IR chroot (8)
+or
+.IR su (1)
+etc., as appropriate.  These options have the advantage that, because they are
+processed by
+.I userver
+as soon as possible, errors will be reported immediately on startup,
+and the reduced privileges actually affect
+.IR userver .
+.I userver
+can be run under
+.IR chroot (8)
+or
+.IR su (1)
+to restrict the privileges in effect when creating the socket.
+.SH OPTIONS
+.TP
+.B -0
+When executing the
+.IR command ,
+pass it the first
+.I arg
+as the program name and the subsequent
+.IR arg s
+as normal arguments, rather than passing the
+.I command
+as the program name.
+.TP
+.B -1
+Accept only a single connection, terminating once it has been handled.
+This option is incompatible with
+.BR -m .
+.TP
+.B -2
+When executing the
+.IR command ,
+pass it its socket as standard error,
+in addition to standard input and output.
+By default, standard error is inherited from
+.IR userver .
+Regardless of options, all file descriptors above 2 are inherited from
+.IR userver .
+.TP
+.BI -a token
+When executing the
+.IR command ,
+any instance of
+.I token
+in the argument list is replaced by the remote address from which
+the connection was initiated, in the form of a UNSN.
+This only affects arguments that are entirely identical to
+.IR token ;
+matching substrings are not affected.
+This option is incompatible with
+.BR -w .
+.TP
+.BI -C directory
+Change current directory to
+.I directory
+before executing the
+.IR command .
+The new current directory
+.I does
+affect resolution of
+.I command
+if it is a relative pathname, but
+.I does not
+affect the meaning of the
+.I local-address
+if it involves a local pathname.
+.TP
+.B -d
+Run in the foreground.  By default,
+.I userver
+daemonizes itself; that is, it
+.IR fork (2)s
+off a child process to do all the work in the background,
+and puts that process into a new process group.  Note that it does
+.I not
+do any of the other things Unix daemons commonly do: it does not
+automatically change to the root directory, and does not abandon its
+standard error.  (By default, the current directory and the standard error
+get passed on to the
+.IR command .)
+.TP
+.B -l
+Log events via
+.IR syslog (3).
+This is usually desirable if
+.I userver
+is being used in place of
+.IR inetd (8).
+(The script that the
+.IR inetd2userver (1)
+utility generates uses this option.)
+.TP
+.B -L
+Log events to standard error.
+.PP
+It is permitted to use both
+.B -l
+and
+.BR -L .
+If neither form of logging is enabled, errors will be
+reported on standard error.
+.TP
+.BI -m maximum
+Allow at most
+.I maximum
+copies of the
+.I command
+to execute concurrently.
+When that number is reached, further attempted connections will be
+queued until a running server termintes.
+Zero is a valid
+.I maximum
+value; it will prevent any connections being handled at all.
+This option is incompatible with
+.B -1
+and
+.BR -w .
+.TP
+.BI -p file
+On successful startup,
+.I userver
+will write its PID to the specified
+.IR file .
+(By default, there is no PID file.)
+The first line of the
+.I file
+contains the PID,
+and other lines may be defined in future versions of
+.IR userver ,
+so use
+.RB ` "head -1" '
+rather than
+.RB ` cat '
+to extract the PID.  The
+.I file
+will not be removed when
+.I userver
+terminates.
+.TP
+.BI -R directory
+Change root directory to
+.I directory
+before executing the
+.IR command .
+The new root directory
+.I does
+affect resolution of
+.IR command ,
+but
+.I does not
+affect the meaning of the
+.I local-address
+if it involves a local pathname.
+On most systems, use of this option requires special privileges.
+Usually it will be desirable to use the option
+.RB ` -C/ '
+or something similar if using
+.BR -R .
+.TP
+.BI -t time-spec
+If no connections are received in the time specified by
+.IR time-spec ,
+terminate.  Time spent waiting for copies of the
+.I command
+to terminate is not counted.
+.I time-spec
+can contain numbers of weeks, days, hours, minutes and seconds, units being
+indicated by letters
+.RB ` w "', `" d "', `" h "', `" m "', `" s '
+appended to the number.  More than one unit can be used together, and
+decimal fractions are permitted.
+.TP
+\fB-U\fP[\fIuser\fR][\fB:\fP[\fIgroup\fR]]
+Change UIDs and GIDs as specified
+before executing the
+.IR command .
+If
+.I user
+is specified, then the UID is changed to that user, the supplementary groups
+are set to that user's default set, and if no
+.I group
+is specified then the primary GID is changed to that user's default group.  If
+.I group
+is specified, then the primary GID is changed to that group, and if no
+.I user
+is specified then the supplementary groups are cleared.
+On most systems, use of this option requires special privileges.
+.TP
+.B -w
+Instead of accepting and handling each connection individually,
+wait until a connection is available, and then invoke the
+.IR command ,
+passing it the unconnected socket.  It is up to the
+.I command
+to accept and handle connections itself (the
+.I command must
+be aware of this responsibility).  The
+.I command
+may process as many connections as it likes (subject to a mimimum of one);
+when it terminates,
+.I userver
+will resume waiting for a connection.  If the
+.I command
+will only handle one connection and may take a long time to handle it,
+usually it is desirable for the
+.I command
+to background itself, so that
+.I userver
+will wait for another connection, so that more than one connection can be
+handled concurrently.  However, in that case it is usually preferable not to
+use this option.
+This option is incompatible with
+.B -a
+and
+.BR -m .
+.SH "SEE ALSO"
+.IR inetd (8),
+.IR inetd2userver (1),
+.IR libunsn (1),
+.IR uclient (1)

@@ -1,0 +1,30 @@
+# emptool_error.mes
+#
+# Error message definitions for emptool-specific errors
+#
+# (C) 2001 empeg Ltd, www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.3 01-Apr-2003 18:52 rob:)
+#
+
+#
+# Failure codes
+#
+
+Facility=4
+Component=0
+Severity=2
+Language=English
+
+# E_PLAYERDB_DOWNLOAD
+Symbol=E_PLAYERDB_DOWNLOAD
+Code=19
+Text=Failed to download player database
+
+# E_PLAYERDB_ACTION
+Symbol=E_PLAYERDB_ACTION
+Code=20
+Text=Failed to perform database action

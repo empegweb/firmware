@@ -1,0 +1,276 @@
+.\"
+.\" Lib/libunsn.3in -- manual page for libunsn
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: libunsn.3
+.TH LIBUNSN 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+libunsn \- library for manipulating UNSNs
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BR cc " ... " -lunsn
+.fi
+.SH DESCRIPTION
+The
+.IR libunsn (3)
+library contains a set of functions for manipulating Universal Network
+Socket Names (UNSNs).
+UNSNs are are a standardized means of addressing endpoints for
+network communications.
+They are described in
+.IR unsn (7).
+For more information on the Sockets API, see
+.IR socket (7).
+.PP
+The header
+.B <libunsn.h>
+reserves all symbols beginning with
+.RB ` UNSN_ '
+or
+.RB ` unsn_ '
+as object names, struct and union tags, and preprocessor macros.
+.PP
+The functions in this library are categorized and described below.
+See the individual manual pages for more information.
+.SS "Address type guessing"
+For applications that need to distinguish between UNSNs and other address
+types without explicit labels, the function
+.IR unsn_guessaddrtype (3)
+implements some standard heuristics.
+.SS "Manual UNSN Parsing"
+It should not be necessary for most applications to manually parse UNSNs.
+For those utilities that need to do clever things with UNSNs, these functions
+are available:
+.PP
+The
+.IR unsn_ctype (3)
+functions perform character classification in a manner similar to the standard
+.B <ctype.h>
+functions, but providing classifications relevant to parsing UNSNs.
+.PP
+.IR unsn_decode (3)
+decodes an octet string encoded in UNSN form.  This is necessary whenever
+the actual contents of a UNSN need to be examined.
+.PP
+.IR unsn_syntaxok (3)
+checks for correct UNSN syntax.
+Use of this can simplify manual parsers, by removing the requirement for
+them to detect syntax errors themselves.
+.SS "Manual UNSN Generation"
+Few applications will need to manually generate UNSNs.
+.PP
+.IR unsn_encode (3)
+encodes an octet string in canonical UNSN form.
+.PP
+.IR unsn_canonize (3)
+canonizes a UNSN.
+Some applications that generate UNSNs, and wish
+to generate canonical UNSNs (as they should), may find it
+inconvenient to generate the canonical form from scratch.  In such cases,
+a UNSN can be generated in whatever form is most convenient, and then this
+function can be used as a post-processing stage.
+Usually, however, it is very easy to ensure that generated UNSNs are
+canonical to start with.
+This function may also be useful as a standalone operation, to canonize
+a UNSN being handled as data, but as a matter of style it is usually
+preferable to display user-provided UNSNs in the form in which they were input.
+.SS "Manual UNSN Alternation"
+Applications that want to do unusual things with UNSNs may need these
+functions.
+.PP
+The structure
+.IR unsn_alt_iterator (3)
+is an iterator class that iterates over the alternative addresses
+encoded in a UNSN using alternation syntax.
+.IR unsn_alt_iterator_free (3),
+.IR unsn_alt_iterator_nonnull (3),
+.IR unsn_alt_iterator_nullify (3),
+and
+.IR unsn_alt_iterator_advance (3)
+are the basic control operations on alternation iterators.
+.PP
+.IR unsn_parse_unsn (3)
+parses a UNSN to generate an alternation iterator.
+.PP
+.IR unsn_unparse1 (3)
+extracts the current alternative of an iterator,
+returning it in the form of an alternation-free canonical UNSN.
+.SS "Manual Socket Address Handling"
+Applications that want greater than usual control over how UNSN-derived
+addresses are used may need these functions.
+Higher-level interfaces are described in the next section.
+.PP
+.B struct
+.IR unsn_sockaddrinfo (3)
+encapsulates all the information required to define a socket address,
+in the terms of the Sockets API.
+.PP
+.IR unsn_copysai (3)
+makes a dynamically allocated copy of a
+.BR "struct unsn_sockaddrinfo" .
+.PP
+.IR unsn_aitounsn (3)
+takes a socket address structure, plus ancilliary addressing information,
+and generates a corresponding UNSN.
+.PP
+.IR unsn_saitounsn (3)
+does the same thing as
+.IR unsn_aitounsn (3),
+but with the various bits of address information all packaged into a
+.B struct
+.IR unsn_sockaddrinfo (3).
+.PP
+The structure
+.IR unsn_sai_iterator (3)
+is an iterator class that iterates over the socket addresses
+encoded in a UNSN.
+.IR unsn_sai_iterator_free (3),
+.IR unsn_sai_iterator_sai (3),
+.IR unsn_sai_iterator_nullify (3),
+and
+.IR unsn_sai_iterator_advance (3)
+are the basic control operations on socket address iterators.
+.PP
+.IR unsn_mksaiiterator (3)
+parses a UNSN to generate a socket address iterator.
+.SS "Socket Operations"
+Simple networked applications that wish to use UNSNs instead of more specific
+network address types will want to use these functions.
+.PP
+.IR unsn_opensock (3)
+creates a socket, binding and/or connecting it to addresses specified as
+UNSNs.  This is the only UNSN-specific function that simple network
+applications will need to call, other than the error number resolution
+functions described below.  It is the only socket-specific function that
+simple client applications need call in order to communicate with a server
+using a connection-oriented byte-stream protocol.
+.PP
+.IR unsn_opensock_gethints (3)
+is a variant of
+.IR unsn_opensock (3)
+which, in addition to creating a socket, returns the specific parameters
+used to create the socket.  This is needed in order to be able to properly
+interpret socket addresses later.
+.PP
+.IR unsn_opensock_fromsai (3)
+does the same job as
+.IR unsn_opensock (3),
+but uses
+.BR "struct unsn_sockaddrinfo" s.
+This is useful in some server programs that need to fiddle with connections
+in unusual ways.
+.PP
+.IR unsn_getsockaddr (3)
+and
+.IR unsn_getpeeraddr (3)
+are wrappers for
+.IR getsockname (3)
+and
+.IR getpeername (3),
+that return the address by filling in part of a
+.BR "struct unsn_sockaddrinfo" .
+.PP
+.IR unsn_addrtounsn (3)
+converts a socket address structure to a UNSN.
+However, not having every aspect of the socket address,
+it cannot always produce a correct answer.
+.PP
+.IR unsn_getsockunsn (3)
+and
+.IR unsn_getpeerunsn (3)
+are like
+.IR getsockname (3)
+and
+.IR getpeername (3),
+except that they generate UNSNs instead of socket address structures.
+As a consequence, the interface is different (it is simpler).
+However, they cannot determine every aspect of the socket addresses,
+and so cannot always produce a correct answer.
+.PP
+.IR unsn_getsockunsn_withhints (3)
+and
+.IR unsn_getpeerunsn_withhints (3)
+are like
+.IR unsn_getsockunsn (3)
+and
+.IR unsn_getpeerunsn (3)
+.IR getsockname (3)
+and
+.IR getpeername (3),
+except that they take an additional argument giving the socket address
+information they cannot determine, and so can always produce a correct answer.
+.SS "Error Numbers"
+This library defines some additional
+.IR errno (3)
+values, for error types specific to this library.  See
+.IR unsn_errno (3)
+for details.
+.PP
+.IR unsn_perror (3)
+and
+.IR unsn_strerror (3)
+are exactly like
+.IR perror (3)
+and
+.IR strerror (3),
+except that they handle these additional error numbers.
+They handle all standard error numbers too, so unless another
+library is using the same technique, a UNSN-using application
+can simply use the
+.IR libunsn (3)
+functions in place of the standard ones throughout.
+.PP
+Because UNSNs support a notion of multiple alternative and chained addresses,
+it is possible for an attempt to communicate to fail in more than one way
+simultaneously.  The functions
+.IR unsn_errno_cmp (3),
+.IR unsn_errno_min (3)
+and
+.IR unsn_errno_max (3)
+exist to decide which of multiple available errors should be reported.
+Simple applications won't see more than one error at once, and so won't
+need to use these functions directly.
+.SH "SEE ALSO"
+.IR socket (7),
+.IR unsn (7),
+.IR unsn_addrtounsn (3),
+.IR unsn_aitounsn (3),
+.IR unsn_alt_iterator (3),
+.IR unsn_canonize (3),
+.IR unsn_copysai (3),
+.IR unsn_ctype (3),
+.IR unsn_decode (3),
+.IR unsn_encode (3),
+.IR unsn_errno (3),
+.IR unsn_errno_cmp (3),
+.IR unsn_getsockaddr (3),
+.IR unsn_getsockunsn (3),
+.IR unsn_getsockunsn_withhints (3),
+.IR unsn_guessaddrtype (3),
+.IR unsn_mksaiiterator (3),
+.IR unsn_opensock (3),
+.IR unsn_opensock_fromsai (3),
+.IR unsn_parse_unsn (3),
+.IR unsn_perror (3),
+.IR unsn_sai_iterator (3),
+.IR unsn_saitounsn (3),
+.IR unsn_sockaddrinfo (3),
+.IR unsn_strerror (3),
+.IR unsn_syntaxok (3),
+.IR unsn_unparse1 (3)

@@ -1,0 +1,96 @@
+empeg-car software beta-11a release.
+
+* Versions:
+
+empeg-car player 0.89
+emplode          0.89
+empegUpgrade	 0.89
+emptool		 0.89
+kernel           2.2.14-rmk5-np17-empeg26
+
+* Notes
+
+*  General
+
+This release makes changes to the configuration of your empeg-car that will
+not be revoked by installing a version prior to beta8b.
+
+When submitting bug reports to bugs@empeg.com please put each bug in a
+separate email - this helps us to classify bugs and to archive the reports
+when the bugs have been fixed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes. These are available at
+http://www2.empeg.com/upgrades/test/all_notes.html
+
+You should not run this version of the player with an earlier release of
+emplode or this version of emplode with an earlier release of the player.
+
+*  Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit will not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+Remove the power connector from your empeg-car and connect your empeg-car
+to your computer using the supplied serial cable. Do _not_ reconnect the
+power to your empeg-car.
+
+The upgrade can be installed by serial only. Select Upgrade empeg-car
+software from the Tools menu and either enter or browse for the upgrade
+file. Click Next and select the serial port that your unit is connected
+to. Click Next again.
+
+When instructed to do so by the upgrade program plug in the empeg-car
+power connector. The upgrade should then be applied.
+
+* Changes:
+
+*  player:
+
+The about box now goes away when any front panel button is pressed.
+
+A crash that could be caused by creating a malformed config.ini file has
+been resolved. Unfortunately, emplode could create such files if you
+previously had a config.ini file.
+
+*  emplode:
+
+When reading existing config.ini files emplode now doesn't get confused by
+carriage returns.
+
+*  empegUpgrade:
+
+Minor changes.
+
+*  emptool
+
+Many improvements have been made to renaming and moving items.
+
+*  developer
+
+* Known bugs:
+
+The empeg hangs if connected via USB to a machine that is switched
+off. Removing the USB cable fixes the problem.
+
+The emplode install program doesn't restart the computer when necessary to
+ensure that the empeg-car device is found. This is not always essential.
+
+The emplode program doesn't check whether files are valid MP3 files before
+downloading.
+
+The same PIN may be entered for more than one tune/playlist - the empeg-car
+will play the first one it finds.
+
+Plugging more than empeg-car into a single machine via USB may confuse
+emplode.
+
+It is not currently possible to play WAV files on the unit.
+
+Mike Crowe 2000/06/27 16:30 BST
+mac@empeg.com

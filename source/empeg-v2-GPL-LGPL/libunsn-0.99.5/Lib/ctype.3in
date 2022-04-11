@@ -1,0 +1,68 @@
+.\"
+.\" Lib/ctype.3in -- manual page for UNSN ctype functions
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_ctype.3
+.\" NAMES: unsn_isbasic.3 unsn_isoctet.3 unsn_isoctet1.3
+.\" NAMES: unsn_isunsn.3 unsn_isxdigit.3
+.TH UNSN_CTYPE 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_isbasic, unsn_isoctet, unsn_isoctet1,
+unsn_isunsn, unsn_isxdigit \- UNSN encoding character classification functions
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "int unsn_isbasic(int " c );
+.BI "int unsn_isoctet(int " c );
+.BI "int unsn_isoctet1(int " c );
+.BI "int unsn_isunsn(int " c );
+.BI "int unsn_isxdigit(int " c );
+.fi
+.SH DESCRIPTION
+These functions provide character classification information, with respect to
+UNSN encoding.  They each take an argument that is either an unsigned character
+value or -1, and return a value indicating whether the character in question
+falls into the appropriate classification.
+.PP
+.B unsn_isbasic
+tests whether a character can appear in a basic UNSN.
+.PP
+.B unsn_isoctet
+tests whether a character can appear in a UNSN <encoded-octet-string>.
+.PP
+.B unsn_isoctet1
+tests whether a character is a valid single-character octet encoding
+in UNSN <encoded-octet-string> format.
+.PP
+.B unsn_isunsn
+tests whether a character can appear in a UNSN.
+.PP
+.B unsn_isxdigit
+tests whether a character is a valid hexadecimal digit for
+.RB ` % '
+escapes in UNSN <encoded-octet-string> coding.
+.SH "RETURN VALUE"
+Each function returns zero if the specified character
+does not meet the appropriate criterion, and a non-zero value if it does.
+.SH NOTES
+Arbitrary signed character values are not valid input to these functions.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_canonize (3),
+.IR unsn_decode (3),
+.IR unsn_encode (3)

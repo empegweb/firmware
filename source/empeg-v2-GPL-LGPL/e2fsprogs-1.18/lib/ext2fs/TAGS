@@ -1,0 +1,358 @@
+
+alloc.c,153
+errcode_t ext2fs_new_inode(37,678
+errcode_t ext2fs_new_block(77,1620
+errcode_t ext2fs_alloc_block(107,2296
+errcode_t ext2fs_get_free_blocks(152,3214
+
+alloc_tables.c,89
+errcode_t ext2fs_allocate_group_table(32,580
+errcode_t ext2fs_allocate_tables(104,2404
+
+badblocks.c,369
+static errcode_t make_badblocks_list(34,590
+errcode_t ext2fs_badblocks_list_create(65,1358
+errcode_t ext2fs_badblocks_copy(73,1533
+errcode_t ext2fs_badblocks_list_add(97,1960
+int ext2fs_badblocks_list_test(132,2617
+errcode_t ext2fs_badblocks_list_iterate_begin(163,3117
+int ext2fs_badblocks_list_iterate(183,3571
+void ext2fs_badblocks_list_iterate_end(203,3920
+
+bb_compat.c,266
+errcode_t badblocks_list_create(31,510
+void badblocks_list_free(36,627
+errcode_t badblocks_list_add(41,709
+int badblocks_list_test(46,817
+errcode_t badblocks_list_iterate_begin(51,921
+int badblocks_list_iterate(57,1073
+void badblocks_list_iterate_end(62,1191
+
+bb_inode.c,179
+struct set_badblock_record set_badblock_record35,687
+errcode_t ext2fs_update_bb_inode(56,1260
+static int clear_bad_block_proc(162,3934
+static int set_bad_block_proc(219,5295
+
+bitmaps.c,446
+static errcode_t make_bitmap(32,563
+errcode_t ext2fs_allocate_generic_bitmap(78,1723
+errcode_t ext2fs_copy_bitmap(87,1938
+void ext2fs_set_bitmap_padding(104,2337
+errcode_t ext2fs_allocate_inode_bitmap(114,2529
+errcode_t ext2fs_allocate_block_bitmap(143,3211
+errcode_t ext2fs_fudge_inode_bitmap_end(173,3941
+errcode_t ext2fs_fudge_block_bitmap_end(186,4235
+void ext2fs_clear_inode_bitmap(199,4529
+void ext2fs_clear_block_bitmap(208,4760
+
+bitops.c,153
+int ext2fs_set_bit(34,805
+int ext2fs_clear_bit(46,1024
+int ext2fs_test_bit(58,1247
+void ext2fs_warn_bitmap(70,1485
+void ext2fs_warn_bitmap2(79,1694
+
+block.c,307
+struct block_context block_context23,389
+static int block_iterate_ind(41,695
+static int block_iterate_dind(126,3159
+static int block_iterate_tind(213,5670
+errcode_t ext2fs_block_iterate2(301,8201
+struct xlate xlate412,10833
+static int xlate_func(423,11007
+errcode_t ext2fs_block_iterate(431,11228
+
+bmap.c,369
+#define _BMAP_INLINE_	24,417
+#define _BMAP_INLINE_26,456
+#define BMAP_ALLOC	34,658
+#define inode_bmap(inode_bmap36,680
+static blk_t _BMAP_INLINE_ block_bmap(38,736
+static errcode_t _BMAP_INLINE_ block_ind_bmap(51,990
+static errcode_t _BMAP_INLINE_ block_dind_bmap(97,2004
+static errcode_t _BMAP_INLINE_ block_tind_bmap(117,2529
+errcode_t ext2fs_bmap(137,3056
+
+bmove.c,128
+struct process_block_struct process_block_struct25,475
+static int process_block(36,676
+errcode_t ext2fs_move_blocks(90,2015
+
+brel_ma.c,337
+struct brel_ma brel_ma42,1023
+errcode_t ext2fs_brel_memarray_create(48,1120
+static errcode_t bma_put(105,2348
+static errcode_t bma_get(117,2596
+static errcode_t bma_start_iter(131,2893
+static errcode_t bma_next(137,2977
+static errcode_t bma_move(154,3341
+static errcode_t bma_delete(168,3694
+static errcode_t bma_free(181,3963
+
+check_desc.c,36
+errcode_t ext2fs_check_desc(34,604
+
+closefs.c,125
+static int test_root(24,399
+int ext2fs_bg_has_super(37,546
+errcode_t ext2fs_flush(56,940
+errcode_t ext2fs_close(178,4078
+
+cmp_bitmaps.c,93
+errcode_t ext2fs_compare_block_bitmap(31,522
+errcode_t ext2fs_compare_inode_bitmap(53,1139
+
+dblist.c,346
+errcode_t ext2fs_get_num_dirs(32,601
+static errcode_t make_dblist(52,998
+errcode_t ext2fs_init_dblist(103,2159
+errcode_t ext2fs_copy_dblist(124,2492
+errcode_t ext2fs_add_dir_block(148,2903
+errcode_t ext2fs_set_dir_block(179,3565
+errcode_t ext2fs_dblist_iterate(200,4019
+static int dir_block_cmp(225,4565
+int ext2fs_dblist_count(241,4960
+
+dblist_dir.c,67
+	ext2fs_dblist_dir_iterate(29,501
+static int db_dir_proc(70,1338
+
+dir_iterate.c,82
+errcode_t ext2fs_dir_iterate(26,453
+extern int ext2fs_process_dir_block(72,1469
+
+dirblock.c,82
+errcode_t ext2fs_read_dir_block(24,388
+errcode_t ext2fs_write_dir_block(49,1041
+
+dosio.c,544
+#define LINUX_EXT2FS 31,549
+#define LINUX_SWAP 32,581
+#define WRITE_ERR(WRITE_ERR33,613
+#define WRITE_ERR_S(WRITE_ERR_S34,669
+#define EXT2_CHECK_MAGIC(EXT2_CHECK_MAGIC80,1957
+static void lba2chs(87,2149
+static PTABLE_ENTRY *scan_partition_table(110,2826
+static io_channel alloc_io_channel(146,3601
+static errcode_t dos_open(177,4372
+static errcode_t dos_close(354,8078
+static errcode_t dos_set_blksize(364,8216
+static errcode_t dos_read_blk(371,8333
+static errcode_t dos_write_blk(408,9308
+static errcode_t dos_flush(451,10305
+
+dupfs.c,36
+errcode_t ext2fs_dup_handle(24,389
+
+expanddir.c,123
+struct expand_dir_struct expand_dir_struct23,381
+static int expand_dir_proc(28,439
+errcode_t ext2fs_expand_dir(83,1697
+
+fileio.c,266
+struct ext2_file ext2_file23,361
+errcode_t ext2fs_file_open(38,589
+static errcode_t ext2fs_file_flush(84,1595
+errcode_t ext2fs_file_close(116,2273
+errcode_t ext2fs_file_read(132,2543
+errcode_t ext2fs_file_write(202,3832
+errcode_t ext2fs_file_llseek(265,5023
+
+freefs.c,265
+void ext2fs_free(24,430
+void ext2fs_free_generic_bitmap(57,1139
+void ext2fs_free_inode_bitmap(74,1540
+void ext2fs_free_block_bitmap(83,1761
+static void ext2fs_free_inode_cache(95,2023
+void ext2fs_badblocks_list_free(110,2375
+void ext2fs_free_dblist(124,2636
+
+get_pathname.c,182
+struct get_pathname_struct get_pathname_struct32,733
+static int get_pathname_proc(42,878
+static errcode_t ext2fs_get_pathname_int(70,1552
+errcode_t ext2fs_get_pathname(142,2984
+
+getsize.c,73
+static int valid_offset 35,634
+errcode_t ext2fs_get_device_size(49,860
+
+icount.c,564
+struct ext2_icount_el ext2_icount_el42,1239
+struct ext2_icount ext2_icount47,1293
+void ext2fs_free_icount(58,1494
+errcode_t ext2fs_create_icount2(73,1824
+errcode_t ext2fs_create_icount(153,3752
+static struct ext2_icount_el *insert_icount_el(163,4013
+static struct ext2_icount_el *get_icount_el(208,5207
+errcode_t ext2fs_icount_validate(273,6651
+errcode_t ext2fs_icount_fetch(296,7220
+errcode_t ext2fs_icount_increment(323,7750
+errcode_t ext2fs_icount_decrement(388,9311
+errcode_t ext2fs_icount_store(431,10293
+ino_t ext2fs_get_icount_size(476,11324
+
+initialize.c,249
+#define CREATOR_OS 33,655
+#define CREATOR_OS 35,740
+#define CREATOR_OS 37,827
+#define CREATOR_OS 39,913
+#define CREATOR_OS 41,952
+#define EXT2_DFL_CHECKINTERVAL 55,1403
+errcode_t ext2fs_initialize(57,1451
+#define set_field(set_field99,2507
+
+inline.c,36
+#define INCLUDE_INLINE_FUNCS32,621
+
+inode.c,663
+struct ext2_struct_inode_scan ext2_struct_inode_scan29,502
+static errcode_t create_icache(54,1060
+errcode_t ext2fs_open_inode_scan(89,1950
+void ext2fs_close_inode_scan(153,3751
+void ext2fs_set_inode_callback(166,4072
+int ext2fs_inode_scan_flags(180,4448
+static errcode_t get_next_blockgroup(198,4864
+errcode_t ext2fs_inode_scan_goto_blockgroup(212,5213
+static errcode_t check_for_inode_bad_blocks(228,5691
+static errcode_t get_next_blocks(286,7467
+errcode_t ext2fs_get_next_inode(340,8890
+errcode_t ext2fs_read_inode 426,11149
+errcode_t ext2fs_write_inode(510,13659
+errcode_t ext2fs_get_blocks(609,16315
+errcode_t ext2fs_check_directory(632,16808
+
+irel_ma.c,565
+struct inode_reference_entry inode_reference_entry49,1394
+struct irel_ma irel_ma54,1477
+errcode_t ext2fs_irel_memarray_create(64,1673
+static errcode_t ima_put(138,3414
+static errcode_t ima_get(176,4379
+static errcode_t ima_get_by_orig(190,4688
+static errcode_t ima_start_iter(207,5054
+static errcode_t ima_next(213,5138
+static errcode_t ima_add_ref(230,5503
+static errcode_t ima_start_iter_ref(266,6361
+static errcode_t ima_next_ref(280,6645
+static errcode_t ima_move(301,7046
+static errcode_t ima_delete(324,7726
+static errcode_t ima_free(344,8239
+
+ismounted.c,125
+static errcode_t check_mntent(43,789
+static errcode_t check_getmntinfo(74,1395
+errcode_t ext2fs_check_if_mounted(113,2292
+
+link.c,99
+struct link_struct link_struct23,375
+static int link_proc(31,476
+errcode_t ext2fs_link(92,2103
+
+llseek.c,175
+#define my_llseek 41,693
+#define llseek 47,762
+#define __NR__llseek 54,856
+static _syscall5(61,1017
+ext2_loff_t ext2fs_llseek 85,1626
+ext2_loff_t ext2fs_llseek 113,2227
+
+lookup.c,106
+struct lookup_struct lookup_struct23,389
+static int lookup_proc(33,519
+errcode_t ext2fs_lookup(51,910
+
+mkdir.c,31
+errcode_t ext2fs_mkdir(31,513
+
+namei.c,230
+static errcode_t follow_link(29,594
+static errcode_t dir_namei(77,1913
+static errcode_t open_namei(114,2726
+errcode_t ext2fs_namei(151,3724
+errcode_t ext2fs_namei_follow(170,4140
+extern errcode_t ext2fs_follow_link(189,4563
+
+native.c,65
+static int i386_byteorder(17,297
+int ext2fs_native_flag(25,396
+
+newdir.c,39
+errcode_t ext2fs_new_dir_block(26,408
+
+openfs.c,30
+errcode_t ext2fs_open(43,878
+
+read_bb.c,119
+struct read_bb_record read_bb_record31,497
+static int mark_bad_block(42,666
+errcode_t ext2fs_read_bb_inode(59,1041
+
+read_bb_file.c,38
+errcode_t ext2fs_read_bb_FILE(34,575
+
+rs_bitmap.c,139
+errcode_t ext2fs_resize_generic_bitmap(31,529
+errcode_t ext2fs_resize_inode_bitmap(73,1519
+errcode_t ext2fs_resize_block_bitmap(90,1935
+
+rw_bitmaps.c,373
+#define EXT2_BIG_ENDIAN_BITMAPS41,985
+void ext2fs_swap_bitmap(45,1056
+errcode_t ext2fs_write_inode_bitmap(55,1252
+errcode_t ext2fs_write_block_bitmap 98,2416
+static errcode_t read_bitmaps(151,3906
+errcode_t ext2fs_read_inode_bitmap 242,6373
+errcode_t ext2fs_read_block_bitmap(247,6462
+errcode_t ext2fs_read_bitmaps(252,6550
+errcode_t ext2fs_write_bitmaps(260,6713
+
+swapfs.c,100
+void ext2fs_swap_super(23,377
+void ext2fs_swap_group_desc(62,2406
+void ext2fs_swap_inode(72,2858
+
+test_io.c,340
+#define EXT2_CHECK_MAGIC(EXT2_CHECK_MAGIC35,556
+struct test_private_data test_private_data38,648
+static errcode_t test_open(80,1977
+static errcode_t test_close(136,3336
+static errcode_t test_set_blksize(159,3921
+static errcode_t test_read_blk(179,4488
+static errcode_t test_write_blk(199,5104
+static errcode_t test_flush(222,5769
+
+tst_badblocks.c,133
+static errcode_t create_test_list(52,897
+static void print_list(76,1396
+static void validate_test_seq(105,1921
+int main(123,2277
+
+tst_iscan.c,142
+static void test_read_blk(40,744
+static void setup(67,1283
+static void iterate(136,2879
+static void check_map(173,3667
+int main(211,4570
+
+unix_io.c,340
+#define EXT2_CHECK_MAGIC(EXT2_CHECK_MAGIC37,637
+struct unix_private_data unix_private_data40,729
+static errcode_t unix_open(70,1532
+static errcode_t unix_close(127,2870
+static errcode_t unix_set_blksize(151,3497
+static errcode_t unix_read_blk(172,4039
+static errcode_t unix_write_blk(222,5360
+static errcode_t unix_flush(272,6562
+
+unlink.c,103
+struct link_struct link_struct23,383
+static int unlink_proc(34,526
+errcode_t ext2fs_unlink(57,1042
+
+valid_blk.c,42
+int ext2fs_inode_has_valid_blocks(29,491
+
+version.c,79
+int ext2fs_parse_version_string(29,544
+int ext2fs_get_library_version(43,774

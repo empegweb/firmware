@@ -1,0 +1,89 @@
+.\"
+.\" Lib/altiter.3in -- manual page for unsn_alt_iterator functions
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_alt_iterator.3
+.\" NAMES: unsn_alt_iterator_advance.3 unsn_alt_iterator_free.3
+.\" NAMES: unsn_alt_iterator_nonnull.3 unsn_alt_iterator_nullify.3
+.TH UNSN_ALT_ITERATOR 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_alt_iterator_advance, unsn_alt_iterator_free, unsn_alt_iterator_nonnull,
+unsn_alt_iterator_nullify \- UNSN alternation iterator functions
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.B struct unsn_alt_iterator;
+.sp
+.BI "void unsn_alt_iterator_free(struct unsn_alt_iterator *" i );
+.sp
+.BI "int unsn_alt_iterator_nonnull(struct unsn_alt_iterator const *" i );
+.sp
+.BI "void unsn_alt_iterator_nullify(struct unsn_alt_iterator *" i );
+.sp
+.BI "int unsn_alt_iterator_advance(struct unsn_alt_iterator *" i );
+.fi
+.SH DESCRIPTION
+.B struct unsn_alt_iterator
+is an opaque type encapsulating an iteration over the alternative
+addresses that can be represented by a UNSN using the alternation syntax.
+Such an iterator is usually created by
+.IR unsn_parse_unsn (3).
+At all times, the iterator either is in a null state or refers to one of the
+possible alternatives over which it is iterating.
+Other functions can perform operations using the current state
+of an iterator.
+.PP
+.B unsn_alt_iterator_free
+deallocates all resources used by an iterator.  If
+.I i
+is a null pointer, it does nothing.
+.PP
+.B unsn_alt_iterator_nonnull
+checks to see whether the iterator
+.I i
+is currently in the null state.
+The iterator is unaffected.
+.PP
+.B unsn_alt_iterator_nullify
+sets the iterator
+.I i
+to the null state, regardless of where it was before.
+.PP
+.B unsn_alt_iterator_advance
+advances the iterator
+.I i
+to refer to the next alternative.  If the iterator
+was previously null, it is set to the first alternative.  If it was
+previously on the last alternative, so that there are no more, it
+is made null.
+.SH "RETURN VALUE"
+.B unsn_alt_iterator_nonnull
+returns 0 if the iterator
+.I i
+is in the null state, and 1 otherwise.
+.PP
+.B unsn_alt_iterator_advance
+returns 0 if there are no more alternatives
+(the iterator is now in the null state), and 1 otherwise.
+.PP
+.IR errno (3)
+is not affected by any of these functions.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_parse_unsn (3),
+.IR unsn_unparse1 (3)

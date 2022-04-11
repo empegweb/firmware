@@ -1,0 +1,463 @@
+
+badblocks.c,136
+static void invalid_block(20,414
+void read_bad_blocks_file(26,536
+void test_disk(115,2555
+static int check_bb_inode_blocks(120,2623
+
+dirinfo.c,195
+int e2fsck_get_num_dirs(11,242
+void e2fsck_add_dir_info(28,630
+struct dir_info *e2fsck_get_dir_info(87,2244
+void e2fsck_free_dir_info(117,2853
+struct dir_info *e2fsck_dir_info_iter(130,3078
+
+e2fsck.c,180
+errcode_t e2fsck_allocate_context(22,400
+errcode_t e2fsck_reset_context(44,823
+void e2fsck_free_context(120,2778
+typedef void (*pass_t)pass_t134,3039
+int e2fsck_run(140,3183
+
+ehandler.c,172
+static errcode_t e2fsck_handle_read_error(22,429
+static errcode_t e2fsck_handle_write_error(65,1398
+const char *ehandler_operation(109,2407
+void ehandler_init(117,2520
+
+extend.c,43
+static void usage(18,354
+int main(26,483
+
+flushb.c,109
+#define NOARGS 17,264
+#define NOARGS19,290
+#define const20,305
+static void usage(25,350
+int main(31,441
+
+iscan.c,69
+static void usage(41,698
+static void PRS(49,827
+int main 102,1808
+
+message.c,381
+#define _INLINE_ 82,1985
+#define _INLINE_84,2019
+#define num_special_inodes	121,2733
+static void print_pathname(137,3130
+static _INLINE_ void expand_at_expression(161,3643
+static _INLINE_ void expand_inode_expression(186,4148
+static _INLINE_ void expand_dirent_expression(235,4968
+static _INLINE_ void expand_percent_expression(271,5616
+void print_e2fsck_message(334,6700
+
+mtrace.c,174
+#define	_MALLOC_INTERNAL25,1069
+FILE *malloc_get_mallstream(52,1683
+tr_break 64,2007
+tr_freehook 70,2077
+tr_mallochook 83,2369
+tr_reallochook 103,2763
+mtrace 137,3631
+
+pass1.c,990
+#define _INLINE_47,1567
+#define _INLINE_ 49,1590
+struct process_block_struct process_block_struct70,2451
+struct process_inode_block process_inode_block82,2702
+static void unwind_pass1(97,2988
+int e2fsck_pass1_check_device_inode(107,3209
+void e2fsck_pass1(117,3370
+static errcode_t scan_callback(472,13123
+static void process_inodes(482,13369
+static int process_inode_cmp(523,14470
+static void alloc_bad_map(537,14853
+static void alloc_bb_map(557,15311
+static _INLINE_ void mark_block_used(581,15986
+static void check_blocks(611,16780
+static char *describe_illegal_block(705,19639
+int process_block(755,20986
+static void bad_block_indirect(868,23542
+int process_bad_block(880,23813
+static void new_table_block(1017,27124
+static void handle_fs_bad_blocks(1079,28897
+static void mark_table_blocks(1109,29800
+errcode_t pass1_get_blocks(1212,32672
+errcode_t pass1_read_inode(1225,32946
+errcode_t pass1_write_inode(1235,33171
+errcode_t pass1_check_directory(1245,33393
+
+pass1b.c,575
+struct dup_block dup_block66,2071
+struct dup_inode dup_inode83,2667
+void e2fsck_pass1_dupblocks(108,3398
+struct process_block_struct process_block_struct151,4493
+static void pass1b(158,4602
+int process_pass1b_block(232,6507
+struct search_dir_struct search_dir_struct292,7848
+static int search_dirent_proc(298,7932
+static void pass1c(330,8620
+static void pass1d(364,9521
+static int delete_file_block(479,12204
+static void delete_file(514,12984
+struct clone_struct clone_struct544,13925
+static int clone_file_block(551,14011
+static int clone_file(615,15516
+
+pass2.c,416
+struct check_dir_struct check_dir_struct63,2071
+void e2fsck_pass2(69,2159
+static int check_dot(142,3821
+static int check_dotdot(201,5199
+static int check_name(242,6177
+static int check_dir_block(264,6610
+static int deallocate_inode_block(521,13232
+static void deallocate_inode(538,13598
+static int process_bad_inode(577,14654
+static int allocate_dir_block(678,17142
+static int update_dir_block(759,19156
+
+pass3.c,480
+void e2fsck_pass3(58,2112
+static void check_root(130,3837
+static void check_directory(240,6890
+ino_t get_lost_and_found(310,8860
+int e2fsck_reconnect_file(432,11810
+static errcode_t adjust_inode_count(478,12873
+struct fix_dotdot_struct fix_dotdot_struct516,13688
+static int fix_dotdot_proc(523,13779
+static void fix_dotdot(556,14542
+struct expand_dir_struct expand_dir_struct592,15333
+static int expand_dir_proc(598,15406
+static errcode_t expand_directory(653,16611
+
+pass4.c,63
+static int disconnect_inode(25,596
+void e2fsck_pass4(78,1895
+
+pass5.c,186
+void e2fsck_pass5(21,486
+static void check_block_bitmaps(69,1468
+static void check_inode_bitmaps(200,5122
+static void check_inode_end(351,9346
+static void check_block_end(394,10467
+
+problem.c,787
+#define PROMPT_NONE	23,391
+#define PROMPT_FIX	24,413
+#define PROMPT_CLEAR	25,434
+#define PROMPT_RELOCATE	26,457
+#define PROMPT_ALLOCATE 27,483
+#define PROMPT_EXPAND	28,509
+#define PROMPT_CONNECT 29,533
+#define PROMPT_CREATE	30,559
+#define PROMPT_SALVAGE	31,583
+#define PROMPT_TRUNCATE	32,608
+#define PROMPT_CLEAR_INODE 33,634
+#define PROMPT_ABORT 34,664
+#define PROMPT_SPLIT 35,689
+#define PROMPT_CONTINUE	36,714
+#define PROMPT_CLONE	37,741
+#define PROMPT_DELETE 38,765
+#define PROMPT_SUPPRESS 39,791
+static const struct e2fsck_problem *find_problem(926,25670
+static struct latch_descr *find_latch(937,25873
+int end_problem_latch(948,26073
+int set_latch_flags(963,26429
+int get_latch_flags(975,26644
+void clear_problem_context(986,26808
+int fix_problem(993,26957
+
+scantest.c,189
+struct resource_track resource_track48,836
+void init_resource_track(57,1006
+static __inline__ float timeval_subtract(68,1250
+static void print_resource_track(75,1437
+int main 92,1917
+
+super.c,122
+#define MIN_CHECK 34,579
+#define MAX_CHECK 35,599
+static void check_super_value(37,620
+void check_super_block(53,1083
+
+swapfs.c,182
+struct swap_block_struct swap_block_struct19,310
+static int swap_block(32,594
+static void swap_inode_blocks(78,1766
+static void swap_inodes(108,2470
+void swap_filesys(186,4557
+
+unix.c,239
+static void usage(58,1152
+static void show_stats(67,1411
+static void check_mount(138,3868
+static void sync_disks(186,4982
+static void check_if_skip(199,5254
+#define PATH_SET 232,6297
+static errcode_t PRS(234,6328
+int main 404,9979
+
+util.c,485
+void fatal_error(23,399
+void *e2fsck_allocate_memory(30,523
+int ask_yn(48,892
+int ask 92,1637
+void read_bitmaps(109,1997
+void write_bitmaps(132,2501
+void preenhalt(162,3201
+void init_resource_track(180,3613
+#define _INLINE_ 202,4120
+#define _INLINE_204,4154
+static _INLINE_ float timeval_subtract(207,4179
+void print_resource_track(214,4369
+void e2fsck_read_inode(242,5162
+extern void e2fsck_write_inode(255,5469
+void mtrace_print(269,5801
+blk_t get_backup_sb(279,5962
+
+e2fsck.h,1041
+#define NOARGS 31,528
+#define FSCK_OK 36,597
+#define FSCK_NONDESTRUCT 37,640
+#define FSCK_REBOOT 38,702
+#define FSCK_UNCORRECTED 39,761
+#define FSCK_ERROR 40,830
+#define FSCK_USAGE 41,881
+#define FSCK_LIBRARY 42,937
+#define E2FSCK_CURRENT_REV	48,1085
+struct dir_info dir_info55,1283
+struct resource_track resource_track66,1584
+#define E2F_OPT_READONLY	77,1748
+#define E2F_OPT_PREEN	78,1780
+#define E2F_OPT_YES	79,1810
+#define E2F_OPT_NO	80,1838
+#define E2F_OPT_TIME	81,1865
+#define E2F_OPT_TIME2	82,1894
+#define E2F_OPT_CHECKBLOCKS	83,1924
+#define E2F_OPT_DEBUG	84,1959
+#define E2F_FLAG_ABORT	89,2013
+#define E2F_FLAG_CANCEL	90,2065
+#define E2F_FLAG_RESTART	91,2119
+#define E2F_FLAG_SIGNAL_MASK	92,2174
+#define E2F_FLAG_SETJMP_OK	94,2211
+#define E2F_PASS_1	99,2331
+#define E2F_PASS_2	100,2352
+#define E2F_PASS_3	101,2373
+#define E2F_PASS_4	102,2394
+#define E2F_PASS_5	103,2415
+#define E2F_PASS_1B	104,2436
+typedef struct e2fsck_struct *e2fsck_t;e2fsck_t109,2506
+struct e2fsck_struct e2fsck_struct111,2547
+
+malloc.h,680
+#define _MALLOC_H	25,1009
+#define	__P(__P34,1143
+#define	__ptr_t	36,1181
+#define	__P(__P39,1248
+#define	const41,1282
+#define	__ptr_t	43,1311
+#define	NULL	47,1378
+#define	size_t	54,1457
+#define	ptrdiff_t	56,1503
+#define	memset(memset85,2445
+#define	memcpy(memcpy88,2511
+#define	CHAR_BIT	96,2650
+#define INT_BIT	104,3015
+#define BLOCKLOG	105,3057
+#define BLOCKSIZE	106,3098
+#define BLOCKIFY(BLOCKIFY107,3132
+#define HEAP	111,3295
+#define FINAL_FREE_BLOCKS	115,3471
+  } malloc_info;malloc_info145,4301
+#define BLOCK(BLOCK154,4533
+#define ADDRESS(ADDRESS155,4595
+struct listlist164,4853
+struct alignlistalignlist174,5066
+struct mstatsmstats215,6397
+
+problem.h,6496
+typedef __u32 problem_t;problem_t12,207
+struct problem_context problem_context14,233
+#define PR_LATCH_MASK	30,585
+#define PR_LATCH_BLOCK	31,632
+#define PR_LATCH_BBLOCK	32,702
+#define PR_LATCH_IBITMAP 33,781
+#define PR_LATCH_BBITMAP 34,855
+#define PR_LATCH_RELOC	35,929
+#define PR_LATCH_DBLOCK	36,1001
+#define PR_LATCH(PR_LATCH38,1075
+#define PRL_YES	43,1170
+#define PRL_NO	44,1211
+#define PRL_LATCHED	45,1250
+#define PRL_SUPPRESS	46,1310
+#define PRL_VARIABLE	48,1380
+#define PR_0_BB_NOT_GROUP	55,1512
+#define PR_0_IB_NOT_GROUP	58,1580
+#define PR_0_ITABLE_NOT_GROUP	61,1647
+#define PR_0_SB_CORRUPT	64,1712
+#define PR_0_FS_SIZE_WRONG	67,1778
+#define PR_0_NO_FRAGMENTS	70,1845
+#define PR_0_BLOCKS_PER_GROUP	73,1908
+#define PR_0_FIRST_DATA_BLOCK	76,1975
+#define PR_0_ADD_UUID	79,2047
+#define PR_0_RELOCATE_HINT	82,2101
+#define PR_0_MISC_CORRUPT_SUPER	85,2180
+#define PR_0_GETSIZE_ERROR	88,2280
+#define PR_1_PASS_HEADER	95,2391
+#define PR_1_ROOT_NO_DIR	98,2464
+#define PR_1_ROOT_DTIME	101,2535
+#define PR_1_RESERVED_BAD_MODE	104,2605
+#define PR_1_ZERO_DTIME	107,2682
+#define PR_1_SET_DTIME	110,2752
+#define PR_1_ZERO_LENGTH_DIR	113,2815
+#define PR_1_BB_CONFLICT	116,2909
+#define PR_1_IB_CONFLICT	119,2999
+#define PR_1_ITABLE_CONFLICT	122,3088
+#define PR_1_BB_BAD_BLOCK	125,3165
+#define PR_1_IB_BAD_BLOCK	128,3239
+#define PR_1_BAD_I_SIZE	131,3309
+#define PR_1_BAD_I_BLOCKS	134,3380
+#define PR_1_ILLEGAL_BLOCK_NUM	137,3453
+#define PR_1_BLOCK_OVERLAPS_METADATA	140,3535
+#define PR_1_INODE_BLOCK_LATCH	143,3630
+#define	PR_1_TOO_MANY_BAD_BLOCKS 146,3707
+#define PR_1_BB_ILLEGAL_BLOCK_NUM 149,3798
+#define PR_1_INODE_BBLOCK_LATCH	152,3901
+#define PR_1_DUP_BLOCKS_PREENSTOP	155,3982
+#define PR_1_BBINODE_BAD_METABLOCK	158,4079
+#define PR_1_BBINODE_BAD_METABLOCK_PROMPT 161,4166
+#define PR_1_BAD_PRIMARY_BLOCK	164,4243
+#define PR_1_BAD_PRIMARY_BLOCK_PROMPT	167,4321
+#define PR_1_BAD_PRIMARY_SUPERBLOCK	170,4399
+#define PR_1_BAD_PRIMARY_GROUP_DESCRIPTOR 173,4488
+#define PR_1_BAD_SUPERBLOCK	176,4571
+#define PR_1_BAD_GROUP_DESCRIPTORS	179,4654
+#define PR_1_PROGERR_CLAIMED_BLOCK	182,4737
+#define PR_1_RELOC_BLOCK_ALLOCATE	185,4837
+#define PR_1_RELOC_MEMORY_ALLOCATE	188,4946
+#define PR_1_RELOC_FROM_TO	191,5051
+#define PR_1_RELOC_TO	194,5142
+#define PR_1_RELOC_READ_ERR	197,5228
+#define PR_1_RELOC_WRITE_ERR	200,5320
+#define PR_1_ALLOCATE_IBITMAP_ERROR	203,5397
+#define PR_1_ALLOCATE_BBITMAP_ERROR	206,5480
+#define PR_1_ALLOCATE_ICOUNT	209,5567
+#define PR_1_ALLOCATE_DBCOUNT	212,5640
+#define PR_1_ISCAN_ERROR	215,5716
+#define PR_1_BLOCK_ITERATE	218,5793
+#define PR_1_ICOUNT_STORE	221,5885
+#define PR_1_ADD_DBLOCK	224,5980
+#define PR_1_READ_INODE	227,6064
+#define PR_1_SUPPRESS_MESSAGES	230,6132
+#define PR_1B_PASS_HEADER	237,6248
+#define PR_1B_DUP_BLOCK_HEADER	240,6320
+#define PR_1B_DUP_BLOCK	243,6399
+#define PR_1B_DUP_BLOCK_END	246,6467
+#define PR_1B_ISCAN_ERROR	249,6540
+#define PR_1B_ALLOCATE_IBITMAP_ERROR 252,6612
+#define PR_1C_PASS_HEADER	256,6720
+#define PR_1D_PASS_HEADER	260,6801
+#define PR_1D_DUP_FILE	263,6869
+#define PR_1D_DUP_FILE_LIST	266,6949
+#define PR_1D_SHARE_METADATA	269,7040
+#define PR_1D_NUM_DUP_INODES	272,7126
+#define PR_1D_DUP_BLOCKS_DEALT	275,7219
+#define PR_1D_CLONE_QUESTION	278,7294
+#define PR_1D_DELETE_QUESTION	281,7352
+#define PR_1D_CLONE_ERROR	284,7426
+#define PR_2_PASS_HEADER	291,7532
+#define PR_2_BAD_INODE_DOT	294,7598
+#define PR_2_BAD_INO	297,7678
+#define PR_2_UNUSED_INODE	300,7760
+#define PR_2_LINK_DOT	303,7832
+#define PR_2_BB_INODE	306,7930
+#define PR_2_LINK_DIR	309,8016
+#define PR_2_LINK_ROOT	312,8108
+#define PR_2_BAD_NAME	315,8199
+#define PR_2_MISSING_DOT	318,8272
+#define PR_2_MISSING_DOT_DOT	321,8348
+#define PR_2_1ST_NOT_DOT	324,8444
+#define PR_2_2ND_NOT_DOT_DOT	327,8538
+#define PR_2_FADDR_ZERO	330,8606
+#define PR_2_FILE_ACL_ZERO	333,8673
+#define PR_2_DIR_ACL_ZERO	336,8741
+#define PR_2_FRAG_ZERO	339,8805
+#define PR_2_FSIZE_ZERO	342,8868
+#define PR_2_BAD_MODE	345,8932
+#define PR_2_DIR_CORRUPTED	348,8991
+#define PR_2_FILENAME_LONG	351,9056
+#define PR_2_DIRECTORY_HOLE	354,9146
+#define PR_2_DOT_NULL_TERM	357,9217
+#define PR_2_DOT_DOT_NULL_TERM	360,9288
+#define PR_2_BAD_CHAR_DEV	363,9369
+#define PR_2_BAD_BLOCK_DEV	366,9441
+#define PR_2_DUP_DOT	369,9504
+#define PR_2_DUP_DOT_DOT	372,9563
+#define PR_2_NO_DIRINFO	375,9644
+#define PR_2_FINAL_RECLEN	378,9708
+#define PR_2_ALLOCATE_ICOUNT	381,9784
+#define PR_2_DBLIST_ITERATE	384,9867
+#define PR_2_READ_DIRBLOCK	387,9941
+#define PR_2_WRITE_DIRBLOCK	390,10014
+#define PR_2_ALLOC_DIRBOCK	393,10095
+#define PR_2_DEALLOC_INODE	396,10163
+#define PR_2_SPLIT_DOT	399,10246
+#define PR_3_PASS_HEADER	406,10352
+#define PR_3_NO_ROOT_INODE	409,10419
+#define PR_3_EXPAND_LF_DIR	412,10485
+#define PR_3_UNCONNECTED_DIR	415,10557
+#define PR_3_NO_LF_DIR	418,10625
+#define PR_3_BAD_DOT_DOT	421,10688
+#define PR_3_NO_LPF	424,10781
+#define PR_3_CANT_EXPAND_LPF	427,10848
+#define PR_3_CANT_RECONNECT	430,10920
+#define PR_3_ERR_FIND_LPF	433,11004
+#define PR_3_ERR_LPF_NEW_BLOCK	436,11100
+#define PR_3_ERR_LPF_NEW_INODE	439,11201
+#define PR_3_ERR_LPF_NEW_DIR_BLOCK	442,11309
+#define PR_3_ERR_LPF_WRITE_BLOCK	445,11416
+#define PR_3_ADJUST_INODE	448,11499
+#define PR_3_FIX_PARENT_ERR	451,11581
+#define PR_3_FIX_PARENT_NOFIND	454,11679
+#define PR_3_ALLOCATE_IBITMAP_ERROR	457,11758
+#define PR_3_CREATE_ROOT_ERROR	460,11844
+#define PR_3_CREATE_LPF_ERROR	463,11932
+#define PR_3_ROOT_NOT_DIR_ABORT	466,12017
+#define PR_3_NO_ROOT_INODE_ABORT	469,12103
+#define PR_4_PASS_HEADER	476,12211
+#define PR_4_ZERO_LEN_INODE	479,12281
+#define PR_4_UNATTACHED_INODE	482,12342
+#define PR_4_BAD_REF_COUNT	485,12410
+#define PR_4_INCONSISTENT_COUNT	488,12497
+#define PR_5_PASS_HEADER	495,12613
+#define PR_5_INODE_BMAP_PADDING	498,12699
+#define PR_5_BLOCK_BMAP_PADDING	501,12791
+#define PR_5_BLOCK_BITMAP_HEADER 504,12872
+#define PR_5_UNUSED_BLOCK	507,12959
+#define PR_5_BLOCK_USED	510,13047
+#define PR_5_BLOCK_BITMAP_END	513,13121
+#define PR_5_INODE_BITMAP_HEADER	516,13200
+#define PR_5_UNUSED_INODE	519,13286
+#define PR_5_INODE_USED	522,13374
+#define PR_5_INODE_BITMAP_END	525,13448
+#define PR_5_FREE_INODE_COUNT_GROUP	528,13529
+#define PR_5_FREE_DIR_COUNT_GROUP	531,13615
+#define PR_5_FREE_INODE_COUNT	534,13689
+#define PR_5_FREE_BLOCK_COUNT_GROUP	537,13769
+#define PR_5_FREE_BLOCK_COUNT	540,13845
+#define PR_5_BMAP_ENDPOINTS	543,13940
+#define PR_5_FUDGE_BITMAP_ERROR	546,14024
+
+problemP.h,310
+struct e2fsck_problem e2fsck_problem12,219
+struct latch_descr latch_descr21,354
+#define PR_PREEN_OK	28,455
+#define PR_NO_OK	29,515
+#define PR_NO_DEFAULT	30,587
+#define PR_MSG_ONLY	31,636
+#define PR_FATAL	32,688
+#define PR_AFTER_CODE	33,730
+#define PR_PREEN_NOMSG	35,820
+#define PR_NOCOLLATE	36,896

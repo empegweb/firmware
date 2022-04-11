@@ -1,0 +1,650 @@
+# Make.rules.gcc
+#
+# Generic rules (in common between all makefiles) for building with gcc
+#
+# (C) 1999-2001 empeg ltd.
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release  01-Apr-2003 18:52 rob:)
+
+# Debugging symbols
+#   Use GDB=1 to include gdb debugging symbols.
+ifeq ($(GDB),)
+GDB=0
+endif
+
+# Remove all default suffix rules
+.SUFFIXES:
+
+OBJ_SUFFIX:=.o
+LIB_PREFIX:=lib
+LIB_SUFFIX:=.a
+EXE_SUFFIX:=
+DLL_SUFFIX:=.so
+RES_SUFFIX:=.res
+
+# Are we doing a 'make clean' of any sort? if so, no dependencies please.
+# This only works on recent makes, but is benign on older ones (which don't
+# set MAKECMDGOALS).
+ifneq ($(findstring clean,$(MAKECMDGOALS)),)
+CLEANING:=1
+endif
+
+ifeq ($(OS),Windows_NT)
+IS_CYGWIN:=1
+else
+IS_CYGWIN:=0
+endif
+
+SHARED_INCLUDE=-I$(TOP)/lib -I$(TOP)/lib/core -I$(TOP)/lib/protocol -I$(TOP)/lib/util -I$(TOP)/lib/ui -I$(TOP)/lib/thread
+ifeq ($(VOICE), 1)
+SHARED_INCLUDE+=-I$(TOP)/lib/voice
+endif
+SHARED_INCLUDE+=-I$(TOP)/lib/codec
+SHARED_INCLUDE+=-I$(TOP)/lib/dsp
+
+MSGCC:=$(TOP)/tools/msgcc2.py
+OPTCC:=$(TOP)/tools/optbuild.py
+
+# Deduce the target name
+
+TARGET_HEAD:=$(ARCH)
+TARGET_TAIL:=debug$(DEBUG)
+ifeq ($(RELEASE), 1)
+TARGET_TAIL:=$(TARGET_TAIL)-static
+endif
+ifeq ($(PROFILE), 1)
+TARGET_TAIL:=$(TARGET_TAIL)-profile
+endif
+ifeq ($(PROFILE), 2)
+TARGET_TAIL:=$(TARGET_TAIL)-profile2
+endif
+TARGET_GENERIC:=$(TARGET_HEAD)-generic-$(TARGET_TAIL)
+TARGET_SPECIFIC:=$(TARGET_HEAD)-$(BUILD)-$(TARGET_TAIL)
+TARGET_PREFIX:=$(TARGET_SPECIFIC)/
+TARGET_GENERIC_LIBDIR:=$(TOP)/lib/$(TARGET_GENERIC)/
+TARGET_SPECIFIC_LIBDIR:=$(TOP)/lib/$(TARGET_SPECIFIC)/
+
+HOST_HEAD:=pc
+HOST_TAIL:=debug$(DEBUG)
+ifeq ($(RELEASE), 1)
+HOST_TAIL:=$(HOST_TAIL)-static
+endif
+ifeq ($(PROFILE), 1)
+HOST_TAIL:=$(HOST_TAIL)-profile
+endif
+ifeq ($(PROFILE), 2)
+HOST_TAIL:=$(HOST_TAIL)-profile2
+endif
+HOST_GENERIC:=$(HOST_HEAD)-generic-$(HOST_TAIL)
+HOST_SPECIFIC:=$(HOST_HEAD)-$(BUILD)-$(HOST_TAIL)
+HOST_PREFIX:=$(HOST_SPECIFIC)/
+HOST_GENERIC_LIBDIR:=$(TOP)/lib/$(HOST_GENERIC)/
+HOST_SPECIFIC_LIBDIR:=$(TOP)/lib/$(HOST_SPECIFIC)/
+
+TARGET_LIBPATH:=-L$(TOP)/lib/$(TARGET_GENERIC) -L$(TOP)/lib/$(TARGET_SPECIFIC)
+
+ifeq ($(ARCH), arm)
+ARM_TOOLS_PREFIX=arm-empeg-linux-
+TARGET_ARCH=ARCH_EMPEG
+TARGET_CC=$(ARM_TOOLS_PREFIX)gcc
+TARGET_CXX=$(ARM_TOOLS_PREFIX)g++
+TARGET_AS=$(ARM_TOOLS_PREFIX)as
+TARGET_LD=$(ARM_TOOLS_PREFIX)g++
+TARGET_REALLD=$(ARM_TOOLS_PREFIX)ld
+TARGET_AR=$(ARM_TOOLS_PREFIX)ar
+TARGET_STRIP=$(ARM_TOOLS_PREFIX)strip
+TARGET_RANLIB=$(ARM_TOOLS_PREFIX)ranlib
+TARGET_OBJCOPY=$(ARM_TOOLS_PREFIX)objcopy
+TARGET_INCLUDEPATH=$(SHARED_INCLUDE)
+TARGET_ARCH_DEFINES=
+TARGET_LIBPATH+=-L/home/empeg/lib
+ifeq ($(VOICE), 1)
+TARGET_ARCH_DEFINES+=-DCONFIG_VOICE -D__USE_MALLOC
+endif
+TARGET_CPUFLAGS=-mapcs-32 -march=armv4 $(BUILD_CPU_FLAGS)
+endif
+
+ifeq ($(ARCH), pc)
+TARGET_ARCH=ARCH_PC
+TARGET_CC=$(PC_TOOLS_PREFIX)gcc
+TARGET_CXX=$(PC_TOOLS_PREFIX)g++
+TARGET_AR=ar
+TARGET_AS=$(PC_TOOLS_PREFIX)as
+TARGET_LD=$(PC_TOOLS_PREFIX)g++
+TARGET_REALLD=$(PC_TOOLS_PREFIX)ld
+TARGET_STRIP=$(PC_TOOLS_PREFIX)strip
+TARGET_RANLIB=ranlib
+TARGET_OBJCOPY=$(PC_TOOLS_PREFIX)objcopy
+TARGET_INCLUDEPATH=$(SHARED_INCLUDE)
+TARGET_ARCH_DEFINES= -D__USE_MALLOC
+TARGET_CPUFLAGS=
+endif
+
+HOST_ARCH=ARCH_PC
+HOST_LIBPATH:=-L$(TOP)/lib/$(HOST_GENERIC) -L$(TOP)/lib/$(HOST_SPECIFIC)
+HOST_CC=gcc
+HOST_CXX=g++
+HOST_AS=as
+HOST_LD=g++
+HOST_REALLD=ld
+HOST_STRIP=strip
+HOST_INCLUDEPATH=$(SHARED_INCLUDE)
+#HOST_LIBPATH=-L$(SHARED)/target-pc
+HOST_ARCH_DEFINES= -D__USE_MALLOC
+
+
+ifeq ($(DEBUG), 6)
+TARGET_DBG1:=-DDEBUG=6 -DDEBUG_MEMORY -fprofile-arcs -ftest-coverage
+HOST_DBG1:=-DDEBUG=6 -DDEBUG_MEMORY -fprofile-arcs -ftest-coverage
+endif
+ifeq ($(DEBUG), 5)
+TARGET_DBG1:=-DDEBUG=5 -DDEBUG_MEMORY
+HOST_DBG1:=-DDEBUG=5 -DDEBUG_MEMORY
+endif
+ifeq ($(DEBUG), 4)
+TARGET_DBG1:=-DDEBUG=4 -DDEBUG_MEMORY
+HOST_DBG1:=-DDEBUG=4 -DDEBUG_MEMORY
+endif
+ifeq ($(DEBUG), 3)
+TARGET_DBG1:=-DDEBUG=3 -DDEBUG_MEMORY
+HOST_DBG1:=-DDEBUG=3 -DDEBUG_MEMORY
+endif
+ifeq ($(DEBUG), 2)
+TARGET_DBG1:=-DDEBUG=2 -O
+HOST_DBG1:=-DDEBUG=2 -O
+endif
+ifeq ($(DEBUG), 1)
+TARGET_DBG1:=-DDEBUG=1 -O
+HOST_DBG1:=-DDEBUG=1 -O
+endif
+ifeq ($(DEBUG), 0)
+TARGET_DBG1:=-DDEBUG=0 -O2
+HOST_DBG1:=-DDEBUG=0 -O2 -fno-implement-inlines
+endif
+ifeq ($(GDB), 1)
+TARGET_DBG2:=-ggdb
+HOST_DBG2:=-ggdb
+else
+ifneq ($(DEBUG),0)
+TARGET_DBG1+=-fno-default-inline
+TARGET_DBG2:=-g
+HOST_DBG2:=-g
+endif
+endif
+ifeq ($(ARCH),arm)
+TARGET_DBG1+=-finline-limit-16
+endif
+
+HOST_DEFINES=$(HOST_ARCH_DEFINES) -D_REENTRANT $(HOST_DBG1) -DBUILD="$(BUILD)"
+
+TARGET_DEFINES:= $(TARGET_ARCH_DEFINES) -D_REENTRANT $(TARGET_DBG1) -D$(TARGET_ARCH) -DBUILD="$(BUILD)"
+TARGET_COMPILEFLAGS=-c -pipe -Wall -Wundef -W -Wpointer-arith -Wconversion -Wstrict-prototypes -Wwrite-strings -fno-rtti $(TARGET_CPUFLAGS) $(TARGET_INCLUDEPATH) $(TARGET_DEFINES) $(TARGET_DBG2) -D_GNU_SOURCE
+#TARGET_CFLAGS=-c -pipe -Wall -W -fno-rtti $(TARGET_CPUFLAGS) $(TARGET_INCLUDEPATH) $(TARGET_DEFINES) $(TARGET_DBG2)
+#TARGET_CXXFLAGS=-c -pipe -Wall -fno-rtti -fno-exceptions $(TARGET_CPUFLAGS) $(TARGET_INCLUDEPATH) $(TARGET_DEFINES) $(TARGET_DBG2)
+TARGET_CFLAGS=$(TARGET_COMPILEFLAGS)
+ifeq ($(ARCH), arm)
+TARGET_CXXFLAGS=-fno-exceptions $(TARGET_COMPILEFLAGS)
+else
+TARGET_CXXFLAGS=$(TARGET_COMPILEFLAGS)
+endif
+TARGET_ASFLAGS=$(TARGET_COMPILEFLAGS)
+TARGET_LDFLAGS=-pipe $(TARGET_DBG2) $(TARGET_CPUFLAGS) $(TARGET_LIBPATH)  #--static #-ggdb
+
+# STLport only in debug>0
+ifeq ($(findstring $(DEBUG),0),)
+ifneq ($(wildcard $(TOP)/lib/STLport/stlport),)
+TARGET_CXXFLAGS+= -isystem $(TOP)/lib/STLport/stlport -ftemplate-depth-64 -D_STLP_USE_NEWALLOC
+endif
+endif
+
+# JSG This changed to allow intermediate directories between TARGET_PREFIX and the object file to match 
+# intermediate directories between current dir and the source file. 
+TARGET_MKDIR=mkdir -p `dirname $@`
+
+#TARGET_MKLIBDIR=(test -d $(TARGET_LIBDIR) || mkdir $(TARGET_LIBDIR) )
+TARGET_GENERIC_MKDIR=mkdir -p $(TARGET_GENERIC_LIBDIR)
+TARGET_SPECIFIC_MKDIR=mkdir -p $(TARGET_SPECIFIC_LIBDIR)
+
+TARGET_MKDEP2:=$(TOP)/tools/mkdep2 $(TARGET_PREFIX) $(TARGET_CXX)
+XPM_SANITISE=$(TOP)/tools/xpm-sanitise
+MAKE_VERSION_GEN_H=@$(TOP)/tools/make-version-gen-h
+ERRBUILD=$(TOP)/tools/errbuild.py
+
+ifeq ($(RELEASE), 1)
+TARGET_CFLAGS+= -DRELEASE
+TARGET_CXXFLAGS+= -DRELEASE
+TARGET_ASFLAGS+= -DRELEASE
+TARGET_LDFLAGS+=--static
+endif
+
+ifeq ($(BUILD), mercury)
+TARGET_CFLAGS+= -DMERCURY
+TARGET_CXXFLAGS+= -DMERCURY
+TARGET_ASFLAGS+= -DMERCURY
+endif
+
+ifeq ($(BUILD), kennedy)
+TARGET_CFLAGS+= -DKENNEDY
+TARGET_CXXFLAGS+= -DKENNEDY
+TARGET_ASFLAGS+= -DKENNEDY
+endif
+
+ifeq ($(BUILD), tardis)
+TARGET_CFLAGS+= -DTARDIS
+TARGET_CXXFLAGS+= -DTARDIS
+TARGET_ASFLAGS+= -DTARDIS
+endif
+
+ifeq ($(BUILD), whitechapel)
+TARGET_CFLAGS+= -DWHITECHAPEL
+TARGET_CXXFLAGS+= -DWHITECHAPEL
+TARGET_ASFLAGS+= -DWHITECHAPEL
+endif
+
+ifeq ($(BUILD), jupiter)
+TARGET_CFLAGS+= -DJUPITER
+TARGET_CXXFLAGS+= -DJUPITER
+TARGET_ASFLAGS+= -DJUPITER
+endif
+
+ifeq ($(BUILD), venus)
+TARGET_CFLAGS+= -DVENUS
+TARGET_CXXFLAGS+= -DVENUS
+TARGET_ASFLAGS+= -DVENUS
+endif
+
+ifeq ($(BUILD), granite)
+TARGET_CFLAGS+= -DGRANITE
+TARGET_CXXFLAGS+= -DGRANITE
+TARGET_ASFLAGS+= -DGRANITE
+endif
+
+ifeq ($(BUILD),jellystone)
+TARGET_CFLAGS+= -DJELLYSTONE
+TARGET_CXXFLAGS+= -DJELLYSTONE
+TARGET_ASFLAGS+= -DJELLYSTONE
+endif
+
+ifeq ($(BUILD),car1)
+TARGET_CFLAGS+= -DCAR1 -DCAR
+TARGET_CXXFLAGS+= -DCAR1 -DCAR
+TARGET_ASFLAGS+= -DCAR1 -DCAR
+endif
+
+ifeq ($(BUILD),car2)
+TARGET_CFLAGS+= -DCAR2 -DCAR
+TARGET_CXXFLAGS+= -DCAR2 -DCAR
+TARGET_ASFLAGS+= -DCAR2 -DCAR
+endif
+
+ifeq ($(BUILD), camelot)
+TARGET_CFLAGS+= -DCAMELOT
+TARGET_CXXFLAGS+= -DCAMELOT
+TARGET_ASFLAGS+= -DCAMELOT
+endif
+
+TARGET_DEP=$(TOP)/tools/mkdep $(TARGET_PREFIX) $(TARGET_CXX) $(TARGET_INCLUDEPATH)
+
+RM=rm -f
+TAGS=etags
+
+HOST_CFLAGS=-c -Wall $(HOST_INCLUDEPATH) $(HOST_DEFINES) -D$(HOST_ARCH)
+HOST_CXXFLAGS=-c -Wall -fno-rtti $(HOST_INCLUDEPATH) $(HOST_DEFINES) -D$(HOST_ARCH)
+HOST_LDFLAGS=$(HOST_LIBPATH)
+HOST_LIBS=-lpthread -lempeg_util -lempeg_protocol -lempeg_core 
+HOST_LIBFILES=$(HOST_SPECIFIC_LIBDIR)libempeg_util.a \
+	$(HOST_GENERIC_LIBDIR)libempeg_protocol.a \
+	$(HOST_GENERIC_LIBDIR)libempeg_core.a
+
+HOST_DEP=$(TOP)/tools/mkdep $(HOST_PREFIX) $(HOST_CXX) $(HOST_INCLUDEPATH)
+HOST_MKDIR=mkdir -p $(HOST_PREFIX)
+HOST_MKDEP2:=$(TOP)/tools/mkdep2 $(HOST_PREFIX) $(HOST_CXX)
+
+ifeq ($(VOICE), 1)
+TARGET_LIBS+=-lempeg_voice
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_voice.a
+endif
+
+ifeq ($(ARCH), arm)
+
+ifeq ($(BUILD), car1)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), car2)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), jupiter)
+TARGET_LIBS+=-lempeg_ui -lfreetype 
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a $(TARGET_GENERIC_LIBDIR)libfreetype.a
+endif
+
+ifeq ($(BUILD), mercury)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), jellystone)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), venus)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), granite)
+TARGET_LIBS+=-lempeg_ui
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), camelot)
+TARGET_LIBS+=-lempeg_ui -lfreetype 
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a $(TARGET_GENERIC_LIBDIR)libfreetype.a
+endif
+
+endif # ARCH=arm
+
+ifeq ($(BUILD), car2)
+TARGET_LIBS+=-lempeg_net
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_net.a
+endif
+
+ifeq ($(BUILD), jupiter)
+TARGET_LIBS+=-lempeg_net -lempeg_cdrom
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_net.a
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_cdrom.a
+endif
+
+ifeq ($(BUILD), camelot)
+TARGET_LIBS+=-lempeg_net -lempeg_cdrom
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_net.a
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_cdrom.a
+endif
+
+ifeq ($(BUILD), tardis)
+TARGET_LIBS+=-lempeg_cdrom
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_cdrom.a
+endif
+
+ifeq ($(BUILD), whitechapel)
+TARGET_LIBS+=-lempeg_cdrom -lempeg_ui
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_cdrom.a
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_ui.a
+endif
+
+ifeq ($(BUILD), mercury)
+TARGET_LIBS+=-lempeg_mercury -lempeg_net
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_mercury.a \
+	$(TARGET_SPECIFIC_LIBDIR)libempeg_net.a
+endif
+
+ifeq ($(BUILD), jellystone)
+TARGET_LIBS+=-lempeg_mercury -lempeg_net
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_mercury.a \
+	$(TARGET_SPECIFIC_LIBDIR)libempeg_net.a
+endif
+
+ifeq ($(ARCH), arm)
+#TARGET_LIBS+=$(TARGET_SPECIFIC_LIBDIR)libempeg_codec.a
+TARGET_LIBS+=-lempeg_codec
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_codec.a
+TARGET_LIBS+=-lempeg_dsp
+TARGET_LIBFILES+=$(TARGET_SPECIFIC_LIBDIR)libempeg_dsp.a
+endif
+
+TARGET_LIBS+= -lempeg_async \
+	      -lempeg_util -lempeg_protocol -lempeg_thread -lempeg_core \
+	      -lpthread -ldl
+TARGET_LIBFILES+=$(TARGET_GENERIC_LIBDIR)libempeg_core.a \
+		 $(TARGET_GENERIC_LIBDIR)libempeg_async.a \
+		 $(TARGET_GENERIC_LIBDIR)libempeg_protocol.a \
+		 $(TARGET_GENERIC_LIBDIR)libempeg_thread.a \
+		 $(TARGET_SPECIFIC_LIBDIR)libempeg_util.a
+TARGET_LIBS_LGPL:=
+
+ifeq ($(DEBUG), 4)
+TARGET_LIBS+= -lefence
+endif
+ifeq ($(DEBUG), 5)
+TARGET_LIBS+= -lefence
+endif
+ifeq ($(DEBUG), 3)
+#TARGET_LIBS+= -lmcheck
+endif
+
+ifeq ($(PROFILE),)
+HOST_CFLAGS+= -DPROFILE=0
+HOST_CXXFLAGS+= -DPROFILE=0
+HOST_ASFLAGS+= -DPROFILE=0
+TARGET_CFLAGS+= -DPROFILE=0 
+TARGET_CXXFLAGS+= -DPROFILE=0
+endif
+
+ifeq ($(PROFILE), 1)
+HOST_CFLAGS+= -pg -DPROFILE=1
+HOST_CXXFLAGS+= -pg -DPROFILE=1
+HOST_ASFLAGS+= -DPROFILE=1
+HOST_LDFLAGS+= -pg
+#HOST_LIBS+=-lc_p
+TARGET_CFLAGS+= -pg -DPROFILE=1
+TARGET_CXXFLAGS+= -pg -DPROFILE=1
+TARGET_ASFLAGS+= -DPROFILE=1
+TARGET_LDFLAGS+= -pg
+#TARGET_LIBS+=-lc_p
+endif
+
+ifeq ($(PROFILE), 2)
+HOST_CFLAGS+= -DPROFILE=2
+HOST_CXXFLAGS+= -DPROFILE=2
+HOST_ASFLAGS+= -DPROFILE=2
+HOST_LDFLAGS+=
+HOST_LIBS+= -lempeg_profile
+HOST_LIBFILES+= $(HOST_GENERIC_LIBDIR)libempeg_profile.a
+TARGET_CFLAGS+= -DPROFILE=2
+TARGET_CXXFLAGS+= -DPROFILE=2
+TARGET_ASFLAGS+= -DPROFILE=2
+TARGET_LDFLAGS+=
+TARGET_LIBS+= -lempeg_profile
+TARGET_LIBFILES+= $(TARGET_GENERIC_LIBDIR)libempeg_profile.a
+endif
+
+ifeq ($(VERBOSE), 1)
+CC_PRE=
+AS_PRE=
+DEP_PRE=
+AR_PRE=
+TARGET_LD_PRE=
+HOST_LD_PRE=
+else
+CC_PRE=@echo Compiling $< ;
+AS_PRE=@echo Assembling $< ;
+DEP_PRE=@echo Dependency checking $< ;
+AR_PRE=@echo Building library $@ ;
+TARGET_LD_PRE=@echo Linking $@ ;
+TARGET_LD_PRE_PARTIAL=@echo Partially linking $@ ;
+HOST_LD_PRE=@echo Linking $@ ;
+endif
+
+# pdh 22-Jan-00: take two compilers into the shower? no, just set
+# DEPENDENCIES_OUTPUT and go.
+#
+$(TARGET_PREFIX)%.o : %.c ; $(CC_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CC) $(TARGET_CFLAGS) -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2
+
+$(TARGET_PREFIX)%.o : %.cpp ; $(CC_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CXX) $(TARGET_CXXFLAGS) -o $@ $< || ( touch $(TARGET_PREFIX)$*.failed ; exit 1 )
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.failed
+
+$(TARGET_PREFIX)%.o : %.S ; $(AS_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CC) $(TARGET_ASFLAGS) -c -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2
+
+# Position independent code
+
+$(TARGET_PREFIX)%.pio : %.c ; $(CC_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CC) $(TARGET_CFLAGS) -fPIC -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2
+
+$(TARGET_PREFIX)%.pio : %.cpp ; $(CC_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CXX) $(TARGET_CXXFLAGS) -fPIC -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2
+
+$(TARGET_PREFIX)%.pio : %.S ; $(AS_PRE) $(TARGET_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" $(TARGET_CC) $(TARGET_ASFLAGS) -fPIC -c -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+	@$(RM) $(TARGET_PREFIX)$*.d2
+
+%.s : %.cpp
+	$(TARGET_MKDIR) && \
+		DEPENDENCIES_OUTPUT="$(TARGET_PREFIX)$*.d2 $@" \
+		$(TARGET_CXX) $(TARGET_CXXFLAGS) -fverbose-asm -S -o $@ $<
+	@cp -f $(TARGET_PREFIX)$*.d2 $(TARGET_PREFIX)$*.d
+ifeq ($(IS_CYGWIN),0)
+	@tr -s ' \\' '\n' < $(TARGET_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(TARGET_PREFIX)$*.d
+endif
+
+%.i : %.cpp ; $(TARGET_CXX) -E -C $(TARGET_CXXFLAGS) -o $@ $<
+
+$(TARGET_SPECIFIC_LIBDIR)%.a :
+	@if [ "`echo $^`" = "" ]; then echo "Cowardly not building empty library $@." 1>&2; exit 1; fi
+	$(AR_PRE) $(TARGET_SPECIFIC_MKDIR) && $(RM) $@ && $(TARGET_AR) rc $@ $^ && $(TARGET_RANLIB) $@
+
+$(TARGET_GENERIC_LIBDIR)%.a :
+	@if [ "`echo $^`" = "" ]; then echo "Cowardly not building empty library $@." 1>&2; exit 1; fi
+	$(AR_PRE) $(TARGET_GENERIC_MKDIR) && $(RM) $@ && $(TARGET_AR) rc $@ $^ && $(TARGET_RANLIB) $@
+
+# We can only have the host rules if they are distinct from the target rules.
+ifneq ($(TARGET_PREFIX), $(HOST_PREFIX))
+$(HOST_PREFIX)%.o : %.c ; $(CC_PRE) $(HOST_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(HOST_PREFIX)$*.d2 $@" $(HOST_CC) $(HOST_CFLAGS) -o $@ $<
+	@cp -f $(HOST_PREFIX)$*.d2 $(HOST_PREFIX)$*.d
+	@tr -s ' \\' '\n' < $(HOST_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(HOST_PREFIX)$*.d
+	@$(RM) $(HOST_PREFIX)$*.d2
+$(HOST_PREFIX)%.o : %.cpp ; $(CC_PRE) $(HOST_MKDIR) && \
+	DEPENDENCIES_OUTPUT="$(HOST_PREFIX)$*.d2 $@" $(HOST_CXX) $(HOST_CXXFLAGS) -o $@ $<
+	@cp -f $(HOST_PREFIX)$*.d2 $(HOST_PREFIX)$*.d
+	@tr -s ' \\' '\n' < $(HOST_PREFIX)$*.d2 | grep -v ':' | sed -e 's/$$/:/' >> $(HOST_PREFIX)$*.d
+	@$(RM) $(HOST_PREFIX)$*.d2
+# These will interfere with TARGET versions.
+#%.s : %.cpp ; $(HOST_CXX) $(HOST_CXXFLAGS) -fverbose-asm -S -o $@ $<
+#%.i : %.cpp ; $(HOST_CXX) -E $(HOST_CXXFLAGS) -o $@ $<
+endif
+
+%.xpmsane : %.xpm ; $(XPM_SANITISE) < $^ > $@
+
+%/Make.hosts : %/Make.hosts.dist
+	@(if [ -f $(TOP)/Make.hosts ] ; then \
+		echo "Warning: " `pwd`$(TOP)/Make.hosts.dist has changed, you may need to update ; \
+		echo "         " `pwd`$(TOP)/Make.hosts. ; \
+	else \
+		echo "Warning: " Created `pwd`$(TOP)/Make.hosts from distributed file. You may ; \
+		echo "         " need to edit it. ; \
+		sed s/Specify_the_ip_or_hostname_of_your_car_player_here/empeg-`whoami`/ < $(TOP)/Make.hosts.dist | sed 's/Do not edit.*/Please edit this file it was generated from Make.hosts.dist/' | grep -v '^#!' > $(TOP)/Make.hosts ; \
+	fi)
+
+-include $(TOP)/Make.hosts
+
+ifeq ($(BUILD_BASIC), car)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_CAR)
+endif
+ifeq ($(BUILD_BASIC), jupiter)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_JUPITER)
+endif
+ifeq ($(BUILD_BASIC), venus)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_JUPITER)
+endif
+ifeq ($(BUILD_BASIC), granite)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_JUPITER)
+endif
+ifeq ($(BUILD_BASIC), tardis)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_TARDIS)
+endif
+ifeq ($(BUILD_BASIC), whitechapel)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_WHITECHAPEL)
+endif
+ifeq ($(BUILD_BASIC), camelot)
+DOWNLOAD_HOST=$(DOWNLOAD_HOST_CAMELOT)
+endif
+
+CWD=$(shell pwd)
+FAKE_ROOT=$(CWD)/$(TOP)/downloadable-root/$(TARGET_PREFIX)
+DISK_ROOT=$(FAKE_ROOT)
+RAMDISK_ROOT=$(CWD)/$(TOP)/downloadable-root/ramdisk-$(TARGET_PREFIX)
+
+ifeq ($(NFSROOT_SERVER), localhost)
+NFSROOT_CP:=cp
+NFSROOT_DESTPREFIX:=
+NFSROOT_RSH:=
+else
+NFSROOT_CP:=rcp
+NFSROOT_DESTPREFIX:=$(NFSROOT_SERVER):
+NFSROOT_RSH:=rsh $(NFSROOT_SERVER)
+endif
+
+ifeq ($(BUILD_BASIC), car)
+KERNEL_DIR=$(TOP)/kernel
+endif
+
+ifeq ($(BUILD_BASIC), mercury)
+KERNEL_DIR=$(TOP)/kernel-net
+endif
+
+ifeq ($(BUILD_BASIC), jellystone)
+KERNEL_DIR=$(TOP)/kernel-net
+endif
+
+ifeq ($(BUILD_BASIC), jupiter)
+KERNEL_DIR=$(TOP)/kernel-2.4
+endif
+
+ifeq ($(BUILD_BASIC), venus)
+KERNEL_DIR=$(TOP)/kernel-2.4
+endif
+
+ifeq ($(BUILD_BASIC), granite)
+KERNEL_DIR=$(TOP)/kernel-2.4
+endif
+
+ifeq ($(BUILD_BASIC), kennedy)
+KERNEL_DIR=$(TOP)/kernel
+endif
+
+ifeq ($(BUILD_BASIC), tardis)
+KERNEL_DIR=$(TOP)/kernel-2.4
+endif
+
+ifeq ($(BUILD_BASIC), whitechapel)
+KERNEL_DIR=$(TOP)/kernel-2.4
+endif

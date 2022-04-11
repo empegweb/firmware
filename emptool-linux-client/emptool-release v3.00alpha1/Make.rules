@@ -1,0 +1,180 @@
+## Make.rules
+#
+# Rules in common between all makefiles
+#
+# (C) 1999-2000 empeg ltd.
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release  13-Mar-2003 18:15 rob:)
+
+# Remove this 'cos there is no build that is now predominant.
+#ifeq ($(BUILD),)
+#BUILD=car1
+#endif
+
+ifeq ($(BUILD), car1)
+BUILD_BASIC=car
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), car2)
+BUILD_BASIC=car
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), obsidian)
+BUILD_BASIC=car
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), jupiter)
+BUILD_BASIC=jupiter
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+RELEASE_STATIC=0
+endif
+
+ifeq ($(BUILD), venus)
+BUILD_BASIC=venus
+BUILD_CPU_FLAGS=-mtune=arm7tdmi
+endif
+
+ifeq ($(BUILD), kennedy)
+BUILD_BASIC=kennedy
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), tardis)
+BUILD_BASIC=tardis
+BUILD_CPU_FLAGS=-mtune=arm7tdmi
+endif
+
+ifeq ($(BUILD), granite)
+BUILD_BASIC=granite
+BUILD_CPU_FLAGS=-mtune=arm7tdmi
+endif
+
+ifeq ($(BUILD), onyx)
+BUILD_BASIC=onyx
+BUILD_CPU_FLAGS=-mtune=arm7tdmi -mshort-load-bytes
+endif
+
+ifeq ($(BUILD), mercury)
+BUILD_BASIC=mercury
+BUILD_CPU_FLAGS=-mtune=arm7tdmi
+endif
+
+ifeq ($(BUILD), jellystone)
+BUILD_BASIC=jellystone
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), whitechapel)
+BUILD_BASIC=whitechapel
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+RELEASE_STATIC=0
+endif
+
+ifeq ($(BUILD), xwhitechapel)
+BUILD_BASIC=xwhitechapel
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+RELEASE_STATIC=0
+endif
+
+ifeq ($(BUILD), camelot)
+BUILD_BASIC=camelot
+BUILD_CPU_FLAGS=-mtune=strongarm1100
+endif
+
+ifeq ($(BUILD), gaea)
+BUILD_BASIC=gaea
+endif
+
+# Architecture.
+# Use ARCH=arm or ARCH=pc
+ifeq ($(ARCH),)
+ARCH=arm
+endif
+
+export ARCH BUILD DEBUG RELEASE VERBOSE
+
+ifeq ($(BUILD_BASIC),)
+ifeq ($(allbuilds),)
+$(error You have not defined a valid BUILD type)
+else
+allbuilds:
+	$(MAKE) $(allbuilds) BUILD=jupiter
+	$(MAKE) $(allbuilds) BUILD=car2
+	$(MAKE) $(allbuilds) BUILD=car1
+	$(MAKE) $(allbuilds) BUILD=obsidian
+	$(MAKE) $(allbuilds) BUILD=mercury
+	$(MAKE) $(allbuilds) BUILD=kennedy
+	$(MAKE) $(allbuilds) BUILD=tardis
+	$(MAKE) $(allbuilds) BUILD=whitechapel
+	$(MAKE) $(allbuilds) BUILD=xwhitechapel
+	$(MAKE) $(allbuilds) BUILD=camelot
+	$(MAKE) $(allbuilds) BUILD=onyx
+endif
+endif
+
+# Debug mode.
+#   DEBUG=0  Optimised release build.
+#   DEBUG=1  Assertions.
+#   DEBUG=2  +Tracing.
+#   DEBUG=3  +Memory leak checking.
+#   DEBUG=4  +Electric fence bounds checking
+#   DEBUG=5  +Slow pointer validity checking.
+#   DEBUG=6  Assertions, trace, leak check, gcov
+ifeq ($(DEBUG),)
+DEBUG=2
+endif
+
+# Are release builds statically linked? By default, yes; for a platform which
+# doesn't want this, set it to 0 above.
+#
+ifeq ($(RELEASE_STATIC),)
+RELEASE_STATIC=1
+endif
+
+# Do we want static linking? Yes if this is a release build and releases of
+# this platform should be static; otherwise no. Override on the make command
+# line with STATIC= 0 or 1.
+#
+STATIC=0
+ifeq ($(DEBUG),0)
+ifneq ($(ARCH),pc)
+ifeq ($(RELEASE_STATIC),1)
+STATIC=1
+endif
+endif
+endif
+
+
+# Some tools
+ERRBUILD=$(TOP)/tools/errbuild2.py
+MSGCC:=$(TOP)/tools/msgcc.py
+
+# Deduce the target name
+TARGET_HEAD:=$(ARCH)
+TARGET_TAIL:=debug$(DEBUG)
+ifeq ($(STATIC), 1)
+TARGET_TAIL:=$(TARGET_TAIL)-static
+endif
+ifeq ($(PROFILE), 1)
+TARGET_TAIL:=$(TARGET_TAIL)-profile
+endif
+ifeq ($(PROFILE), 2)
+TARGET_TAIL:=$(TARGET_TAIL)-profile2
+endif
+TARGET_GENERIC:=$(TARGET_HEAD)-generic-$(TARGET_TAIL)
+TARGET_SPECIFIC:=$(TARGET_HEAD)-$(BUILD)-$(TARGET_TAIL)
+TARGET_PREFIX:=$(TARGET_SPECIFIC)/
+TARGET_GENERIC_LIBDIR:=$(TOP)/lib/$(TARGET_GENERIC)/
+TARGET_SPECIFIC_LIBDIR:=$(TOP)/lib/$(TARGET_SPECIFIC)/
+
+ifneq ($(ARCH),win32)
+include $(TOP)/Make.rules.gcc
+else
+include $(TOP)/Make.rules.vc
+endif

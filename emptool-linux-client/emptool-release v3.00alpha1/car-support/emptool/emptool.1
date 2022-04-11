@@ -1,0 +1,426 @@
+.# emptool.1
+.#
+.# Man page for emptool
+.#
+.# (C) 2000 empeg ltd, http://www.empeg.com
+.#
+.# This software is licensed under the GNU General Public Licence (see file
+.# COPYING), unless you possess an alternative written licence from empeg ltd.
+.#
+.# (:Empeg Source Release 1.6 13-Mar-2003 18:15 rob:)
+.#
+.TH EMPTOOL 1 "27 June 2000" "empeg-car Tools" "empeg-car Tools"
+.SH NAME
+emptool \- manipulate empeg-car player
+.SH SYNOPSIS
+.BR "emptool" " [ options ] " "device"
+.br
+.SH DESCRIPTION
+.B emptool
+manipulates the empeg-car player database as well as performing other
+functions such as quitting and rebooting the player.
+.SH OPTIONS
+.TP
+.BR "device"
+Specify the serial device that emptool should connect on, e.g
+.I /dev/ttyS0,
+or the IP address or network name of a networked player.
+
+.TP
+.BR "-h, --help"
+Show list of command line options.
+.TP
+.BR "-t, --timeout <retries>"
+Set the number of polls for connection status, default is 15. Polling
+occurs once per second.
+.TP
+.BR "-c, --check"
+Just check the connection and return error level 0 for success, 1 for
+failure. The database mode is not activated if this option is used.
+.TP
+.BR "-r, --restart"
+Restart the player. This only respawns the player executable and does
+not perform a full reboot. Recommended if synchronisation fails for
+any reason. The database mode is not activated if this option is used.
+.TP
+.BR "-b, --reboot"
+Reboot the player. This performs a full cycle of kernel and
+executable.  Not normally necessary. The database mode is not
+activated if this option is used.
+.TP
+.BR "-d, --rebuild"
+Rebuild the player cached database. If reading the database fails,
+rebuilding it will usually fix the problem as it was probably left in
+a corrupt state by a previous failed sychronise. The database mode is
+not activated if this option is used.
+.TP
+.BR "-w, --wait"
+Using this option makes
+.BR emptool
+wait for the player to restart after a restart or a reboot.
+.TP
+.BR "-q, --quit"
+Quit the player. On developer images, this can be used to drop the
+player to a shell. On consumer images, this will only respawn the
+player again. Once protocol packets have occurred, typing either
+.I q
+into the terminal or
+.I Ctrl-C
+will not quit the player. This option allows quitting the player after
+protocol packets have been transmitted. The database mode is not
+activated if this option is used.
+.TP
+.BR "--debug <level>"
+Turn on debugging. Valid levels are 0, 1 and 2. The default (level 0)
+prints no additional information. Level 1 prints more interesting
+progress information, where hashes are replaced with characters
+representing what action is being performed. Level 2 adds to this by
+printing all debug information coming back from the player between
+packets to console. This is only useful when a developer release of
+the software is installed on the player. See
+.I DEBUG INFORMATION
+for more details.
+.TP
+.BR "--serial"
+If emptool cannot determine whether the device used to connect to the
+player is connected via serial, use this option to override and use
+serial style buffering.
+.TP
+.BR "--usb"
+Likewise, this option forces the use of USB style buffering. This uses
+a larger buffer.
+.SH DATABASE MODE USAGE
+When started without any options,
+.I emptool
+runs in database mode, where the state of the database can be modified
+as well as uploading new files. This mode resembles the command line tool
+.I ftp.
+An important difference is that changes are deferred until the user
+enters the command
+.I sync,
+at which point all changes will be uploaded to the player.
+
+Available commands are:
+.TP
+.BR "help"
+Show help text
+.TP
+.BR "ls [ -r ] [ -d ] [ identifier ... ]"
+Without the optional arguments, this lists the entries under the
+current playlist. The contents of the playlists and tunes specified in
+the arguments are listed. If the
+.I -r
+option is used, any playlist found is recursed and its contents also
+listed.
+.TP
+.BR "cd < identifier >"
+Change to the specified playlist identifier.
+.TP
+.BR "mklist [ -p ] < identifier > [ identifier ... ]"
+Make a new playlist with the specified name used as its title. If the
+name contains spaces, use quotation around the entire string. Multiple
+playlists can be created at the same time. Tags other than title,
+length an type are inherited from the parent playlist. If the
+.I -p
+option is used, and a playlist of the specified name already exists, then
+mklist will do nothing (without the
+.I -p,
+a second playlist with the same name would be created).
+.TP
+.BR "link [ -e -l ] < identifier > [ identifier ... ]"
+Link the specified entries to the current playlist. This will make
+them appear under the current playlist. Wildcards may be
+used. Checking for recursion loops is performed before adding, and any
+playlists that would cause a loop to the current playlist are not
+added.
+.TP
+.BR "rm [ -e -r -l ] < identifier [ ... ] >"
+Remove the specified entries. If an entry is no longer referenced by
+any playlist, it will be scheduled for deletion on the player when
+synchronised.
+.TP
+.BR "repair"
+If faults in the database were detected at startup, this will attempt
+to repair them. All changes will be written when synchronised.
+.TP
+.BR "upload [ -e -r -l -p ] < local file path > [ local file path ... ]"
+The files specified will be uploaded onto the player in the current
+playlist. If the file type can be identified (e.g ID3 tags exist) then
+this information will automatically be assigned to the properties of
+the tune, otherwise the file name will be used. Wildcards may be used,
+and are expanded according to normal shell globbing rules. Directories
+are added as playlists of the same name. However, directories are only
+recursed and added if the
+.I -r
+option is used. The tags from the parent playlist are inherited for
+new playlists and tunes. If the
+.I -p
+option is used, directories to be added are merged with existing playlists
+of the same name (without the
+.I -p,
+directories which match existing playlists are ignored).
+.TP
+.BR "lookup [ -e -l ] < identifier > [ identifier ... ]"
+This will print a list of tags (including title, year, comment) for
+the specified entry names.
+.TP
+.BR "set < tag > < new value > < identifier > [ identifier ... ]"
+This sets the value of the tag for the specified entries to a new
+value. If the tag did not exist for the entry, it will be added. The
+.I type
+and
+.I length
+tags cannot be safely changed and as such any attempt it disallowed.
+.TP
+.BR "unset < tag > < identifier > [ identifier ... ]"
+If the tag exists each the entries, it will be removed. Again, the
+.I type
+and
+.I length
+tags cannot be safely changed and attempts to remove them are
+disallowed.
+.TP
+.BR "move [ -e -r -l ] < identifier from > < identifier to >"
+This moves the first identifier to the second identifier. If the
+second identifier is prefixed with a '^' or '$' character (in the
+style of grep's regular expressions), this indicates placing
+respectively before or after the second identifier. This allows moving
+entries even between different playlists and still specifying the
+exact location of placement.
+.TP
+.BR "config [ < section > < key > < value > ]"
+Without the
+optional arguments, this displays the player's configuration file (which may
+be empty). Otherwise it sets a configuration option in the player (see
+CONFIGURATION ITEMS below). As with other changes, changes in configuration
+are not saved back to the player until a
+.I sync
+command is issued. Configuration files are mainly useful for network-capable
+players.
+.TP
+.BR "sync"
+All changes are uploaded to the player. Enabling write and upload may
+take some time, so please be patient. If synchronise is aborted or
+fails, it is advisable to restart the player and rebuild the database
+.I (see BUGS).
+.TP
+.BR "quit"
+If there are unsynchronised changes,
+.I emptool
+will produce a warning message. Another
+.I quit
+will actually quit the program. An EOF on stdin will quit instantly.
+All unsynchronised changes will be lost, and the player will be
+unaffected by the entire session.
+.PP
+Entries are specified by an
+.I identifier
+which may be either the name, FID hex number or position number of the
+entry.  This makes it easy to specify an entry which may be burried in
+several layers deep of playlists, or when it's quicker to just type in
+the position number of an entry. Names with spaces must be surrounded
+by quotes, e.g \- "Name With Spaces", or by using an escape backslash,
+e.g \- Name\\ With\\ Spaces. FID numbers are specified by simply their
+number, e.g \- 1c0. Position numbers are specified by prefixing with a
+hash, e.g \- #35. The position number can also be specified as either
+#begin or #end, referring respectively to the first entry in the
+playlist and the last entry in the playlist.
+.SH COMMAND OPTIONS
+.TP
+.BR "-e"
+This option makes the print out of titles use backslash escaping for
+any character that might be mistaken for listing
+whitespace. Currently, only spaces are escaped.
+.TP
+.BR "-r"
+Recurse subdirectories or playlists.
+.TP
+.BR "-l"
+Use a long print out style, which has 4 field separated by spaces. For
+scripting, use this in conjunction with -e, otherwise the spaces in
+title names can confuse field separation. The fields are, in order:
+FID node number (hex), type (text - playlist or tune), title, and
+length. The length for playlists is the number of entries. For tunes,
+this is the length of data in bytes.
+.SH TAGS
+When the commands
+.I lookup, set or unset
+are used, they view or change
+.I tags.
+Any tag name may be used, but some have special meaning to the player:
+.TP
+.BR "type"
+Currently only 
+.I tune
+and
+.I playlist
+have meaning to the player. This cannot be changed manually.
+.TP
+.BR "artist"
+The name of the artist who created the tune, or tunes in this
+playlist.
+.TP
+.BR "length"
+The length in bytes of the entry. This cannot be changed manually.
+.TP
+.BR "title"
+The title of the tune or playlist. This is used for the name of the
+entry in menus on the player.
+.TP
+.BR "year"
+The year of creation of the tune, or tunes in the playlist.
+.TP
+.BR "source"
+The source of the tune or tunes in the playlist. For example, the name
+of the album.
+.TP
+.BR "comment"
+Any extra short comments.
+.TP
+.BR "genre"
+Text describing the genre the tune or playlist belongs to.
+.TP
+.BR "pin"
+A string of numbers which can be used to quickly access the tune or
+playlist on the player.
+.PP
+When 
+.I upload
+is used, the file is automatically scanned for ID3 tags, and the above
+entries are automatically set. For ID3v1.1 tags, the track number is
+appended to the
+.I source
+tag.
+.SH CONFIGURATION ITEMS
+The following options may be set or modified with the
+.I config
+command:
+.TP
+.BR "config options name < name >"
+Names the player. The player's name has no effect on its operation and is only
+really useful if you have several players plugged in at once, perhaps on a
+network. (In particular, there is
+.I no
+attempt to synchronise the name of a network player with its DNS name.)
+.TP
+.BR "config network dhcp < 0 or 1 >"
+For a network player, disables or enables automatic configuration of network
+details using DHCP. If you want to use the player's network interface,
+but don't 
+use DHCP, you must set both the IP address and network mask, see below.
+.TP
+.BR "config network ipaddress < address >"
+For a network player, sets the IP address of its network interface. The address
+must be a numeric address such as 10.2.3.4, 
+.I not
+a hostname such as empegcar.myhouse.com. This option is ignored if DHCP is
+enabled.
+.TP
+.BR "config network netmask < netmask >"
+For a network player, sets the IP network mask of its network interface. The
+address must be given in numeric form. If you don't know your network mask,
+use 255.0.0.0. This option is ignored if DHCP is enabled.
+.TP
+.BR "config network gateway < gateway >"
+In the unlikely event that you want your network player to be accessible from
+beyond your local network, you should set the IP address of an IP gateway. If
+not, you don't need to set a gateway. This option is ignored if DHCP is
+enabled.
+.BR
+.SH DEBUG INFORMATION
+When debug levels 1 or 2 are used (see options, above), hash progress
+prompting is changed to characters representing the action being
+performed, as follows:
+.TP
+.BR "r"
+A read from the player occurred.
+.TP
+.BR "w"
+A write to the player occurred.
+.TP
+.BR "s"
+The database requested the size of an entry on the player.
+.TP
+.BR "p"
+The database requested an entry prepared on the player.
+.TP
+.BR "d"
+The database requested an entry deleted from the player.
+.TP
+.BR "i"
+The database requested disk usage information from the player.
+.TP
+.BR "c"
+The player is checking the integrity of its filesystem.
+.TP
+.BR "m"
+The filesystem is being remounted on the player.
+.TP
+.BR "b"
+The database signalled the player to rebuild its music database.
+.TP
+.BR "."
+The database is waiting for a response from the player.
+.PP
+In addition, protocol errors may occur:
+.TP
+.BR "!TIMEOUT!"
+The player did not respond to a request from the database.
+.TP
+.BR "!ACKFAIL!"
+A packet to or from the player failed during transmission.
+.TP
+.BR "!WRONGPACKET!"
+A packet response from the player returned the wrong sequence number.
+.PP
+The protocol should normally resume immediately. Timeouts are not
+uncommon when the player is starting up, or if serial data is stuck in
+buffers somewhere. Ackfail and Wrongpacket indicate that there is a
+possible problem with either the host system setup or perhaps a
+problem with the protocol. It takes 16 bad packets in a row to trigger
+an abort, however. See
+.I BUGS
+below for details.
+.SH AUTHOR AND CREDITS
+Interface and emptool in-memory database management:
+
+John Ripley
+.I <john@empeg.com>
+, empeg Ltd.
+
+Player database and protocol:
+
+Mike Crowe
+.I <mac@empeg.com>
+, Hugo Fiennes
+.I <hugo@empeg.com>
+, empeg Ltd.
+.SH SEE ALSO
+.BR ftp (1)
+.SH HISTORY
+First limited release, 16th September 1999.
+
+Public release version 0.7, 1st October 1999.
+
+Public release version 0.7a, 4th October 1999.
+
+Public release version 0.7b, 15th October 1999.
+
+Limited release 0.8c, 10th December 1999.
+
+Public release version 0.81, 14th January 2000.
+
+Public release version 0.83, 4th February 2000.
+.SH BUGS
+Please submit bug reports to 
+.I bugs@empeg.com
+
+For bug reports, use --debug 2 to report back some information from
+the player.
+
+Creating entries that have quotes or slashes in their titles is
+inadvisable as escaping is not yet implemented for directory names.
+.SH LICENSE
+This software is licensed under the GNU General Public Licence (see file
+COPYING), unless you possess an alternative written licence from empeg ltd.
+

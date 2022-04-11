@@ -1,0 +1,233 @@
+Rio Car Release 1-Apr-2003
+Version 2.00
+
+Copyright (c) SONICblue, Inc. 2003
+
+
+* Notes
+
+This is a new stable release of the car-player software, and users of
+v1.03 and of earlier beta versions are encouraged to upgrade.
+
+These releases notes are cumulative since 2.00-beta13.  Subsequent
+Release Candidate builds were distributed only to the alpha team.
+
+
+* General
+
+Please submit bugs to the Bug Reports forum at the empeg BBS
+(http://empeg.comms.net).  Be sure to check that the bug has not already
+been discussed.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool
+for Linux users) from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit may not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We recommend completely de-installing the previous emplode before
+installing the new one.
+
+The USB driver has been moved out of the emplode setup program since just
+placing it in the drivers directory wasn't advisable on modern operating
+systems. In order to improve reliability on Windows XP there is now a new
+USB driver specifically for Windows XP called RIOXDRV.SYS. Users of
+earlier operating systems (Windows 98, Windows 98SE, Windows ME and
+Windows 2000) should continue to use the RIOHD.SYS driver. Anyone who is
+still using the EMPEGCAR.SYS driver should consider switching to the
+RIOHD.SYS driver.
+
+Driver installation varies among various versions of Windows so these
+instructions are deliberately a little vague... :)
+
+In order to install the driver on a machine which already has the old
+driver you will need to run Device Manager (accessible by right clicking
+on My Computer and selecting Properties). You should select the properties
+for the "Rio Car" or "empeg-car" device and choose to Update Driver.
+Choose to install the driver from a specific location and point it at
+wherever you've unzipped the emplode installer.
+
+To install the driver on a machine that has not seen the device before you
+should choose to specify the location and point it at wherever you've
+unzipped the emplode installer.
+
+Once the driver is installed you should be able to check the driver details.
+On Windows XP it should show that you are using RIOXDRV.SYS and on older
+operating systems it should show that you are using RIOHD.SYS.
+
+Although the RIOXDRV.SYS driver has been through WHQL testing it has not yet
+been signed by Microsoft. On Windows XP you will be presented with a scary
+dialog box that warns you that the driver is unsigned; you should choose to
+continue installation.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 2.00-beta13 - Player
+
+BPM calculation exposed (this was in previous releases but the results were
+not displayed).  The BPM (beats per minute) is shown in the Track Details
+screen.  This works better for some genres of music than others.
+
+Added button code for "Previous Visual" at the request of Mark Lord.  This
+is useful for Hijack users with stalk controls.  The button codes are
+0x0020df18 (pressed) and 0x8020df18 (released).
+
+Re-worked RDS AF as follows:
+
+The new AF feature works with the RDS information about alternative FM
+frequencies for the current station. Very small gaps in the audio are detected
+by the software, and during this time the AF code measures a signal from its
+list of alternative frequencies.  Typically the AF list will contain around 8
+alternative frequencies.
+
+When a frequency in the list has 8 consistent measurements greater than that
+of the current frequency, the new frequency is tuned to and the unique PI code
+identifying that station is waited for.  If the PI code does not arrive, or is
+not the correct one for that frequency, the old frequency is tuned back to.
+If the correct PI code is received, the new frequency is deemed to be correct.
+
+An RDS AF visual is included, currently called 'AF debugger' which
+shows graphically the relative signal strengths as a bar chart.  When a
+frequency is being measured, the bar goes grey.  The current frequency is
+denoted by a dot at the top of the bar, and is drawn as numbers next to
+this dot.
+
+Fixed: No pause icon after reboot (Bug #1729)
+
+Fixed: Played flag being cleared with player On/Off (#1521)
+
+Fixed: No pause icon after reboot (#1729)
+
+Fixed: Player version number incorrect (#1733)
+
+Fixed: Timecode formats behave strangely when 1 key is pressed (#1742)
+
+Fixed: Total time for a track is reported strangely when player is
+paused. (#1743)
+
+Fixed: Debug messages still going out on serial port (#1748)
+
+Fixed: Need a "button code" for "Prev Visual" (#1754)
+
+Fixed: Settings not retained between menu invocations (#1759)
+
+Fixed: Volume ramp-up not working properly in 2.0b11 (#1763)
+
+Fixed: Clock visual still truncated in 2.0b11 (#1774)
+
+Fixed: Traffic Announce too late (#1775)
+
+Fixed: Weighted shuffles broken in beta? (#1803)
+
+Fixed: Volume Ramp doesn't work after power fail (#1814)
+
+Fixed: Tracks shorter than 5 seconds don't get a "Last Played" value. (#1815)
+
+Fixed: Flashing "Song Progress" Dot Vanishes in 2.0b11 (#1818)
+
+Fixed: Adding tracks unpauses player (#1836)
+
+Fixed: Hidden digits in equalizer parameters make changing them
+difficult. (#1840)
+
+Fixed: Selection order of auto-freq-Db-Q is irritating, should be
+auto-freq-q-db. (#1841)
+
+Fixed: Overlapping Wendy filters don't work right unless you
+reshuffle. (#1849)
+
+Fixed: Serial commands no longer navigate menus. (#1850)
+
+Fixed: Distortion in EQ with certain settings. (#1852)
+
+Fixed: Automatically Repeat flag does not repeat. (#1855)
+
+Fixed: Currently active wendy filter does not survive a reboot. (#1856)
+
+Fixed: Player does not handle low bitrate MPEG2.5 files gracefully (#1858)
+
+Fixed: Visual auto change on timeout reverts to 30 seconds (#1859)
+
+Fixed: Time format:clock + Info:Line + Visual:Spectrolog128 = Segfault (#1868)
+
+Fixed: Make displaying "Plays:" counter optional (#1871)
+
+Fixed: Huge invalid *1 file causes persistent rebuild failure (#1872)
+
+Fixed: Player screen flickers when inserting/enqueing tracks from
+emplode (#1877)
+
+Pressing Search button in Tuner no longer slows/locks player (Bug 1817)
+
+v2 will fail to load v3 databases, allowing the user to move between
+builds (Bug 1901)
+
+v2 no longer misreads v3-written (UTF8) *1 files (Bug 1902)
+
+Power off after track feature now works with Repeat One (Bug 1885)
+
+Codec and bitrate once again shown on detailed track info screen (Bug 1882)
+
+Tuner now selects the correct preset after a reboot (1839)
+
+Radio "line" mode now updates when player has an empty playlist (Bug 1844)
+
+Entry of invalid digits in tuner mode no longer locks up player (Bug 1876)
+
+
+* What's New Since 2.00-beta13 - Emplode
+
+Playlist re-ordering tool implemented.  Select a playlist (or hierarchy of
+playlists), then choose Ordering from the Tools menu.  The selected playlist
+and its descendants will be reordered such that playlists occur first (and
+are sorted by title), and tunes are then sorted by track number.
+
+Added a second page to the download wizard that summarises space required
+and space available, warning if reqd > avail. (Bug 1831)
+
+Ordering feature no longer reverses order of tracks with no track
+numbers (Bug 1879)
+
+Getting tune properties no longer marks tune modified even if no changes
+made  (Bug 1905)
+
+Fixed: USB connection under Win XP (#1670)
+
+Fixed: Plays MP3 hyperlink is broken (#1845)
+
+Fixed: Emplode converts 'Beat' genre to 'Christian Gangsta' (#1854)
+
+Fixed: Emplode crashes when you press Play at the top of the tree (#1860)
+
+Fixed: Networking tab should explain why it's not there (#1862)
+
+Fixed: Handling of backslash characters in Advanced Search is broken (#1870)
+
+Fixed: There's no Properties item on the context menu in the soup
+tree. (#1873)
+
+Fixed: emplode consumes 100% CPU during download/synchronise (#1878)
+
+
+Rob Voisey 2003/04/01 12:30 +0100 (BST)
+rvoisey@sonicblue.com

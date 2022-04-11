@@ -1,0 +1,129 @@
+empeg-car software beta-10a release.
+
+* Versions:
+
+empeg-car player 0.86
+emplode          0.86
+empegUpgrade	 0.86
+emptool		 0.83
+kernel           2.2.14-rmk5-np17-empeg22
+
+* Notes
+
+*  General
+
+This release makes changes to the configuration of your empeg-car that will
+not be revoked by installing a version prior to beta8b.
+
+When submitting bug reports to bugs@empeg.com please put each bug in a
+separate email - this helps us to classify bugs and to archive the reports
+when the bugs have been fixed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes. These are available at
+http://www2.empeg.com/upgrades/test/all_notes.html
+
+You should not run this version of the player with an earlier release of
+emplode or this version of emplode with an earlier release of the player.
+
+*  Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit will not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+Remove the power connector from your empeg-car and connect your empeg-car
+to your computer using the supplied serial cable. Do _not_ reconnect the
+power to your empeg-car.
+
+The upgrade can be installed by serial only. Select Upgrade empeg-car
+software from the Tools menu and either enter or browse for the upgrade
+file. Click Next and select the serial port that your unit is connected
+to. Click Next again.
+
+When the upgrade program displays "Finding Unit" plug in the empeg-car
+power connector. The upgrade should then be applied.
+
+* Changes:
+
+*  player:
+
+For safety reasons a full screen text visual will be selected automatically 
+when the unit is powered on in-car. A graphical visual can still be
+selected but this is entirely at your own risk. Please do not report this
+as a bug.
+
+The information visual used when not in-car is now restored correctly on
+power up.
+
+The player no longer crashes when selecting a visual in radio or auxillary
+mode.
+
+The mute setting is no longer being reset when switching input channels.
+
+The player now deals better with files that are not MP3. If it does not
+find two valid MP3 frames in succession within the first 32K of the file it
+will assume that the file is not an MP3 and display a message to that
+effect.
+
+Playlist end behaviour has been improved. If a unit is powered down when at 
+the end of a playlist then it will be at the beginning of the playlist next 
+time it is powered up. Pressing play in either case will cause the playlist 
+to play again from the start.
+
+The now & next visual has been rearranged slightly.
+
+Other minor changes.
+
+*  emplode:
+
+When requested to play an item from within emplode the player will now
+switch on first if necessary.
+
+The USB driver will now install just as easily on Windows 2000 as on
+Windows 98.
+
+0xffffff92 errors during stages 9, 10 and 11 when using serial should now
+be fixed.
+
+Other minor changes.
+
+*  empegUpgrade:
+
+Minor changes.
+
+*  emptool
+
+No changes.
+
+*  developer
+
+The kernel has been upgraded to a 2.2.14 derivative.
+
+When in-car the baud rate is now set to 4800 once the player gets running.
+
+* Known bugs:
+
+The empeg hangs if connected via USB to a machine that is switched
+off. Removing the USB cable fixes the problem.
+
+The emplode install program doesn't restart the computer when necessary to
+ensure that the empeg-car device is found. This is not always essential.
+
+The emplode program doesn't check whether files are valid MP3 files before
+downloading.
+
+The same PIN may be entered for more than one tune/playlist - the empeg-car
+will play the first one it finds.
+
+Plugging more than empeg-car into a single machine via USB may confuse
+emplode.
+
+It is not currently possible to play WAV files on the unit.
+
+Mike Crowe 2000/03/25 18:05 GMT
+mac@empeg.com

@@ -1,0 +1,28 @@
+libunsn has been compiled and installed on the following systems.
+If something isn't listed here, it doesn't mean it doesn't work, it means
+it hasn't been tried (absence of evidence is not evidence of absence).
+
+i586-pc-linux-gnu (Debian, Red Hat 5/6) [0.99.4]
+
+	Compiles cleanly out of the box.  Compiles as a shared library.
+	IPv6 is supported (if the kernel is so configured), with hostname
+	lookup in glibc2.
+
+i686-pc-linux-gnulibc1 (Slackware) [0.99.2]
+
+	Compiles with some harmless warnings about missing prototypes in
+	kernel headers.  Compiles as a shared library.	IPv6 is supported
+	(if the kernel is so configured), but with no hostname lookup.
+
+sparc-sun-solaris2.6 [0.99.4]
+
+	Compiles cleanly out of the box.  Compiles as a shared library.
+	IPv6 is not supported (it will be in Solaris 8).
+
+hppa-hp-hpux10.20 [0.99.4]
+
+	Compilation problems due to h_errno not being defined.	Also
+	warnings due to configure giving making socklen_t the wrong type.
+	Should compile as a shared library.  The native make barfs on
+	the Makefiles; GNU make must be used.  Possibly some issues with
+	hostname lookup.

@@ -1,0 +1,67 @@
+.\"
+.\" Lib/decode.3in -- manual page for unsn_decode()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_decode.3
+.TH UNSN_DECODE 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_decode \- decode UNSN-coded octet string
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "size_t unsn_decode(char **" pbuffer ", char const *" string );
+.fi
+.SH DESCRIPTION
+This function decodes an octet string from UNSN <encoded-octet-string> format.
+.PP
+The string to be decoded starts at
+.I string
+and is as long as possible.  It is terminated by any character that cannot
+appear in UNSN octet string encoding (such as
+.RB ` / '
+or NUL), or by any invalid
+.RB ` % '
+escape.
+.PP
+The decoded octet string is placed in the buffer starting at
+\fB*\fP\fIpbuffer\fR, and
+.BI * pbuffer
+is updated to point to the byte after the decoded string.
+No terminator is added.
+The buffer may be in the same place as the original string,
+to decode it in place.
+.I pbuffer
+or
+.BI * pbuffer
+may be a null pointer, in which case the output is not written anywhere.
+.SH "RETURN VALUE"
+Returns the number of characters of the encoded representation that were
+processed.
+This is calculated even if no output is generated.
+.PP
+.IR errno (3)
+is not affected.
+.SH NOTES
+The decoded string cannot be longer than the input string, so decoding
+in place is generally safe.
+.PP
+The decoded octet string may include NUL bytes; if this is a problem
+in any particular application, in must be checked for manually.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_encode (3)

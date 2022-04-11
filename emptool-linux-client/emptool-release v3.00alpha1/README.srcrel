@@ -1,0 +1,115 @@
+	emptool source release
+	======================
+
+
+(C) 2002 empeg ltd, www.empeg.com
+
+Licensing
+---------
+This release of the source code to emptool comes under the GNU General
+Public Licence, which you can read in the file COPYING.
+
+Certain files not written by empeg are instead covered by separate
+Open Source licences:
+
+	lib/core/vbr_header.h is (C) 1998 Xing Corporation, and may be
+		freely used in any MP3 software, see the file for details
+	lib/protocol/crc.cpp contains code (C) 1986 Gary S. Brown, and
+		may be used without restriction, see the file for details
+        lib/vorbis is (C) 1994-200 Xiph Corporation, see lib/vorbis/COPYING
+
+
+Support
+-------
+While we have verified that emptool can be built from the code
+presented here, empeg cannot offer support on this source release, nor 
+on using any modified versions of emptool. THIS IS A RELEASE FOR
+CODERS WHO WANT TO HACK ABOUT WITH STUFF, NOT FOR END USERS.
+
+
+Build requirements
+------------------
+You need a C++ compiler with a good implementation of the STL. Here at 
+empeg we use egcs-1.1.2 or gcc-2.95.3. Older gcc versions may not have 
+good enough STL support. Other C++ compilers may choke on the few gcc
+extensions which have unfortunately snuck into the code. You also need
+GNU make.
+
+
+Building emptool
+----------------
+As emptool currently only runs on Linux, there is no configure
+script. In the top-level directory, run
+
+	make BUILD=car2 ARCH=pc emptool
+
+The "ARCH=pc" means "do a native compile, not a cross-compile"
+(emptool shares many makefiles with empeg's cross-compiled player code).
+This produces debug builds of all the libraries, and then emptool. The
+emptool binary is left in car-support/emptool/emptool.
+
+To produce a release build, the incantation is
+
+	make BUILD=car2 ARCH=pc DEBUG=0 RELEASE=1 emptool
+
+Release builds are statically linked; the binary is left in
+car-support/emptool/emptool.static
+
+
+Quick spin round the ingredients
+--------------------------------
+All empeg's code builds out of a single source tree; this distribution 
+contains the subset of that tree needed to build emptool. The code
+itself lives in the following directories:
+
+	car-support/emptool	Main emptool code
+	lib/core		General utilities
+	lib/protocol		Library encapsulating player communication
+	lib/net			Networking code
+	lib/tags                ID3/Ogg tag extraction
+
+Some parts of the libraries (parts not used by emptool) have been
+excluded from this release; these are pieces of code whose licensing
+conditions prohibit us from re-releasing them under the GPL.
+
+
+Contacting empeg ltd
+--------------------
+See our web site at http://www.empeg.com -- or use the following:
+
+email
+                                                          
+        General Enquiries        info@empeg.com
+        Sales Enquiries          sales@empeg.com
+        After Sales Support      support@empeg.com
+        Bug Reporting            bugs@empeg.com
+        Press Relations          press@empeg.com
+       	OEM Services             oem@empeg.com 
+        Recruitment              jobs@empeg.com 
+
+telephone
+
+        Telephone cover is provided Monday to Friday at the following times: 
+        09:30 to 23:30 GMT,      04:30 to 18:30 EST,     01:30 to 15:30 PST
+        Messages can be left outside of these hours, or consider using email.
+                                     
+        United Kingdom           01223 576 123
+        United States            1 877 259 5295 (Toll Free)
+        International            +44 (0)1223 576 123
+                                     
+fax
+
+        United Kingdom           01223 576 124
+        International            +44 (0)1223 576 124
+
+mail
+
+        1 Signet Court
+        Swann's Road
+        Cambridge CB5 8LA
+        United Kingdom
+
+
+								---------------
+								peter@empeg.com
+								15-October-2002

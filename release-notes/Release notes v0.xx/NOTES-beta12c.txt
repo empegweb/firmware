@@ -1,0 +1,149 @@
+empeg-car software beta 12c release.
+
+* Versions:
+
+empeg-car player 0.95
+emplode          0.95
+empegUpgrade	 0.95
+emptool		 0.95
+kernel           2.2.14-rmk5-np17-empeg32
+
+* Notes
+
+*  General
+
+This release is appropriate for both Mark I and Mark II players.
+
+When submitting bug reports to bugs@empeg.com please put each bug in a
+separate email - this helps us to classify bugs and to archive the reports
+when the bugs have been fixed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes. These are available in
+the support/downloads/empeg car documentation section of the website at
+http://www.empeg.com/
+
+You should not run this version of the player with an earlier release of
+emplode or this version of emplode with an earlier release of the player.
+
+*  Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit will not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+Connect your computer to your empeg car using the supplied serial
+cable. Switch off your player at the wall, if this is not possible, unplug
+the IEC cable from the brick power supply.
+
+The upgrade can be installed by serial only. Select Upgrade empeg-car
+software from the Tools menu and either enter or browse for the upgrade
+file. Click Next and select the serial port that your unit is connected
+to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick 
+power supply. The upgrade should then be applied.
+
+* Changes:
+
+*  player:
+
+The offset of the actual MP3 data (as written by the new version of
+emplode) is now read and used. This means that ID3v2 tags aren't
+unnecessarily cached and files should not be misidentified as not being
+valid.
+
+Duplicates are now correctly removed when using shuffle.
+
+The player now automatically rebuilds (but does not save) the database if
+certain anomalies are detected.
+
+The menus have been restructured to make them quicker to navigate.
+
+A lot of work has been done on the caching algorithm which will hopefully
+solve some of the gap problems.
+
+A new loading screen has been implemented.
+
+Append and shuffle now work correctly together.
+
+The playlist is now reshuffled when the play position passes the end of the 
+playlist.
+
+A bug with the pick N/pick % feature that would cause less tracks than
+intended to be played has been fixed.
+
+*  player (Mark II specific):
+
+Several bugs with the mute sense have been fixed.
+
+*  emplode:
+
+Many features from the Technology Preview have been integrated.
+
+Several bugs have been fixed and improvements made in the Player
+Configuration dialog.
+
+The time after which the player will hard power itself off when the
+accessory line is low and the player is soft powered off is now
+configurable.
+
+The offset of the actual MP3 data in the file is now calculated and stored
+for newly added files.
+
+If only the player configuration has changed the database is not rebuilt.
+
+It is now possible to sort a stored playlist as well as the view of it.
+
+The synchronisation dialog box now displays errors in a read-only edit box
+so that they can be copied and pasted.
+
+*  empegUpgrade:
+
+The last upgrade file is now remembered so that the correct folder can be
+displayed when browse is pressed.
+
+* empegClone:
+
+empegClone has not been updated in this release.
+
+*  emptool
+
+Fixed the "name by FID" and "name by position" feature (see man page for
+details).
+
+Other bug fixes.
+
+*  developer
+
+No changes.
+
+* Known bugs:
+
+The empeg hangs if connected via USB to a machine that is switched
+off. Removing the USB cable fixes the problem.
+
+The emplode install program doesn't restart the computer when necessary to
+ensure that the empeg-car device is found. This is not always essential.
+
+The emplode program doesn't check whether files are valid MP3 files before
+downloading.
+
+The same PIN may be entered for more than one tune/playlist - the empeg-car
+will play the first one it finds.
+
+Plugging more than empeg-car into a single machine via USB may confuse
+emplode.
+
+It is not currently possible to play WAV files on the unit.
+
+emplode is only capable of communicating with one player via ethernet. If
+more than one player is present then one is effectively picked at random.
+
+Mike Crowe 2000/07/28 17:48 BST
+mac@empeg.com

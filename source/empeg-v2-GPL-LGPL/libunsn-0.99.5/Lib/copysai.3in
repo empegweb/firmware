@@ -1,0 +1,68 @@
+.\"
+.\" Lib/copysai.3in -- manual page for unsn_copysai()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_copysai.3
+.TH UNSN_COPYSAI 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_copysai \- copy a unsn_sockaddrinfo structure
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "struct unsn_sockaddrinfo *unsn_copysai("
+.BI "        struct unsn_sockaddrinfo const *" src );
+.fi
+.SH DESCRIPTION
+This function copies a socket address information structure.  The
+.BR "struct unsn_sockaddrinfo" ,
+.IR src ,
+and the
+.B struct sockaddr
+it references, \fIsrc\fP\fB->sai_addr\fP,
+are both copied, into a single
+.IR malloc (3)ed
+memory block.
+.PP
+It is permitted for
+.IB src ->sai_addr
+to be a null pointer, meaning that
+.I src
+represents an error condition rather than a socket address (see
+.IR unsn_sockaddrinfo (3)).
+.SH "RETURN VALUE"
+Returns freshly
+.IR malloc (3)ed
+storage, containing a copy of the input structure.
+The caller is responsible for
+.IR free (3)ing
+the copy;
+.IR free (3)ing
+the returned structure will also deallocate the
+.B struct sockaddr
+it references.
+On error, NULL is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to build the structure to be returned.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_sockaddrinfo (3)

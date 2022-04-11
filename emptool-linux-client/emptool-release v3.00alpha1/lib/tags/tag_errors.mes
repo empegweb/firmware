@@ -1,0 +1,167 @@
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.6 13-Mar-2003 18:15 rob:)
+#
+
+# Global settings for this file
+Facility=4
+Component=8
+
+#
+# Success codes
+#
+
+Severity=0
+
+#
+# Failure codes
+#
+
+Severity=2
+
+# TAG_E_UNSUPPORTED
+Symbol=TAG_E_UNSUPPORTED
+Code=1
+Language=English
+Text=Unsupported file format.
+Language=French
+Text=Format de fichier non pris en charge
+Language=German
+Text=Nicht unterstütztes Dateiformat.
+Language=Spanish
+Text=Formato de archivo no admitido.
+Language=Italian
+Text=Formato file non supportato.
+Language=Japanese
+Text=ƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚Å‚·B
+
+# TAG_E_WMA_NOTASF
+Symbol=TAG_E_WMA_NOTASF
+Code=2
+Language=English
+Text=Not a valid ASF file.
+Language=French
+Text=Fichier ASF non valide.
+Language=German
+Text=Ungültige ASF-Datei.
+Language=Spanish
+Text=Archivo ASF no válido.
+Language=Italian
+Text=Il file non è un file ASF valido.
+Language=Japanese
+Text=—LŒø‚ÈASFƒtƒ@ƒCƒ‹‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
+
+# TAG_E_WMA_HASDRM
+Symbol=TAG_E_WMA_HASDRM
+Code=3
+Language=English
+Text=DRM not supported.
+Language=French
+Text=DRM non pris en charge
+Language=German
+Text=DRM nicht unterstützt.
+Language=Spanish
+Text=DRM no admitido.
+Language=Italian
+Text=DRM non supportato.
+Language=Japanese
+Text=DRM‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB
+
+# TAG_E_ID3_TOOSHORT
+Symbol=TAG_E_ID3_TOOSHORT
+Code=4
+Language=English
+Text=File is too short.
+Language=French
+Text=Le fichier est trop court.
+Language=German
+Text=Datei ist zu kurz.
+Language=Spanish
+Text=El archivo es demasiado pequeño.
+Language=Italian
+Text=Il file è troppo piccolo.
+Language=Japanese
+Text=ƒtƒ@ƒCƒ‹‚ª’Z‚·‚¬‚Ü‚·B
+
+# TAG_E_ID3_NOTV1
+Symbol=TAG_E_ID3_NOTV1
+Code=5
+Language=English
+Text=Not ID3v1
+Language=French
+Text=Pas ID3v1
+Language=German
+Text=Nicht ID3v1
+Language=Spanish
+Text=No ID3v1
+Language=Italian
+Text=Non è ID3v1
+Language=Japanese
+Text=ID3v1‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
+
+# TAG_E_ID3_NOTV2
+Symbol=TAG_E_ID3_NOTV2
+Code=6
+Language=English
+Text=Not ID3v2
+Language=French
+Text=Pas ID3v2
+Language=German
+Text=Nicht ID3v2
+Language=Spanish
+Text=No ID3v2
+Language=Italian
+Text=Non è ID3v2
+Language=Japanese
+Text=ID3v2‚Å‚Í‚ ‚è‚Ü‚¹‚ñ
+
+# TAG_E_ID3_TOONEW
+Symbol=TAG_E_ID3_TOONEW
+Code=7
+Language=English
+Text=Newer than ID3v2.4.0
+Language=French
+Text=Plus récent que ID3v2.4.0
+Language=German
+Text=Neuer als ID3v2.4.0
+Language=Spanish
+Text=Más reciente que ID3v2.4.0
+Language=Italian
+Text=Più recente di ID3v2.4.0
+Language=Japanese
+Text=ID3v2.4.0ˆÈ~‚Ìƒo[ƒWƒ‡ƒ“‚Å‚·
+
+# TAG_E_WAV_IDENTIFYFAILED
+Symbol=TAG_E_WAV_IDENTIFYFAILED
+Code=8
+Language=English
+Text=WAV identify failed
+Language=French
+Text=Échec de l'identification WAV
+Language=German
+Text=WAV-Identifizierung fehlgeschlagen
+Language=Spanish
+Text=Error de identificación de WAV
+Language=Italian
+Text=Identificazione WAV non riuscita
+Language=Japanese
+Text=WAV‚Ì¯•Ê‚É¸”s‚µ‚Ü‚µ‚½
+
+# TAG_E_WAV_NOTPCM
+Symbol=TAG_E_WAV_NOTPCM
+Code=9
+Language=English
+Text=Unsupported WAV format. File must be in PCM format.
+Language=French
+Text=Format WAV non pris en charge. Le fichier doit être au format PCM.
+Language=German
+Text=Nicht unterstütztes WAV-Format. Datei muss PCM-Format haben.
+Language=Spanish
+Text=Formato WAV no admitido. El archivo debe tener formato PCM.
+Language=Italian
+Text=Formato WAV non supportato. Il formato del file deve essere PCM.
+Language=Japanese
+Text=ƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢WAVƒtƒH[ƒ}ƒbƒg‚Å‚·Bƒtƒ@ƒCƒ‹‚ÍPCMƒtƒH[ƒ}ƒbƒg‚Å‚È‚¯‚ê‚Î‚È‚è‚Ü‚¹‚ñB

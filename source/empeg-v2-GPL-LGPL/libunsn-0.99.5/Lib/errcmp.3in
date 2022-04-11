@@ -1,0 +1,100 @@
+.\"
+.\" Lib/errcmp.3in -- manual page for error comparison functions
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_errno_cmp.3 unsn_errno_max.3 unsn_errno_min.3
+.TH UNSN_ERRNO_CMP 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_errno_cmp, unsn_errno_max, unsn_errno_min \- compare error numbers
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "int unsn_errno_cmp(int " errnum1 ", int " errnum2 );
+.sp
+.BI "int unsn_errno_min(int " errnum1 ", int " errnum2 );
+.sp
+.BI "int unsn_errno_max(int " errnum1 ", int " errnum2 );
+.fi
+.SH DESCRIPTION
+Because UNSNs support a notion of multiple alternative and chained addresses,
+it is possible for an attempt to communicate to fail in more than one way
+simultaneously.  When this happens, unless the application is to report all
+errors separately, it is necessary to decide which of the multiple errors
+to report.  The usual convention is to report the error that is most
+immediately obstructing progress.  This rule takes effect in two different
+ways:
+.TP
+.B (1)
+Where
+.I all
+of the attempted actions must succeed in order for the whole to succeed
+(e.g., multiple protocol layers in a UNSN), report the one that failed in the
+.I most basic
+manner, i.e., the action that got least far.
+.TP
+.B (2)
+Where
+.I any
+of the attempted actions may succeed in order for the whole to succeed
+(e.g., alternative addresses in a UNSN), report the one that failed in the
+.I most advanced
+manner, i.e., the action that got furthest.
+.PP
+Incidentally, the above rules work out right if success is regarded as the
+most advanced possible error condition.
+.PP
+.B unsn_errno_cmp
+compares two error numbers, and decides which is the more basic error.
+This is decided in the context of an attempt to communicate using UNSN-based
+addresses, and so might produce inappropriate answers if used in other
+complex contexts that can generate errors from more than one source.
+It handles the
+.IR libunsn (3)-specific
+error numbers (see
+.IR unsn_errno (3)).
+It regards the error number zero (indicating success) to be more advanced
+than any actual error condition.  It compares errors as equal only if the
+error numbers are numerically equal; the order of comparison for error numbers
+that it does not recognize is unspecified but guaranteed to be consistent.
+.PP
+.B unsn_errno_min
+returns the more basic error of the two error numbers it is given.
+.B unsn_errno_max
+returns the more advanced error of the two error numbers it is given.
+These are decided using exactly the same behavior as
+.BR unsn_errno_cmp .
+.SH "RETURN VALUE"
+.B unsn_errno_cmp
+returns -1 if it considers
+.I errnum1
+to be a more basic error than
+.IR errnum2 ,
++1 if it considers
+.I errnum1
+to be a more advanced error than
+.IR errnum2 ,
+and zero if the two error numbers are equal.
+.PP
+.B unsn_errno_min
+and
+.B unsn_errno_max
+return whichever of their arguments is appropriate.
+.SH "SEE ALSO"
+.IR errno (3),
+.IR libunsn (3),
+.IR unsn_errno (3)

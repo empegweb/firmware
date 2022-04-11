@@ -1,0 +1,382 @@
+Rio Car Beta Release 08-February-2002
+Version 2.00-beta11
+
+Copyright (c) SONICblue, Inc. 2002
+
+
+* Notes
+
+This is a Rio Car beta release.  BY DEFINITION, BETA SOFTWARE MAY NOT
+PERFORM AS ADVERTISED.  It may not be stable.  It may eat your music
+and spoil your day in any number of ways.  Please do not install this
+release unless you understand these important points.
+
+
+* General
+
+Please submit bugs to carbugs@riohome.com - preferably after reading
+the BBS (http://empeg.comms.net) to check that the bug has not already
+been discussed.
+
+Note that 2.00-beta8 to 2.00-beta10 were internal releases.  Their
+notes have been rolled into this release note.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit may not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We strongly recommend completely de-installing the previous emplode before
+installing the new one, which installs into a different location.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 2.00-beta7 - Player
+
+Support has been added for Microsoft WMA format audio files.  DRM encrypted
+files are not supported, and it is known that some very low bitrate files do
+not playback correctly.
+
+-
+
+The RDS "TA" (Traffic Announce) feature has been implemented.  It can be
+switched on and off from the Radio menu.  When enabled, TA will cause the
+radio station to change (and the unit to switch to Radio mode if it was
+in Player or Aux mode) when a local station transmits a traffic broadcast.
+This is dependent on the currently tuned station supporting the feature (e.g.
+BBC Radio 1 will trigger TA for regional BBC stations).  When the broadcast
+has finished the unit will return to the previous setting.
+
+This feature is widely available within Europe, but almost never utilised
+within the USA.
+
+Mk.2 & Mk.2A owners note: the powered antenna line will always be active
+while TA is switched on, so that the tuner can scan for the appropriate
+RDS information.
+
+-
+
+Implemented tuner AF feature (RDS Alternate Frequency).  The tuner will retune
+to an alternate frequency (if available) when signal strength of currently
+tuned station becomes too weak.  Switch on/off via Radio menu.
+
+-
+
+Implemented tuner PTY feature (RDS Programme TYpe).  Player flashes any change
+in programme type on the bottom of the Radio Full Screen info mode.
+
+-
+
+Implemented tuner mode indicators:
+
+"TP" means the currently tuned station carries travel announcements
+"TA" normal means that player will switch to radio from normal/aux if a travel
+     announcement is made on either the currently tuned station (see "TP"
+     indicator) or via another station.
+"TA" dimmed means TA mode is on but the currently tuned station doesn't carry
+     travel announcement or transmits information about those that do.
+"TA" missing means TA mode is off.
+"AF" normal means that the player has other frequencies available for the
+     currently tuned station.
+"AF" dimmed if AF mode on but alternate freqs not available.
+"AF" missing means AF mode is off.
+
+-
+
+Automatic standby has been implemented.  Press and hold the standard
+'Power Off' menu item and be presented with a brand new menu:
+
+Now - Turns off now
+After this track - Turns off after the currently playing track
+At end of playlist - Turns off at end of playlist
+Cancel imminent standby - Only appears if you've scheduled a standby event
+
+To be added: Timed standby.
+
+-
+
+The visuals menu has been restructured adding another layer between the
+current structure and the main menu.  The format is now as follows:
+
+by Type - The old menu
+by Name - Entire list of visuals
+Favourites - Listed if you have them defined
+Auto Change - Automatic visual selection on track change or on a timer
+Select Mode - How visuals are selected (sequentially or at random)
+
+In order to set a timeout value press and hold the 'On Timeout' menu option
+and use the left/right or rotary control to alter it.  Note that everything
+is persisted over a power cycle, and that everything is channel dependent
+except the timeout which is a global value.
+
+-
+
+Press & Hold of the Search button now goes straight to a Title Search.
+
+-
+
+Stereo Bleed has been implemented.  Certain early stereo tracks (e.g. ones by
+the Beatles) are recorded with most or all instruments panned to the extreme
+left or the extreme right. This type of sound can be disturbing on headphones
+and some speaker systems.
+
+Stereo bleed works by treating such tracks as pairs of uncorrelated mono
+signals, and synthesising a new stereo image in which one signal is located
+centre left and the other centre right. This means that each channel of the
+resulting signal is made up from both channels of the input signal, in
+different proportions, with different delays and filtering. The result is a
+stereo effect more consistent with modern stereo recordings.
+
+To use the feature, check "stereo bleed" in the tune properties dialog in
+Emplode for tracks requiring stereo bleed and synchronise.
+
+-
+
+Fixed: First 'q' doesn't exit the player (#1678)
+
+Fixed: Volume ramp-up doesn't always happen. (#24)
+
+Fixed: Volume pops up when adjusting Time/Date (#1572)
+
+Fixed: FF/REW don't use correct "time" display (#1609)
+
+Fixed: Timecode appears as 15291:44 on empty player (#1644)
+
+Fixed: Snake visual assert whilst fast forwarding in DEBUG=3 build (#1667)
+
+Fixed: Catenated MP3 files crash player (#1620)
+
+Fixed: SOURCE button on kenwood steering wheel remote stopped working (#1388)
+
+Fixed: Aux in makes player run VERY slowly (#1654)
+
+Fixed: Player glitches slightly on startup (#1229)
+
+Fixed: Failed to seek to offset 3098447 (#1576)
+
+Fixed: Playback breakup after selecting programme (#1133)
+
+Fixed: Wave files skip and sometimes lock up the player. (#1328)
+
+Fixed: Short pauses when inserting and adding items. (#1631)
+
+Fixed: Detailed info screen says Fixed Stereo on files which are Joint
+Stereo (#1571)
+
+Fixed: Play/Pause glyph appears _under_ track count (#1613)
+
+Fixed: Assertion failure on empty player (#1632)
+
+Fixed: Number of plays increases after deleting tunes. (#1659)
+
+Fixed: Bogus, but present static database causes emplode to display bogus
+data (#1668)
+
+Fixed: Wendy flags overwritten on heterogenous selection (#1687)
+
+Fixed: Scrambled setting when upgrading from 1.03 to 1.10 (#927)
+
+Fixed: Daylight Savings Time (#1213)
+
+Fixed: Large values entered into the Timeout box cause hard-to-trace problems
+with the player. (#1634)
+
+Fixed: Menu option for Mark Track isn't obvious (#1146)
+
+Fixed: Mark track dosen't stick when powered off (#1371)
+
+Fixed: Sony stalk issues with 2.0b3 (#1384)
+
+Fixed: Loudness/Balance/Etc slide control closes on 2nd button press (#1579)
+
+Fixed: Seek Tool not showing current position (#1582)
+
+Fixed: Crash when switching to Info: Seek Tool (#1585)
+
+Fixed: Playlist elapsed/remaining runs off left side of screen (#1612)
+
+Fixed: Tuner timecount ("INFO - LINE") goes negative (#1629)
+
+Fixed: Infoseek tool uses colon in timecodes (#1646)
+
+Fixed: Bug (+fix) in kernel drivers/block/flash-empeg.c (#1666)
+
+Fixed: 200ms delay when selecting left-right menu items from the front
+panel (#1671)
+
+Fixed: There are two "Info: Track" items listed in the menu. (#1681)
+
+Fixed: Tweak Order: Artist found different artist. (#1682)
+
+Fixed: Crash when hitting 'q'. (#1715)
+
+Fixed: Capital I's in preset names get changed to lower case. (#1721)
+
+Fixed: Rio remote stops working after selecting shuffle. (#1639)
+
+Fixed: Info seek tool doesn't display the bar at the left when skipping
+tracks whilst paused. (#1645)
+
+Fixed: Hang after "sync" with Tuner connected (#1706)
+
+Fixed: Player unresponsive when caching (#1719)
+
+Fixed: Player crashes after sync with Emptool (#1575)
+
+Fixed: Player unpauses when it wakes up from standby at "end of
+playlist". (#1702)
+
+Fixed: Assertion on entering new playlist in DEBUG=2 (#1720)
+
+Fixed: ASSERT when pressing Play in emplode (#1728)
+
+Fixed: Rebuilding the static database doesn't truncate it when
+necessary (#1726)
+
+Fixed: Crash when switching FM stations with steering wheel (#1722)
+
+Fixed: beta8: UI lockup (#1725)
+
+Fixed: Pause icon still showing during playback in 2.0 Beta 1 (#1041)
+
+Fixed: EQ must be "changed" before it works right in 4-channel mode. (#1676)
+
+Fixed: Left/right button logic confusing in EQ (#1734)
+
+Fixed: Strangeness with clock going back and forth with tuner. (#1712)
+
+Fixed: "-None-" playlist screen looks odd (#1663)
+
+Fixed: Auto visual switching does not honor "favorites" mode. (#1710)
+
+Fixed: Random visual selection should ignore blank visual (#1732)
+
+Fixed: Two long-down presses required to toggle info screen (#1583)
+
+Fixed: Radio audio not being interpreted by visuals in Beta9 (#1736)
+
+
+* What's New Since 2.00-beta9 - Emplode
+
+Fixed: Missing description on Windows installer (#1116)
+
+Fixed: Repeated crashes during Uninstall of emplode on NT WS SP6A (#1208)
+
+Fixed: Download reports error message when dialog cancelled (#1562)
+
+Fixed: Xing/VBRI fixes not merged into beta7 (#1586)
+
+Fixed: Invalid song length reported (#1468)
+
+Fixed: Duration of playlist increases every time properties are
+modified (#1505)
+
+Fixed: Crash when moving playlists at the root level (#1525)
+
+Fixed: Reset Metadata doesn't mark tracks as dirty (#1587)
+
+Fixed: After Reset Metadata, synchronise fails with 0x80040015 (#1588)
+
+Fixed: Sort order wrong in Playlists tree (#1592)
+
+Fixed: Possible enhancement to sort orders (#1593)
+
+Fixed: Fix to bug 1540 not merged into beta7 (#1594)
+
+Fixed: Can't enter e-acute into "source" field (#1595)
+
+Fixed: Ctrl+O still works even with a player connected (#1598)
+
+Fixed: Emplode dialogs truncated w/ very long track names (#1599)
+
+Fixed: Deleting a playlist and something that it contains causes
+crash. (#1601)
+
+Fixed: Orphaned playlists should be reattached to the root playlist (#1603)
+
+Fixed: CF_TEXT clipboard data rendering is not deferred (#1606)
+
+Fixed: Play button no longer works (#1608)
+
+Fixed: Initial download from empty player shows warnings (#1614)
+
+Fixed: Deleting things from the playlist tree doesn't actually delete
+them (#1615)
+
+Fixed: Synchronising results in error 0xc0041016 (#1618)
+
+Fixed: Cut and paste of tracks leaves them marked deleted (#1625)
+
+Fixed: Column sorting is broken in playlists (#1626)
+
+Fixed: Set Playlist Order broken (#1627)
+
+Fixed: Emplode connection failure on Windows XP (#1636)
+
+Fixed: Artists tree has mysteriously acquired Albums in it (#1647)
+
+Fixed: Sort order not consistent in soup views (#1650)
+
+Fixed: Multiple selection -- length not displayed in Details Dialog (#1467)
+
+Fixed: Can't copy CQueryItem to clipboard (#1607)
+
+Fixed: pickn/pickpercent fields not displayed on playlist details page (#1693)
+
+Fixed: pickn/pickpercent fields not saved from playlist details page (#1694)
+
+Fixed: Wendy Filters Dialog: Flags page problems (#1700)
+
+Fixed: Switching from the wendy tab marks tracks as changed (#1704)
+
+Fixed: Hush percentage only 1-10% in Emplode (#1713)
+
+Fixed: Dynamic data properties page broken (#1688)
+
+Fixed: Downloading a song with an asterisk in the title crashes
+emplode. (#1752)
+
+Fixed: References to empeg car in help file (#1028)
+
+Fixed: Downloading crashes on special chars *, ~, etc (#1751)
+
+Fixed: There's no context menu in the edit boxes in the track properties
+dialog (#1165)
+
+
+* What's New Since 2.00-beta7 - Clone Tool
+
+Fixed: If USB is not checked in emplode, empegClone doesn't find any
+units (#1630)
+
+
+* What's New Since 2.00-beta7 - Upgrader
+
+Fixed: Update file description not descriptive (#1203)
+
+Fixed: Mk1 doesn't upgrade to beta8 (#1723)
+
+Fixed: Ugrade info - text wrap fault (#1714)
+
+
+Rob Voisey 2002/02/08 18:45 +0000 (GMT)
+rvoisey@sonicblue.com

@@ -1,0 +1,70 @@
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.4 01-Apr-2003 18:52 rob:)
+#
+
+# Global settings for this file
+Facility=4
+Component=8
+Language=English
+
+#
+# Success codes
+#
+
+Severity=0
+
+#
+# Failure codes
+#
+
+Severity=2
+
+# TAG_E_UNSUPPORTED
+Symbol=TAG_E_UNSUPPORTED
+Code=1
+Text=Unsupported file format.
+
+# TAG_E_WMA_NOTASF
+Symbol=TAG_E_WMA_NOTASF
+Code=2
+Text=Not a valid ASF file.
+
+# TAG_E_WMA_HASDRM
+Symbol=TAG_E_WMA_HASDRM
+Code=3
+Text=DRM not supported.
+
+# TAG_E_ID3_TOOSHORT
+Symbol=TAG_E_ID3_TOOSHORT
+Code=4
+Text=File is too short.
+
+# TAG_E_ID3_NOTV1
+Symbol=TAG_E_ID3_NOTV1
+Code=5
+Text=Not ID3v1
+
+# TAG_E_ID3_NOTV2
+Symbol=TAG_E_ID3_NOTV2
+Code=6
+Text=Not ID3v2
+
+# TAG_E_ID3_TOONEW
+Symbol=TAG_E_ID3_TOONEW
+Code=7
+Text=Newer than ID3v2.4.0
+
+# TAG_E_WAV_IDENTIFYFAILED
+Symbol=TAG_E_WAV_IDENTIFYFAILED
+Code=8
+Text=WAV identify failed
+
+# TAG_E_WAV_NOTPCM
+Symbol=TAG_E_WAV_NOTPCM
+Code=9
+Text=Unsupported WAV format. File must be in PCM format.
+

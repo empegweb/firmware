@@ -1,0 +1,81 @@
+.\"
+.\" Lib/encode.3in -- manual page for unsn_encode()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_encode.3
+.TH UNSN_ENCODE 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_encode \- encode octet string in UNSN form
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "size_t unsn_encode(char *" buffer ,
+.BI "        char const *" string ", ssize_t " string_len );
+.fi
+.SH DESCRIPTION
+This function encodes an octet string as a character string in UNSN
+canonical <encoded-octet-string> format.
+The encoded form represents some octets (such as
+US-ASCII alphabetics) as themselves, and represents others as a
+three-character sequence starting with
+.RB ` % '.
+.PP
+The octet string to be encoded starts at
+.I string
+and is
+.I string_len
+octets long.  For convenience, if
+.I string_len
+is specified as -1, then
+the octet string starts at
+.I string
+and extends up to (but does not include)
+the first byte with a value of zero; i.e.,
+a standard NUL-terminated string may be encoded by giving a
+.I string_len
+of -1.
+.PP
+The encoded form is placed in the buffer
+.IR buffer ,
+and terminated with a NUL byte.
+However, if
+.I buffer
+is a null pointer, then the encoded form is not written anywhere.
+.SH "RETURN VALUE"
+Returns the length of the encoded representation, in characters.
+This is calculated even if no output is generated (if
+.I buffer
+is a null pointer);
+this allows the function to be used to calculate the size of buffer
+required to hold the result of a subsequent call.  (If doing this, remember
+to allow for the NUL which this function appends to the output but is not
+included in the length count returned.)
+The encoding generated is guaranteed to be in canonical form,
+and therefore the length
+returned will be consistent for repeated calls with the same input string.
+.PP
+.IR errno (3)
+is not affected.
+.SH NOTES
+The length of the encoded representation of a string cannot be less than
+the length of the string, and cannot be more than three times the length
+of the string.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_canonize (3),
+.IR unsn_decode (3)

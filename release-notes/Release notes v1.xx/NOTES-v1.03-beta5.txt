@@ -1,0 +1,33 @@
+Rio Car v1.03-beta5 release notes
+==================================
+Mike Crowe, <mcrowe@riohome.com>
+2001/06/07 19:06 +0100 (BST)
+
+This release is intended to provide tuner support on the v1.0 branch and
+fix a few other longstanding niggles in the v1.0 software. Very few other
+features are present.
+
+Player changes
+==============
+
+The radio display has been updated to provide the information in a clearer
+way.
+
+Powered antennas should now extend when the unit is soft powered on.
+
+Soft muting when switching channels has been improved.
+
+Numerous other bug fixes.
+
+Emplode changes
+===============
+
+None. Use emplode-v1.03-beta3 with this release.
+
+Emptool changes
+===============
+
+None. Use emptool-v1.03-beta3 with this release.
+
+
+End.

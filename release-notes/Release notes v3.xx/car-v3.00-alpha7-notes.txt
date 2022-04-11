@@ -1,0 +1,123 @@
+Rio Car Alpha Release 13-Feb-2004
+Version 3.00-alpha7
+
+Copyright (c) Digital Networks North America, Inc. 2003, 2004
+
+
+* Notes
+
+This is a Rio Car Alpha Release. This release may not be stable, and is
+for empeg Mark 2 and Rio Car hardware only. Mark 1 support is problematic
+and will be addressed for a future release.
+
+Those who value stability over excitement should steer well clear of
+this version, in favour of the v2.00 release.
+
+
+* General
+
+If you are not an alpha tester, please hold back on reporting bugs until
+a public Beta is released - unless it is something really critical!
+
+As always, the Unofficial Empeg BBS at http://empeg.comms.net is a good
+place for discussing this alpha.
+
+
+* Installation
+
+You should install the new emplode before installing this release. If you
+fail to do so your empeg-car unit may not function and it will be
+necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+This release contains an interim emplode build, which does not yet have an
+installer.  Install the v2.00-rc2 version of emplode, unzip the new
+executable and library to another folder, and execute from there.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only. Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall ifc possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 3.00-alpha5 - Player
+
+Alpha 6, in case you're wondering, wasn't intended to be public -- but it
+sort of leaked, so this one had to be 7.
+
+A serious bug in earlier alphas whereby the disks were never spun down is
+fixed.
+
+Database rebuilding now works.
+
+The bug in earlier alphas whereby Transient Info mode worked more like Absent
+Info mode is fixed.
+
+The scrolling text in Transient Info and Line Info modes now remains
+visible no matter how much space the timecode takes up.
+
+A new config.ini setting, "squash_visuals" in the "[display]" section,
+controls whether Transient Info and Line Info squash the visuals. The
+default is "1" (yes, as per previous alphas); use "0" for the behaviour
+of v2.00. Sadly, there is no UI for changing this setting at the moment.
+
+Ogg Vorbis files now play back gaplessly again.
+
+Ogg Vorbis files containing two (concatenated) streams no longer crash the
+player. (They're still officially "not supported", though.)
+
+Some more memory has been eked out for the cache, which is larger than in
+earlier alphas, though still not as large as in v2.00.
+
+Insert/Enqueue/Append into an empty running-order no longer causes either
+crashing or weirdness.
+
+Some unused files that shouldn't have been in the root partition have
+been removed (i.e. the upgrade files should be a bit smaller).
+
+Many further fixes inherited from Rio Karma, too numerous to identify.
+
+
+* What's New Since 2.00-alpha1 - Emplode
+
+No changes.
+
+
+* What's New Since 2.00-alpha1 - EmpTool
+
+No changes.
+
+
+* Known Issues
+
+Probably doesn't work on Mark 1 players (untested).
+
+Memory footprint is a little large resulting in reduced caching -
+especially on empeg (Mark 2) players. If you have at any time manually
+altered the ReserveCache setting in config.ini and your player is
+failing to rebuild its databases on startup, try reducing ReserveCache,
+or indeed setting it to 0. This may necessitate temporarily disabling some or
+all third-party software on your player.
+
+Reportedly, using the search features can cause audio glitching. This
+has yet to be addressed.
+
+For various reasons, the player now opens the serial port in "raw"
+(character-orientated) rather than "cooked" (line-orientated) mode; this
+may or may not be a problem in practice, but is a change from earlier
+versions.
+
+
+Peter Hartley 2004-Feb-13
+pdhartley@rioaudio.com

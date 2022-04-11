@@ -1,0 +1,82 @@
+.\"
+.\" Lib/sai.3in -- manual page for unsn_sockaddrinfo structure
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_sockaddrinfo.3
+.TH UNSN_SOCKADDRINFO 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_sockaddrinfo \- socket address information structure
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.B struct unsn_sockaddrinfo;
+.fi
+.SH DESCRIPTION
+A
+.B struct unsn_sockaddrinfo
+encapsulates all the information required to define a socket address,
+in the terms of the Sockets API (see
+.IR socket (7)).
+The structure is defined thus:
+.PP
+.nf
+struct unsn_sockaddrinfo {
+        int sai_family;
+        int sai_type;
+        int sai_protocol;
+        struct sockaddr *sai_addr;
+        socklen_t sai_addrlen;
+};
+.fi
+.PP
+The members
+.BR sai_family ,
+.B sai_type
+and
+.B sai_protocol
+members correspond directly to the
+.BR family ,
+.B type
+and
+.B protocol
+arguments to the
+.IR socket (2)
+function; the interpretation of the socket address structure
+depends on the value of these members.
+.B sai_addr
+points to the structure giving the protocol-specific address data.
+.B sai_addrlen
+gives the length of this structure; this must be correct,
+and can affect the interpretation of the address data structure
+for some protocols.
+.PP
+Some functions also support another set of semantics for the
+.B unsn_sockaddrinfo
+structure.  If the
+.B sai_addr
+member is a null pointer (which is not valid for a normal address),
+then the
+.B sai_family
+member is actually an
+.IR errno (3)-style
+error number.  In this case, the structure represents that error condition,
+rather than a socket address.  The documentation of each individual function
+indicates how error addresses are handled.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_copysai (3)

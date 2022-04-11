@@ -1,0 +1,124 @@
+empeg-car software beta 12 release.
+
+* Versions:
+
+empeg-car player 0.92
+emplode          0.92
+empegUpgrade	 0.92
+emptool		 0.92
+kernel           2.2.14-rmk5-np17-empeg29
+
+* Notes
+
+*  General
+
+This release is appropriate for both Mark I and Mark II players.
+
+When submitting bug reports to bugs@empeg.com please put each bug in a
+separate email - this helps us to classify bugs and to archive the reports
+when the bugs have been fixed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes. These are available at
+http://www2.empeg.com/upgrades/test/all_notes.html
+
+You should not run this version of the player with an earlier release of
+emplode or this version of emplode with an earlier release of the player.
+
+*  Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit will not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+Connect your computer to your empeg car using the supplied serial
+cable. Switch off your player at the wall, if this is not possible, unplug
+the IEC cable from the brick power supply.
+
+The upgrade can be installed by serial only. Select Upgrade empeg-car
+software from the Tools menu and either enter or browse for the upgrade
+file. Click Next and select the serial port that your unit is connected
+to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick 
+power supply. The upgrade should then be applied.
+
+* Changes:
+
+*  player:
+
+The loudness menu has been reinstated.
+
+The rotary control now accelerates when used on gauges (volume, balance,
+fader, etc.)
+
+The disk is no longer spun up before the unit is powered down due to the
+accessory line going low.
+
+Work has been done that should address the hanging audio problems whereby
+the visual would continue but the audio would stop.
+
+*  emplode:
+
+It is now possible for emplode to find players automatically on the local
+network. It will communicate with the first one it finds - there is
+currently no mechanism for selecting between multiple units on ethernet.
+
+An early version of the online help is included. It is not complete.
+
+It is now possible to enable/disable the disk spinning icon from within
+emplode.
+
+It is now possible to enable/disable the visual name prompts from within
+emplode.
+
+Once synchronisation is in progress it is now possible to request that the
+player will be powered off once synchronisation is complete.
+
+It is no longer possible to run multiple instances of emplode.
+
+*  empegUpgrade:
+
+empegUpgrade has not been updated in this release.
+
+* empegClone:
+
+The user interface has been improved.
+
+The error reporting is now much better.
+
+*  emptool
+
+Many improvements have been made to renaming and moving items.
+
+*  developer
+
+It is now possible to add a Quit item to the player menu by placing an
+entry of quit=1 in section [menu] of /empeg/var/config.ini.
+
+* Known bugs:
+
+The empeg hangs if connected via USB to a machine that is switched
+off. Removing the USB cable fixes the problem.
+
+The emplode install program doesn't restart the computer when necessary to
+ensure that the empeg-car device is found. This is not always essential.
+
+The emplode program doesn't check whether files are valid MP3 files before
+downloading.
+
+The same PIN may be entered for more than one tune/playlist - the empeg-car
+will play the first one it finds.
+
+Plugging more than empeg-car into a single machine via USB may confuse
+emplode.
+
+It is not currently possible to play WAV files on the unit.
+
+Mike Crowe 2000/07/15 18:15 BST
+mac@empeg.com

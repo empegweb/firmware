@@ -1,0 +1,92 @@
+# empeg core library Jamfile
+#
+# (C) 1999-2002 empeg ltd.
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.7 01-Apr-2003 18:52 rob:)
+#
+# Authors:
+#   Mike Crowe <mac@empeg.com>
+
+SubDir TOP lib core ;
+
+local SRC_COMMON = 
+	dospath2.cpp
+	dynamic_config_file.cpp
+	empeg_exception.cpp
+	empeg_time.cpp
+	file.cpp
+	file_stream.cpp
+	format_error.cpp
+	memory_stream.cpp
+	pstring.cpp
+	reblocker.cpp
+	serial.cpp
+	timeout.cpp
+	var_string.cpp
+	wildcard.cpp ;
+
+local SRC_THREADS =
+	cyclecheck.cpp
+	mutex.cpp
+	thread_pid.cpp ;
+
+local SRC_NOTHREADS =
+	thread_pid_fake.cpp ;
+
+local SRC_UNIX = 
+	dnew.cpp
+	mutexcycle.cpp
+	id3v1tags.cpp
+	refcount_posix.cpp
+	time_calc.cpp
+	trace.cpp ;
+
+local SRC_WIN32 =
+	trace_win32.cpp ;
+
+local THREADS_SRC ;
+local NOTHREADS_SRC ;
+
+if $(ARCH) = win32
+{
+	THREADS_SRC = $(SRC_COMMON) $(SRC_WIN32) $(SRC_THREADS) ;
+	NOTHREADS_SRC = $(SRC_COMMAND) $(SRC_WIN32) $(SRC_NOTHREADS) ;
+}
+else
+{
+	THREADS_SRC = $(SRC_COMMON) $(SRC_UNIX) $(SRC_THREADS) ;
+	NOTHREADS_SRC = $(SRC_COMMON) $(SRC_UNIX) $(SRC_NOTHREADS) ;
+}
+
+SUBDIRHDRS += lib ;
+
+Library empeg_core : $(THREADS_SRC) ;
+Library empeg_core_nothreads : $(NOTHREADS_SRC) ;
+
+ERRBUILD = tools/errbuild.py ;
+
+rule ErrorsHeader
+{
+	local _h = [ FDirName $(SUBDIR) $(<) ] ;
+	local _s = [ FDirName $(SUBDIR) $(>) ] ;
+	ECHO $(_h) ;
+	WriteErrorsHeader $(_h) : $(_s) ;
+}
+
+rule WriteErrorsHeader
+{
+	DEPENDS $(<) : $(>) ;
+	DEPENDS $(<) : $(ERRBUILD) ;
+	DEPENDS files : $(<) ;
+	Clean clean : $(RM) $(<) ;
+}
+
+actions WriteErrorsHeader
+{
+	$(ERRBUILD) -h -o $(<:D)$(SLASH)$(<:B) $(<) $(>)
+}
+
+ErrorsHeader core_errors.h : core_errors.mes ;

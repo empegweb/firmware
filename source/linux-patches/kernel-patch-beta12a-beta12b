@@ -1,0 +1,203 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.31 empeg/kernel/Makefile:1.32
+--- empeg/kernel/Makefile:1.31	Tue Jul 18 00:50:58 2000
++++ empeg/kernel/Makefile	Thu Jul 20 17:53:25 2000
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg30
++EXTRAVERSION = -rmk5-np17-empeg31
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_display.c
+diff -u empeg/kernel/arch/arm/special/empeg_display.c:1.30 empeg/kernel/arch/arm/special/empeg_display.c:1.31
+--- empeg/kernel/arch/arm/special/empeg_display.c:1.30	Mon Jul 17 19:35:29 2000
++++ empeg/kernel/arch/arm/special/empeg_display.c	Thu Jul 20 13:17:21 2000
+@@ -174,7 +174,6 @@
+            /* 32 bytes of DMA overrun space for SA1100 LCD controller */
+ };
+ 
+-
+ /* We only support one device */
+ struct display_dev
+ {
+@@ -203,6 +202,9 @@
+ 
+ static struct display_dev devices[1];
+ 
++/* Timer to display user's splash screen */
++static struct timer_list display_timer;
++
+ #ifdef CONFIG_EMPEG_LCD
+ static volatile unsigned char
+         *lcd_command0=(volatile unsigned char*)0xe0000000,
+@@ -495,6 +497,20 @@
+ 	display_refresh(dev);
+ }
+ 
++/* Display user-configurable screen */
++static void display_user_splash(unsigned long screen)
++{
++	struct display_dev *dev = devices;
++	unsigned char *image=(unsigned char*)screen;
++
++	/* Copy splash screen to the software buffer */
++	memcpy(dev->software_buffer,image,EMPEG_SCREEN_SIZE);
++
++	/* Blat it: well, add it to the refresh buffer, otherwise when
++	   the audio DMA starts it all goes blank... */
++	display_refresh(dev);
++}
++
+ /* This handles the mmap call. To be able to mmap RAM we need to swing
+    through hoops a little. See p283 of Linux Device Drivers for details */
+ 
+@@ -557,8 +573,8 @@
+ 			udelay(15);
+ 		} else {
+ 			/* Low - 2us of low */
+-		  //udelay(1);
+-		  { int a; for(a=0;a<50;a++); }
++			//udelay(1);
++			{ int a; for(a=0;a<50;a++); }
+ 		}
+ 
+ 		/* Set line high */
+@@ -779,14 +795,9 @@
+ void __init empeg_display_init(void)
+ {
+ 	struct display_dev *dev = devices;
++	unsigned char *user_splash=(EMPEG_FLASHBASE+0xa000);
+ 	int result,delay;
+ 	
+-	/* Initialise main board->display board comms: mk2 only */
+-	if (empeg_hardwarerevision()>=6) {
+-		/* Set brightness */
+-		display_sendcontrol(16);
+-	}
+-
+ 	/* Firstly, we need to locate the LCD DMA buffer to a 4k page
+ 	   boundary to ensure that the SA1100 DMA controller can do
+ 	   display fetches for the LCD. We currently do this by having
+@@ -941,15 +952,25 @@
+ 	*lcd_command1=0xaf;
+ 	udelay(1);
+ #endif
+-	/* Initialise main board->display board comms: mk2 only */
+-	if (empeg_hardwarerevision()>=6) {
+-		/* Set brightness */
+-		display_sendcontrol(16);
+-	}
+ 	
+ 	/* Load splash screen image */
+ 	display_splash(dev);	
+-	
++
++	/* Setup timer to display user's image (if present) in 3 seconds */
++	if (strncmp(user_splash,"empg",4)==0) {
++		init_timer(&display_timer);
++		display_timer.expires=(jiffies+(HZ*3));
++
++		/* On AC or DC power? AC is first image, DC is second */
++		display_timer.data=(unsigned long)(user_splash+4);
++		if (GPLR&EMPEG_EXTPOWER) display_timer.data+=EMPEG_SCREEN_SIZE;
++
++		/* Set up function pointer & add to timer queue (it will remove
++		   itself when the timer expires) */
++		display_timer.function=display_user_splash;
++		add_timer(&display_timer);
++	}
++
+ 	printk("empeg display initialised.\n");
+ }
+ 
+@@ -1056,7 +1077,4 @@
+ 	}
+ 	GPSR=EMPEG_DSPPOM;
+ #endif
+-	/*
+-	  printk("Display now brought back to life.\n");
+-	*/
+ }
+Index: empeg/kernel/arch/arm/special/empeg_power.c
+diff -u empeg/kernel/arch/arm/special/empeg_power.c:1.10 empeg/kernel/arch/arm/special/empeg_power.c:1.12
+--- empeg/kernel/arch/arm/special/empeg_power.c:1.10	Mon Jul 17 19:36:52 2000
++++ empeg/kernel/arch/arm/special/empeg_power.c	Thu Jul 20 13:56:54 2000
+@@ -156,25 +156,56 @@
+ /* Bitset of current power state */
+ int getbitset(void)
+ {
++	/* These bits should be stable for half a second before they are
++	   allowed to change */
++	const int unstable_bits = EMPEG_POWER_FLAG_FAILENABLED
++		| EMPEG_POWER_FLAG_EXTMUTE;
++	static int saved_unstable = 0;
++	static unsigned long stable_time = 0;
++		
++	/* Any activity on these bits indicates a presence, if they go
++	   low for a while then don't worry. */
++	static unsigned long last_lights_activity;
++	
++	
+ 	int bitset=0;
+ 	unsigned int gplr=GPLR;
+ 	
+ 	if (empeg_hardwarerevision()<6) {
+ 		/* Mk1 */
+-		if (gplr&EMPEG_EXTPOWER)  bitset|=1;
+-		if (powerfail_enabled())  bitset|=2;
+-		/* Accessory ON */        bitset|=4;
++		if (gplr&EMPEG_EXTPOWER)  bitset|=EMPEG_POWER_FLAG_DC;
++		if (powerfail_enabled())  bitset|=EMPEG_POWER_FLAG_FAILENABLED;
++		/* Accessory ON */        bitset|=EMPEG_POWER_FLAG_ACCESSORY;
+ 	} else {
+ 		/* Mk2 */
+-		if (gplr&EMPEG_EXTPOWER)  bitset|=1;
+-		if (powerfail_enabled())  bitset|=2;
+-		if (gplr&EMPEG_ACCSENSE)  bitset|=4;
+-		if (power_firstboot)      bitset|=8;
+-		if (gplr&EMPEG_SERIALDCD) bitset|=16; /* Tel mute */
+-		if (!(gplr&EMPEG_SERIALCTS)) bitset|=32; /* Dimmer sense - inverted */
++		if (gplr&EMPEG_EXTPOWER)  bitset|=EMPEG_POWER_FLAG_DC;
++		if (powerfail_enabled())  bitset|=EMPEG_POWER_FLAG_FAILENABLED;
++		if (gplr&EMPEG_ACCSENSE)  bitset|=EMPEG_POWER_FLAG_ACCESSORY;
++		if (power_firstboot)      bitset|=EMPEG_POWER_FLAG_FIRSTBOOT;
++		if (gplr&EMPEG_SERIALDCD) bitset|=EMPEG_POWER_FLAG_EXTMUTE; /* Tel mute */
++		if (!(gplr&EMPEG_SERIALCTS)) bitset|=EMPEG_POWER_FLAG_LIGHTS; /* Dimmer sense - inverted */
++
++	}
++	
++	if (saved_unstable == (bitset & unstable_bits)) {
++		 /* It hasn't changed, so keep the timeout up to date */
++		stable_time = jiffies;
++	} else if ((jiffies - stable_time) > HZ/4) {
++		/* It has changed but has been stable for a quarter of
++                   a second so use it. */
++		
++		saved_unstable = bitset & unstable_bits;
++	}
++
++	if (bitset & EMPEG_POWER_FLAG_LIGHTS) {
++		/* We've got some activity on the lights. */
++		last_lights_activity = jiffies;
++	} else if (jiffies - last_lights_activity < HZ) {
++		/* We had some activity less than a quarter of a second ago. */
++		bitset |= EMPEG_POWER_FLAG_LIGHTS;
+ 	}
+ 
+-	return bitset;
++	return (bitset & ~unstable_bits) | saved_unstable;
+ }
+ 
+ /* Timer routine */
+@@ -276,7 +307,7 @@
+ 	}
+ 
+ 	/* Initialise current state */
+-	dev->laststate=getbitset();
++	dev->laststate=dev->newstate=getbitset();
+ 
+ 	/* Initialise polling of state */
+ 	dev->wq=NULL;

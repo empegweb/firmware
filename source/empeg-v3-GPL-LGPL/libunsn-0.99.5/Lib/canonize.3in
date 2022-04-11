@@ -1,0 +1,60 @@
+.\"
+.\" Lib/canonize.3in -- manual page for unsn_canonize()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_canonize.3
+.TH UNSN_CANONIZE 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_canonize \- canonize a UNSN in canonical fashion
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char *unsn_canonize(char *" dst ", char const *" src );
+.fi
+.SH DESCRIPTION
+This function canonizes a UNSN.
+.I src
+is the NUL-terminated input.  The canonical canonical form of the input
+is written to the buffer at
+.IR dst ,
+which must be large enough to contain a complete copy of the input string.
+.I dst
+may be equal to
+.I src
+in order to canonize the UNSN in place.
+.PP
+The input is checked for correct syntax, but not for semantic validity.
+Any semantic error in the input UNSN will be preserved in the canonical form
+output.
+.SH "RETURN VALUE"
+If
+.I src
+does not have correct UNSN syntax,
+returns NULL and does not modify the output buffer.
+Otherwise, returns
+.IR dst ,
+which now contains the canonical form of the UNSN.
+.PP
+.IR errno (3)
+is not affected.
+.SH NOTES
+The canonical canonical form is never longer than the input.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_encode (3),
+.IR unsn_syntaxok (3)

@@ -1,0 +1,51 @@
+.\"
+.\" Lib/perror.3in -- manual page for unsn_perror()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_perror.3
+.TH UNSN_PERROR 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_perror \- display short error message
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "void unsn_perror(char const *" str );
+.fi
+.SH DESCRIPTION
+This function sends to the standard error stream an error message
+(as returned by
+.IR unsn_strerror (3))
+relating to the current value of
+.IR errno (3).
+The message is terminated by a newline.  If
+.I str
+is non-null, the message is preceded by the string
+.I str
+and a colon and space.
+.PP
+Like
+.IR unsn_strerror (3),
+this function appropriately handles the
+.IR libunsn (3)-specific
+errors, as well as normal system errors.
+.SH "SEE ALSO"
+.IR errno (3),
+.IR libunsn (3),
+.IR perror (3),
+.IR unsn_errno (3),
+.IR unsn_strerror (3)

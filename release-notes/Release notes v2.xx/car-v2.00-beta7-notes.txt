@@ -1,0 +1,264 @@
+Rio Car Beta Release 24-December-2001
+Version 2.00-beta7
+
+Copyright (c) SONICblue, Inc. 2001
+
+
+* Notes
+
+This is a Rio Car beta release.  BY DEFINITION, BETA SOFTWARE MAY NOT
+PERFORM AS ADVERTISED.  It may not be stable.  It may eat your music
+and spoil your day in any number of ways.  Please do not install this
+release unless you understand these important points.
+
+Note that 2.00-beta4 to 2.00-beta6 were restricted releases.  The
+release notes have been combined here, for this first public release.
+
+
+* General
+
+Please submit bugs to carbugs@riohome.com - preferably after reading
+the BBS (http://empeg.comms.net) to check that the bug has not already
+been discussed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit may not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We strongly recommend completely de-installing the previous emplode before
+installing the new one, which installs into a different location.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 2.00-beta3 - Player
+
+Older players sometimes experienced glitching on the rotary control,
+for example causing a volume change to jitter.  This has been resolved.
+
+There is now an option (set in emplode) to sort playlist menu entries by
+emplode order, not alpabetically.
+
+New dancing people visual - awaiting permission from the author of the
+Acorn Archimedes data files to include this in the next public Beta.
+
+Improvement to fonts by Bruno Fernandes - thanks!
+
+New info mode - Seek Tool.  The first time a track is played through
+a profile is created, and then saved for future playback.  The profile
+is intended to identify phrases within the track, with active sections
+plotted with bright pixels and less active sections with dim pixels.  Note
+that the plot will be dynamic until it has been completed, as each section
+is relative to the rest of the track.
+
+Within the Seek Tool the controls act as follows:
+Left       : skip to the previous phrase
+Right      : skip to the next phrase
+Left-Hold  : skip to the next track
+Right-Hold : skip to the previous track
+Rotary     : seek within the track (press to change volume etc)
+
+Fixed: Rewind time pop-up window moves slowly. (#17)
+
+Fixed: Rotary button does nothing. (#36)
+
+Fixed: Wish list: TOD in the time-cycle (#124)
+
+Fixed: Set the clock from RDS on Mark 1 (#188)
+
+Fixed: InfoTex visuals contain blitter and don't always get proper info fed to
+them (#976)
+
+Fixed: Radio is silent when booting into radio mode. (#1005)
+
+Fixed: "Title bar" text on search screens overlaps "xxxx tunes" text (#1020)
+
+Fixed: Info:Transient doesn't display frequency when scanning in radio (#1038)
+
+Fixed: Now and Next screen shows multiple repeats of single track (#1052)
+
+Fixed: Time mode info popups - cosmetic bug (#1073)
+
+Fixed: Play count (& other stats?) not updated in Repeat track mode (#1104)
+
+Fixed: More than 22 chars on the serial port exits the player. (#1108)
+
+Fixed: No "pause" or "mute" indicator on Info:Tuner screen (#1109)
+
+Fixed: Now and Next overridden at in-car startup. (#1111)
+
+Fixed: Anna Vu freaks out when tuner is pause/muted (#1112)
+
+Fixed: Info screen clock stays at 24hr when Clock visual is at 12hr (#1114)
+
+Fixed: Flashes to a screen with one horizontal line across the middle of the
+screen and reboots (#1119)
+
+Fixed: Changing volume from the remote control is too slow (#1121)
+
+Fixed: Searching by track does not select all matches (#1130)
+
+Fixed: Perpetual reboot with empty playlist (#1134)
+
+Fixed: Inappropriate menu choices in RADIO and AUX source modes (#1135)
+
+Fixed: Clock timemode doesn't update while player is paused (#1137)
+
+Fixed: Track skip beeps for Kenwood but not Rio remote (#1140)
+
+Fixed: After entering Year, search screens stop working (#1172)
+
+Fixed: Source switching problem after power-on in car (#1188)
+
+Fixed: Tuner Info:Transient showing Mute indicator at startup
+in 2.0b4/b5 (#1197)
+
+Fixed: Kenwood remote DNPP did not confirm time setting (#1211)
+
+Fixed: Info:Track Clock doesn't update when time is set. (#1212)
+
+Fixed: If BPM is present, last line of Track Details screen is cut off (#1216)
+
+Fixed: Pushing the rotary brings up the fader at home (#1316)
+
+Fixed: TimeShade 128 behaves poorly with Info:Line/Transient (#1322)
+
+Fixed: Rewind popup is "clock" if that's the current time mode (#1323)
+
+Fixed: Player paused when returning from Tuner (#1324)
+
+Fixed: Hush volume level propogates across reboot to be normal volume (#1345)
+
+Fixed: Player not exiting immediately. (#1357)
+
+Fixed: Beep Volume Window should beep (#1360)
+
+Fixed: Absurdly short timeout on loudness/fader/etc. (#1377)
+
+Fixed: Volume up/down speed from remote too slow. (#1383)
+
+Fixed: Tuner/boot/stop mode switching issues. (#1386)
+
+Fixed: Home EQ lets you set the EQ to four channels (#1389)
+
+Fixed: Time Display Modes in AUX Mode (#1393)
+
+Fixed: Impossible to increase volume to 0db (#1457)
+
+Fixed: No audio on player startup (#1483)
+
+Fixed: Player crashes immediately on startup (#1497)
+
+Fixed: Bottom-button-hold only switches Off<>Radio in Tuner mode (#1113)
+
+Fixed: Last letter in 8-character preset name lost when re-saving over
+another station. (#1381)
+
+Fixed: Power antenna line not always powering up. (#1391)
+
+
+* What's New Since 2.00-beta3 - Emplode
+
+The user is now warned that deleting a playlist doesn't necessarily do what
+they're expecting (i.e. the content remains on the player).
+
+Fixed: Error writing player configuration (#919)
+
+Fixed: Checkbox in Emplode to switch playlist ordering modes (#979)
+
+Fixed: Emplode truncates exit event WAV (#1031)
+
+Fixed: Cut & paste into track properties doesn't forget font (#1056)
+
+Fixed: Need a "Yes to all" for deleting items from a search. (#1131)
+
+Fixed: Tags with leading zeroes are incorrectly parsed as octal when coerced
+to an integer (#1143)
+
+Fixed: Wendy tab on track properties should not appear if player doesn't
+support wendy flags (#1164)
+
+Fixed: Emplode fails to recognise genres, albums, artists (B5) (#1206)
+
+Fixed: Soup views quit working on 2.0 Beta 5? (#1210)
+
+Fixed: Player sometimes fails to reboot during synchronization (#1215)
+
+Fixed: No way to turn on quit option from emplode (#1222)
+
+Fixed: Tracks with long comments fields get lost (#1329)
+
+Fixed: Total playlist play time value incorrect when editing
+properties. (#1346)
+
+Fixed: Switching properties tabs loses changes. (#1358)
+
+Fixed: Overall progress bar is not working (#1363)
+
+Fixed: Bitrate column sorted oddly (#1400)
+
+Fixed: There's no way to reset track metadata (#1413)
+
+Fixed: Needs XML export (#1430)
+
+Fixed: Add "Restarting player" after "Writing Configuration" to the sync
+progress dialog (#1466)
+
+Fixed: Progress bar is too jerky (#1471)
+
+Fixed: Advanced search doesn't recognise tags with underscores (#1473)
+
+Fixed: Scrollbar thumb should have a tooltip when scrolling long lists (#1474)
+
+Fixed: Can't bulk rename Albums by pressing F2 in tree control (#1476)
+
+Fixed: List view is always striped, even if isn't in details view. (#1485)
+
+
+* What's New Since 2.00-beta3 - Emptool
+
+Fixed: emptool falls over on "cd /" if you start it with no parameters (#1118)
+
+
+* What's New Since 2.00-beta3 - Upgrader
+
+Fixed: Installer for Emplode does not associate EmpegUpgrade.exe with
+.upgrade files. (#27)
+
+Fixed: Upgrade does not listen for player "peace..." message soon
+enough (#1058)
+
+Fixed: empegUpgrade uses wrong registry key (#1128)
+
+Fixed: Error message displayed when serial port is in use is rather
+lame (#1183)
+
+Fixed: "Serial Port In Use" Error Not Correctly Reported (#1214)
+
+Fixed: empegUpgrade uses wrong icon in Alt-Tab window (#1245)
+
+
+Rob Voisey 2001/12/24 12:38 +0000 (GMT)
+rvoisey@sonicblue.com

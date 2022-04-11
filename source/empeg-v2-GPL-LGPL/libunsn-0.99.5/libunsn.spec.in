@@ -1,0 +1,127 @@
+Summary: libunsn: library to handle UNSNs
+Name: libunsn
+Version: @VERSION@
+Release: 0
+Copyright: LGPL and GPL
+Group: Libraries
+Source0: libunsn-@VERSION@.tar.bz2
+BuildRoot: /tmp/rpmroot-libunsn-%{PACKAGE_VERSION}-%{PACKAGE_RELEASE}
+
+%description
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+%prep
+%setup -q -n libunsn-@VERSION@
+
+%build
+./configure --prefix=/usr
+make
+
+%install
+DESTDIR=$RPM_BUILD_ROOT make install
+echo > filelist.shlib
+INSTLIST=`pwd`/filelist.shlib make instlist.shlib
+echo > filelist.devel
+INSTLIST=`pwd`/filelist.devel make instlist.devel
+echo > filelist.utils
+INSTLIST=`pwd`/filelist.utils make instlist.utils
+cat filelist.shlib filelist.devel filelist.utils > filelist.all
+
+%clean
+DESTDIR=$RPM_BUILD_ROOT make uninstall
+
+%package shlib
+Conflicts: libunsn-all
+Summary: libunsn (library to handle UNSNs) - shared library
+Group: Libraries
+Prefix: /usr
+
+%description shlib
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+This package contains the libunsn shared library only.  This is required
+in order to run programs that use UNSNs.  In order to compile programs
+that use UNSNs, you'll need the libunsn-devel package (or you can get
+everything in one go with the libunsn-all package).
+
+%package devel
+Conflicts: libunsn-all
+Requires: libunsn-shlib
+Summary: libunsn (library to handle UNSNs) - program development files
+Group: Development/Libraries
+Prefix: /usr
+
+%description devel
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+This package contains the libunsn headers and the static version of the
+library.  This is required in order to compile programs that use UNSNs.
+You'll also need the shared library in the libunsn-shlib package (or
+you can get everything in one go with the libunsn-all package).
+
+%package utils
+Conflicts: libunsn-all
+Provides: uclient userver ustat
+Summary: libunsn (library to handle UNSNs) - utilities
+Group: Networking/Utilities
+Prefix: /usr
+
+%description utils
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+This package contains the UNSN-using networking utility programs
+uclient, userver and ustat.  You'll also need the shared library in
+the libunsn-shlib package (or you can get everything in one go with the
+libunsn-all package).
+
+%package all
+Conflicts: libunsn-shlib libunsn-devel libunsn-utils
+Provides: uclient userver ustat
+Summary: libunsn (library to handle UNSNs) - complete installation
+Group: Libraries
+Prefix: /usr
+
+%description all
+libunsn is a library providing functions to handle Universal Network
+Socket Names (UNSNs).
+
+UNSNs are a form of network address that does not discriminate in favour
+of any particular networking protocol suite.  Applications that use
+UNSNs can talk all protocols that the library knows, without having to
+know about any protocols themselves.
+
+This package contains the libunsn shared library, the development files,
+and a set of UNSN-using networking utilities.  This is exactly what is
+in the libunsn-shlib, libunsn-devel and libunsn-utils packages, combined.
+
+%files shlib -f filelist.shlib
+
+%files devel -f filelist.devel
+
+%files utils -f filelist.utils
+
+%files all -f filelist.all

@@ -1,0 +1,53 @@
+.\"
+.\" Lib/strerror.3in -- manual page for unsn_strerror()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_strerror.3
+.TH UNSN_STRERROR 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_strerror \- return string describing error code
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char const *unsn_strerror(int " errnum );
+.fi
+.SH DESCRIPTION
+This function returns a string describing the error denoted by the
+number passed to it.  For normal system errors, this function
+behaves identically to
+.IR strerror (3).
+It also handles the
+.IR libunsn (3)-specific
+errors (see
+.IR unsn_errno (3)).
+.SH "RETURN VALUE"
+Returns a pointer to a string describing the specified error,
+or a generic message if the error number is not recognized.
+On some systems, the string may be overwritten by the next call to
+.IR strerror (3)
+or
+.IR unsn_strerror (3).
+.PP
+.IR errno (3)
+is not affected.
+.SH "SEE ALSO"
+.IR errno (3),
+.IR libunsn (3),
+.IR strerror (3),
+.IR unsn_errno (3),
+.IR unsn_perror (3)

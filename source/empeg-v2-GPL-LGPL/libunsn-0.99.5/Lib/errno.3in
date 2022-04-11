@@ -1,0 +1,219 @@
+.\"
+.\" Lib/errno.3in -- manual page for libunsn-specific error numbers
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_errno.3
+.TH UNSN_ERRNO 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_errno \- libunsn-specific error numbers
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.fi
+.SH DESCRIPTION
+The
+.IR libunsn (3)
+library needs to indicate and handle some error conditions not covered by
+standard
+.IR errno (3)
+error constants.
+This is done by defining additional error numbers, not overlapping with the
+standard set.  These error numbers are handled in exactly the same way as
+standard error numbers; errors are usually indicated by setting
+.IR errno (3)
+to the appropriate error number.
+.PP
+The
+.IR libunsn (3)-specific
+error constants are named like the standard
+.IR errno (3)
+error constants, except that they all start with
+.RB ` UNSN_E '
+instead of just
+.RB ` E '.
+.PP
+The standard error reporting functions
+.IR perror (3)
+and
+.IR strerror (3)
+don't know about these additional error numbers.
+.IR unsn_perror (3)
+and
+.IR unsn_strerror (3)
+are drop-in replacements that do handle the
+.IR libunsn (3)-specific
+error numbers, in addition to all the standard error numbers.
+Unless another library is using the same technique, a
+.IR libunsn (3)-using
+application can simply use these
+functions in place of the standard ones throughout.
+.SH ERRORS
+.SS "General address errors"
+.TP
+UNSN_EADDRINCOMPAT
+.BR "Addresses are incompatible" :
+Two addresses specified to be used together as the two endpoints of
+a network connection cannot be used together because they specify
+incompatible protocols.
+.TP
+UNSN_EADDRUNSPEC
+.BR "Insufficiently specified address" :
+A UNSN did not include sufficient information to form a usable address.
+.SS "IP errors"
+.TP
+UNSN_EIPHOSTFAIL
+.BR "Unknown IP hostname lookup failure" :
+An IP protocol layer in a UNSN specified a host by name,
+and during lookup of that hostname an error condition occurred that
+could not be adequately communicated.
+Whether this can happen or not depends on your resolver library.
+.TP
+UNSN_EIPHOSTNOADDR
+.BR "No usable addresses for IP host" :
+An IP protocol layer in a UNSN specified a host (by name)
+that has no IP addresses of a form that can be handled by
+this implementation of
+.IR libunsn (3)
+on this system.
+.TP
+UNSN_EIPHOSTPFAIL
+.BR "Permanent IP hostname lookup failure" :
+An IP protocol layer in a UNSN specified a host by name,
+and during lookup of that hostname a permanant error condition occurred.
+For example, this could occur if the relevant DNS servers were misconfigured.
+.TP
+UNSN_EIPHOSTTFAIL
+.BR "Temporary IP hostname lookup failure" :
+An IP protocol layer in a UNSN specified a host by name,
+and during lookup of that hostname a temporary error condition occurred.
+For example, this would occur if all the DNS servers to which the appropriate
+domain is delegated are down.
+.TP
+UNSN_EIPNOHOST
+.BR "No such IP host" :
+An IP protocol layer in a UNSN specified a host (by name)
+that does not exist.
+.TP
+UNSN_EIPPROTOUNREC
+.BR "Unrecognized IP protocol name" :
+An IP protocol layer in a UNSN specified a protocol name that
+is not recognized by this implementation of
+.IR libunsn (3)
+on this system.
+.SS "Socket errors"
+.TP
+UNSN_ESOCKNOADDR
+.BR "Socket address not determinable" :
+It is not possible to determine an address for this type of socket.
+For example, on a raw Internet-domain socket, on some systems there is
+no way to determine the protocol number being used.
+.SS "TCP errors"
+.TP
+UNSN_ETCPPORTUNREC
+.BR "Unrecognized TCP port name" :
+A TCP protocol layer in a UNSN specified a port name that
+is not recognized by this implementation of
+.IR libunsn (3)
+on this system.
+.SS "UDP errors"
+.TP
+UNSN_EUDPPORTUNREC
+.BR "Unrecognized UDP port name" :
+A UDP protocol layer in a UNSN specified a port name that
+is not recognized by this implementation of
+.IR libunsn (3)
+on this system.
+.SS "UNSN errors"
+.TP
+UNSN_EUNSNBADENCAP
+.BR "Invalid protocol encapsulation in UNSN" :
+The UNSN specified two protocol layers, one protocol to be encapsulated
+in another, in a combination that is not possible.  For example, IP
+cannot only be encapsulated in a datagram protocol, not a byte-stream
+protocol.
+.TP
+UNSN_EUNSNBADOPTION
+.BR "Inappropriate option for protocol in UNSN" :
+The UNSN included a protocol layer with an option that is not valid for
+that protocol.  Most protocols only permit a very small number of options.
+For example, the
+.RB ` ip '
+protocol (IP) defines an option called
+.RB ` protocol ',
+but not one called
+.RB ` fridge '.
+.TP
+UNSN_EUNSNBADSYNTAX
+.BR "Syntax error in UNSN" :
+The string being used as a UNSN does not match UNSN syntax.  See
+.IR unsn (7)
+for more information.
+.TP
+UNSN_EUNSNBADVALUE
+.BR "Invalid option value in UNSN" :
+The UNSN included a protocol option whose value is syntactically invalid.
+The validity rules depend on the protocol and option, but are otherwise
+static; run-time errors are reported using other error numbers.
+.TP
+UNSN_EUNSNCOMBINOSUPPORT
+.BR "Unsupported protocol combination in UNSN" :
+This implementation of
+.IR libunsn (3)
+on this system does not support the particular combination of protocol layers
+specified by the UNSN.
+.TP
+UNSN_EUNSNDUPOPTION
+.BR "Duplicated option in UNSN" :
+The UNSN included a protocol layer in which a single option name appeared
+more than once, which is a semantic error.
+.TP
+UNSN_EUNSNEMPTY
+.BR "Empty UNSN" :
+The UNSN specified no protocol layers, which is a semantic error.
+.TP
+UNSN_EUNSNENCAPNOSUPPORT
+.BR "Unsupported protocol encapsulation in UNSN" :
+The UNSN specified two protocol layers, one protocol to be encapsulated
+in another, in a combination that is not supported by
+this implementation of
+.IR libunsn (3)
+on this system.
+.TP
+UNSN_EUNSNLAYERNOSUPPORT
+.BR "Unsupported protocol options in UNSN" :
+The UNSN included a protocol layer with an option combination that
+is not supported by this implementation of
+.IR libunsn (3)
+on this system.
+.TP
+UNSN_EUNSNPROTONOSUPPORT
+.BR "Unsupported protocol in UNSN" :
+The UNSN included a protocol layer specifying a protocol that
+is not supported by this implementation of
+.IR libunsn (3).
+.TP
+UNSN_EUNSNPROTOUNREC
+.BR "Unrecognized UNSN protocol name" :
+The UNSN included a protocol layer specifying a protocol that
+is not recognized by this implementation of
+.IR libunsn (3).
+.SH "SEE ALSO"
+.IR errno (3),
+.IR libunsn (3),
+.IR unsn_errno_cmp (3),
+.IR unsn_perror (3),
+.IR unsn_strerror (3)

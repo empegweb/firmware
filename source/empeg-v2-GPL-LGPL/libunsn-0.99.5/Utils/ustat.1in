@@ -1,0 +1,133 @@
+.\"
+.\" Utils/ustat.1in -- manual page for ustat
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: ustat.1
+.TH USTAT 1 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+ustat \- display information about an existing socket
+.SH SYNOPSIS
+.B ustat
+.RI [ options ]
+.SH DESCRIPTION
+.I ustat
+gathers information about an existing socket connected to standard input,
+and sends the results to standard output.
+It is intended for use by Internet daemons written as shell scripts,
+but can also be used in many other situations.
+.PP
+To support use from shell scripts, certain guarantees are made about the
+form of the output.  The options used (see section below) determine which
+data items are to be determined and output.  Each data item is output as
+a sequence of graphic characters, and the items are separated by whitespace;
+this makes them easily separated by Bourne shell field splitting.
+The order in which items are output is also guaranteed.  Where an error
+occurs, each datum affected by an error is replaced by the string
+.RB ` -- ',
+and an error message is sent to standard error.
+An error message is emitted for each affected datum, one message per line.
+.PP
+The exit status is zero if no errors occurred, 1 if at least one error
+occurred, or 2 if a usage error was detected.
+.SH OPTIONS
+.TP
+.B -T
+Output the type of the socket.  Usually this will be
+.RB ` STREAM '
+(reliable byte stream) or
+.RB ` DGRAM '
+(unreliable datagrams); other normal socket types are
+.RB ` RDM '
+(reliably delivered messages) and
+.RB ` SEQPACKET '
+(reliable packet sequence).
+Other values are possible on
+some systems, for example,
+.RB ` RAW '
+indicates bypass of upper-layer protocols, but does not reliably indicate the
+type of communication that may be performed on the socket.
+.RB ` unknown '
+will be output if the socket is of a type not recognised by
+.IR ustat .
+.TP
+.B -L
+Output the address of the socket
+(the local end of the connection in the case of a connected socket).
+This is possible even if the socket has not been explicitly bound to
+any address.
+The address is output as a Universal Network Socket Name (UNSN)
+in canonical format.
+See
+.IR unsn (7)
+for more information.
+.TP
+.B -R
+Output the address of the socket to which this one is connected
+(the remote end of the connection).  It is an error if the socket is
+not connected.
+The address is output as a Universal Network Socket Name (UNSN)
+in canonical format.
+See
+.IR unsn (7)
+for more information.
+.PP
+At least one of
+.BR -T ,
+.B -L
+or
+.B -R
+must be specified.
+If more than one is specified, all the requested bits of information
+will be output, one per line, in the order in which the options
+are listed above.
+.TP
+.B -0
+When generating UNSNs, use numeric addresses rather than symbolic names.
+.TP
+.B -y
+When generating UNSNs, use symbolic names in place
+of numeric addresses wherever possible.
+.PP
+If neither
+.RB ` -0 '
+nor
+.RB ` -y '
+is specified, the default is to use numeric addresses.  If both options
+are specified, then UNSNs will be generated in both flavors; they
+will both be output, numeric first, separated by a space.
+.TP
+.B -c
+When used with
+.RB ` -R ',
+if the socket is not connected, output
+.RB ` -c '
+in place of a remote address, instead of signalling an error.
+(If two versions of the remote address would have been generated,
+two copies of
+.RB ` -c '
+will be output.)
+.TP
+.B -s
+If the standard input is not a socket, output
+.RB ` -s '
+in place of each datum that would otherwise have been output,
+instead of signalling an error.
+.SH "SEE ALSO"
+.IR libunsn (1)
+.SH BUGS
+The addresses can't be determined, or can only be partially determined,
+for some types of socket.

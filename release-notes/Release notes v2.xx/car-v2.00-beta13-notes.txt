@@ -1,0 +1,174 @@
+Rio Car Beta Release 24-July-2002
+Version 2.00-beta13
+
+Copyright (c) SONICblue, Inc. 2002
+
+
+* Notes
+
+This is a Rio Car beta release.  BY DEFINITION, BETA SOFTWARE MAY NOT
+PERFORM AS ADVERTISED.  It may not be stable.  It may eat your music
+and spoil your day in any number of ways.  Please do not install this
+release unless you understand these important points.
+
+Note that 2.00-beta12 was an internal release.  Its release notes have
+been rolled into this document.
+
+
+* General
+
+Please submit bugs to the Bug Reports forum at the empeg BBS
+(http://empeg.comms.net).  Be sure to check that the bug has not already
+been discussed.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit may not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We strongly recommend completely de-installing the previous emplode before
+installing the new one, which installs into a different location.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 2.00-beta11 - Player
+
+In Seek Tool mode, left/right and rotary turn now perform their normal
+functions.  To activate the seek tool functions press the rotary control:
+the rotary turn now seeks within the track and left/right skip to the
+previous/next phrase.  Pressing the rotary control again switches back
+to normal mode.
+
+Following considerable debate on the BBS and elsewhere, the player's
+INSERT functionality has been renamed to ENQUEUE. There is an all-new INSERT
+mode, in which added songs are always added immediately after the current
+song, even if subsequent songs were enqueued or inserted. Those of you who
+didn't like the way the old INSERT worked should try the new INSERT; those
+of you  who liked the old INSERT should now use ENQUEUE. The new INSERT mode
+is available from the long-press-on-playlist-menu menu, and as one of the
+search window modes (on the Select Mode button).
+
+Developers: when telling the player what to play by supplying FID numbers
+over the serial port, you can now select whether the new FID replaces the
+current content (as before), or is appended (follow the FID with "+"), or
+Enqueued (follow it with "-"), or Inserted ("!").
+
+FIQ's are now correctly disabled when appropriate, hopefully solving some
+issues whereby the UI would hang for periods of approximately 19 minutes
+(fix supplied by Mark Lord - thanks).
+
+The player now supports a partitioning scheme for the fids directory, which
+should improve performance when rebuilding the database.  The partitioning
+works by e.g. FID 34da0 is placed in (e.g.) /driveN/fids/_00034/da0,
+where N is 0 or 1, according to the player's normal rules.  Essentially,
+the number (in hex) is zero-padded to 8 characters (xxxxxyyy) and saved
+as _xxxxx/yyy.
+
+Note that the player won't create directories of this form.  A future version
+of the player will.  This code was partially back-ported, in order to
+allow v2.0 betas to work correctly on players which had music added by v2.1
+player code.
+
+
+Fixed: Player sometimes reverts to previous power-on playlist postion. (#1672)
+
+Fixed: Playlist isn't reshuffled at "End of Playlist" (#1680)
+
+Fixed: Single-letter menus not highlighted (#1735)
+
+Fixed: Clock display available despite lack of clock (#1741)
+
+Fixed: Stalk ignores "Favorite Visuals" mode (#1753)
+
+Fixed: flash-empeg.c busy-waits (#1756) (Thanks Mark)
+
+Fixed: "Failed to restart player" errors, 2.0b11 (#1762)
+
+Fixed: Poweroff submenu reboots (#1768)
+
+Fixed: Visual Mode Forced (#1769)
+
+Fixed: Alpha keys don't work for selecting timezones (#1770)
+
+Fixed: Visuals "by name" not alpha sorted (#1772)
+
+Fixed: Player boots into transient info mode (#1777)
+
+Fixed: February spelled wrong in the Clock visuals (#1782)
+
+Fixed: Currently active Wendy filter does not survive a reboot (#1787)
+
+Fixed: Volume increments change when limits are reached. (#1793)
+
+Fixed: Can't use ctime in custom shuffles (#1796)
+
+Fixed: Equalizer channel lock behavior strange (#1799)
+
+Fixed: Auto change visuals "on timeout" gets forgotten after reboot (#1802)
+
+
+* What's New Since 2.00-beta11 - Emplode
+
+Fixed: Misbehaving hush settings in Emplode (#1773)
+
+Fixed: Repeating list of visuals in Fav Vis window (#1764)
+
+Fixed: Emplode misinterprets ID3v2 track info at import (#1765)
+
+Fixed: strtol() being used bogusly (#1776)
+
+Fixed: Using the favourite visual dialog causes config.ini to grow (#1780)
+
+Fixed: Dropping a folder onto emplode with the same name as a track corrupts
+the FIDs (#1790)
+
+Fixed: Importing a folder into a playlist oddity (#1792)
+
+Fixed: Emplode erroneously treats tunes as playlists when they have tracks
+dropped on, and they're at the bottom of the list view.
+
+Fixed: Make the "playlist subset" controls slightly more intelligent.
+
+Fixed: Performance enhancements in the track properties dialog box,
+particularly in the Search Results window.
+
+Fixed: Crash when using Alt+3 properties dialog and pressing OK.
+
+Fixed: Network configuration dialog still available when connected by network.
+Causes problems on reboot.
+
+Fixed: Replacing a tune isn't updating the list control properly, if the tags
+are different.
+
+Fixed: Replacing a tune in the soup views deletes the track.  Similarly in
+the search results.
+
+Fixed: Some soup entries have no children, they should have.
+
+
+* What's New Since 2.00-beta11 - Emptool
+
+Fixed: emptool mishandles dynamic data (#1795)
+
+
+Rob Voisey 2002/07/24 18:08 +0000 (GMT)
+rvoisey@sonicblue.com

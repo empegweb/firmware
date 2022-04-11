@@ -1,0 +1,169 @@
+#
+# Lib/Compat/Makefile.in -- Makefile for libunsn compatibility library
+# Copyright (C) 2000  Andrew Main
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# Paths
+
+SHELL = /bin/sh
+@SET_MAKE@
+
+srcdir      = @srcdir@
+VPATH       = @srcdir@
+
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+mandir      = @mandir@
+libdir      = @libdir@
+includedir  = @includedir@
+
+CC          = @CC@
+CPPFLAGS    = @CPPFLAGS@
+DEFS        = @DEFS@
+CFLAGS      = @CFLAGS@
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@
+
+SHLIB_CFLAGS = @SHLIB_CFLAGS@
+SHLIB_LDFLAGS = @SHLIB_LDFLAGS@
+SHLIB_SONAME_LDFLAG = @SHLIB_SONAME_LDFLAG@
+SHLIB_EXT = @SHLIB_EXT@
+
+RANLIB      = @RANLIB@
+
+INSTALL     = @INSTALL@
+
+MAKEDEFS    = \
+prefix='$(prefix)' exec_prefix='$(exec_prefix)' \
+bindir='$(bindir)' mandir='$(mandir)' libdir='$(libdir)' \
+includedir='$(includedir)' \
+CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' DEFS='$(DEFS)' \
+CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS='$(LIBS)' \
+SHLIB_CFLAGS='$(SHLIB_CFLAGS)' SHLIB_LDFLAGS='$(SHLIB_LDFLAGS)' \
+SHLIB_SONAME_LDFLAG='$(SHLIB_SONAME_LDFLAG)' SHLIB_EXT='$(SHLIB_EXT)' \
+RANLIB='$(RANLIB)'
+
+DISTFILES   = Makefile.in .cvsignore \
+base.h errno.h fcntl.h getopt.h inetdb.h ip.h poll.h pwdgrp.h \
+signal.h sock_inet.h sock_local.h socket.h \
+stdlib.h string.h syslog.h time.h unistd.h wait.h \
+basename.c hnbyteorder.c in6addr.c inet_ntop.c inet_pton.c ipnode.c poll.c \
+
+# Build targets
+
+SHLIB_TARGETS = shlibobjs.list
+SHNIB_TARGETS =
+
+all: stamp-h libobjs.list $(SH@L@IB_TARGETS)
+
+check: libobjs.list $(SH@L@IB_TARGETS)
+	@echo 'There are no tests.'
+
+install install.shlib install.devel install.utils:
+uninstall uninstall.shlib uninstall.devel uninstall.utils:
+instlist.shlib instlist.devel instlist.utils:
+
+install-strip: install
+
+# Cleaning
+
+clean:
+	rm -f stamp-h
+	rm -f *.o libobjs.list $(SH@L@IB_TARGETS)
+
+distclean: clean
+	rm -f Makefile
+
+superclean: distclean
+
+mostlyclean: clean
+maintainer-clean: distclean
+
+# Distributions
+
+dist: $(DISTFILES)
+	mkdir $(DISTDIR)
+	list=`echo '' $(DISTFILES) | sed 's" \([^ ]\)" '$(srcdir)'/\1"g'`; \
+	ln $$list $(DISTDIR) || cp -p $$list $(DISTDIR)
+
+# Configuration
+
+../../config.status: ../../configure
+	cd ../.. && ./config.status --recheck
+
+../../configure: ../../configure.in ../../aclocal.m4
+	cd $(srcdir)/../.. && autoconf
+
+../../config.h: ../../stamp-h
+	@: Getting round a bug in GNU make
+
+../../stamp-h: ../../config.h.in ../../config.status
+	cd ../.. && CONFIG_FILES= CONFIG_HEADERS=config.h ./config.status
+
+../../config.h.in: ../../stamp-h.in
+	@: Getting round a bug in GNU make
+
+../../stamp-h.in: ../../acconfig.h ../../configure.in ../../aclocal.m4
+	cd $(srcdir)/../.. && autoheader
+	echo > $(srcdir)/../../stamp-h.in
+
+../../acconfig.h: ../../configure.in ../../mkacconfigh
+	cd $(srcdir)/../.. && ./mkacconfigh > acconfig.h
+
+Makefile: Makefile.in ../../config.status
+	cd ../.. && CONFIG_FILES=Lib/Compat/Makefile CONFIG_HEADERS= ./config.status
+
+# Library building
+
+HEADERS = \
+base.h errno.h fcntl.h getopt.h inetdb.h ip.h poll.h pwdgrp.h \
+signal.h sock_inet.h sock_local.h socket.h \
+stdlib.h string.h syslog.h time.h unistd.h wait.h
+
+stamp-h: ../../config.h $(HEADERS)
+	echo > stamp-h
+
+LIBOBJS = \
+basename.o hnbyteorder.o in6addr.o inet_ntop.o inet_pton.o ipnode.o poll.o \
+
+SHLIBOBJS = \
+basename..o hnbyteorder..o in6addr..o inet_ntop..o inet_pton..o ipnode..o poll..o \
+
+$(LIBOBJS) $(SHLIBOBJS): stamp-h
+
+libobjs.list: $(LIBOBJS)
+	echo '' $(LIBOBJS) | sed 's| | Compat/|g' > $@
+
+shlibobjs.list: $(SHLIBOBJS)
+	echo '' $(SHLIBOBJS) | sed 's| | Compat/|g' > $@
+
+# Compiling
+
+INCLUDES = -I.. -I$(srcdir)/..
+COMPBASE = $(CC) $(INCLUDES) $(CPPFLAGS) $(DEFS) $(CFLAGS)
+COMPILE = $(COMPBASE) -c
+DLCOMPILE = $(COMPBASE) $(SHLIB_CFLAGS) -c -o $@
+
+.SUFFIXES:
+.SUFFIXES: .c .o ..o
+
+.c.o:
+	$(COMPILE) $<
+
+.c..o:
+	$(DLCOMPILE) $<

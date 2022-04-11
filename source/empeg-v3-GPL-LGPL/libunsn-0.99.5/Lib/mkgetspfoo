@@ -1,0 +1,62 @@
+#! /bin/sh -e
+
+#
+# mkgetspfoo -- generate C source for get{sock,peer} function pairs
+# Copyright (C) 2000  Andrew Main
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+TEMPLATE=$1
+OUTPUT=$2
+
+eval `echo $OUTPUT | sed 's/^get\(....\)\(.*\)\.c$/sp=\1;thingy=\2/'`
+
+case $thingy in
+	addr)
+		rettype='int'
+		other_arg_decls='struct unsn_sockaddrinfo *addr_ret'
+		other_args='addr_ret'
+		;;
+	unsn)
+		rettype='char *'
+		other_arg_decls='unsigned opts'
+		other_args='opts'
+		;;
+	unsnh)
+		thingy=unsn_withhints
+		rettype='char *'
+		other_arg_decls='struct unsn_sockaddrinfo const *hints, unsigned opts'
+		other_args='hints, opts'
+		;;
+	*)
+		echo >&2 "$0: Don't know how to make $OUTPUT"
+		exit 1
+		;;
+esac
+
+(
+	echo "/* Generated automatically -- do not edit */"
+	echo "/* Edit the template ($TEMPLATE) instead */"
+	echo
+	sed "
+		s|\* Lib.* -- template for |* Lib/${OUTPUT} -- |
+		s/@SP@/$sp/g
+		s/@THINGY@/$thingy/g
+		s/@RETTYPE@/$rettype/g
+		s/@OTHER_ARG_DECLS@/$other_arg_decls/g
+		s/@OTHER_ARGS@/$other_args/g
+	" < $TEMPLATE
+) > $OUTPUT

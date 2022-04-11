@@ -1,0 +1,106 @@
+.\"
+.\" Lib/saiiter.3in -- manual page for unsn_sai_iterator functions
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_sai_iterator.3
+.\" NAMES: unsn_sai_iterator_advance.3 unsn_sai_iterator_free.3
+.\" NAMES: unsn_sai_iterator_nullify.3 unsn_sai_iterator_sai.3
+.TH UNSN_SAI_ITERATOR 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_sai_iterator_advance, unsn_sai_iterator_free, unsn_sai_iterator_nullify,
+unsn_sai_iterator_sai \- UNSN socket address information iterator functions
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.B struct unsn_sai_iterator;
+.sp
+.BI "void unsn_sai_iterator_free(struct unsn_sai_iterator *" i );
+.sp
+.BI "struct unsn_sockaddrinfo const *unsn_sai_iterator_sai("
+.BI "        struct unsn_sai_iterator const *" i );
+.sp
+.BI "void unsn_sai_iterator_nullify(struct unsn_sai_iterator *" i );
+.sp
+.BI "struct unsn_sockaddrinfo const *unsn_sai_iterator_advance("
+.BI "        struct unsn_sai_iterator *" i );
+.fi
+.SH DESCRIPTION
+.B struct unsn_sai_iterator
+is an opaque type encapsulating an iteration over the socket
+addresses that can be represented by a UNSN.
+Such an iterator is usually created by
+.IR unsn_mksaiiterater (3).
+At all times, the iterator either is in a null state or refers to one of the
+possible socket addresses over which it is iterating.
+.PP
+.B unsn_sai_iterator_free
+deallocates all resources used by an iterator.  If
+.I i
+is a null pointer, it does nothing.
+.PP
+.B unsn_sai_iterator_sai
+retrieves the socket address
+currently referenced by the iterator
+.IR i .
+The iterator is unaffected.
+.PP
+.B unsn_sai_iterator_nullify
+sets the iterator
+.I i
+to the null state, regardless of where it was before.
+.PP
+.B unsn_sai_iterator_advance
+advances the iterator
+.I i
+to refer to the next socket address.  If the iterator
+was previously null, it is set to the first socket address.  If it was
+previously on the last socket address, so that there are no more, it
+is made null.
+.SH "RETURN VALUE"
+.B unsn_sai_iterator_sai
+returns NULL if the iterator
+.I i
+is in the null state.  Otherwise it
+returns a pointer to a structure encapsulating the socket address
+currently referenced by the iterator.  This structure must not be modified
+by the caller, and remains valid until the next call to
+.B unsn_sai_iterator_advance
+or
+.B unsn_sai_iterator_free
+on that iterator.
+If an error occurs in handling a particular address, the `address' returned
+may actually represent an error condition, as described in
+.IR unsn_sockaddrinfo (3).
+.PP
+.B unsn_sai_iterator_advance
+returns a pointer giving the new state of the iterator.
+The return value has the same semantics as the return value of
+.BR unsn_sai_iterator_sai .
+.PP
+.IR errno (3)
+is not affected by any of these functions.
+If an error occurs in
+.BR unsn_sai_iterator_advance ,
+it returns a
+.IR unsn_sockaddrinfo (3)
+structure representing the error condition.
+.B unsn_sai_iterator_sai
+will then continue to return the same error structure.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR unsn_mksaiiterater (3)

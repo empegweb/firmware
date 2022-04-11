@@ -1,0 +1,372 @@
+/*
+ * Lib/libunsn.h.in -- interface header for libunsn
+ * Copyright (C) 2000  Andrew Main
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifndef UNSN_LIBUNSN_VERSION
+
+/* Library version, as an encoded date.  Particular values are not
+   meaningful -- the value can change daily.  Check for ranges (is the
+   library new enough to do ...) rather than equality. */
+
+#define UNSN_LIBUNSN_VERSION 20000105L
+
+@@TYPE_DEFS@@
+
+@@IF_SUPPORT_SOCKETS@@
+
+/* Forward declaration of socket address structure (defined in the usual
+   socket library headers). */
+
+struct sockaddr;
+
+@@ENDIF_SUPPORT_SOCKETS@@
+
+/* Additional errno constants.  These start at -9999 so that they are
+   out of the way of any possible positive errno values and any likely
+   range on systems that use negative errnos. */
+
+#define UNSN_ESOCKNOADDR	(-9999) /* Socket address not determinable */
+#define UNSN_EUNSNBADSYNTAX	(-9998) /* Syntax error in UNSN */
+#define UNSN_EUNSNEMPTY		(-9997) /* Empty UNSN */
+#define UNSN_EUNSNDUPOPTION	(-9996) /* Duplicated option in UNSN */
+#define UNSN_EUNSNPROTOUNREC	(-9995) /* Unrecognized UNSN protocol name */
+#define UNSN_EUNSNBADOPTION	(-9994) /* Inappropriate option for protocol in UNSN */
+#define UNSN_EUNSNBADVALUE	(-9993) /* Invalid option value in UNSN */
+#define UNSN_EUNSNBADENCAP	(-9992) /* Invalid protocol encapsulation in UNSN */
+#define UNSN_EUNSNPROTONOSUPPORT	(-9991) /* Unsupported protocol in UNSN */
+#define UNSN_EUNSNLAYERNOSUPPORT	(-9990) /* Unsupported protocol options in UNSN */
+#define UNSN_EUNSNENCAPNOSUPPORT	(-9989) /* Unsupported protocol encapsulation in UNSN */
+#define UNSN_EUNSNCOMBINOSUPPORT	(-9988) /* Unsupported protocol combination in UNSN */
+#define UNSN_EADDRUNSPEC	(-9987) /* Insufficiently specified address */
+#define UNSN_EIPPROTOUNREC	(-9986) /* Unrecognized IP protocol name */
+#define UNSN_ETCPPORTUNREC	(-9985) /* Unrecognized TCP port name */
+#define UNSN_EUDPPORTUNREC	(-9984) /* Unrecognized UDP port name */
+#define UNSN_EIPHOSTTFAIL	(-9983) /* Temporary IP hostname lookup failure */
+#define UNSN_EIPHOSTPFAIL	(-9982) /* Permanent IP hostname lookup failure */
+#define UNSN_EIPHOSTFAIL	(-9981) /* Unknown IP hostname lookup failure */
+#define UNSN_EIPNOHOST		(-9980) /* No such IP host */
+#define UNSN_EIPHOSTNOADDR	(-9979) /* No usable addresses for IP host */
+#define UNSN_EADDRINCOMPAT	(-9978) /* Addresses are incompatible */
+
+/* Options when generating UNSNs. */
+
+#define UNSN_USENAMES	(1<<0) /* use names instead of numeric addresses */
+
+@@IF_SUPPORT_SOCKETS@@
+
+/* Socket address information structure.  Note that a non-const pointer is
+   used for the sai_addr pointer; C does not provide a way to make this
+   interface const-correct.  If sai_addr is null, then the structure
+   represents an error condition, and sai_family is an errno constant. */
+
+struct unsn_sockaddrinfo {
+	int sai_family;
+	int sai_type;
+	int sai_protocol;
+	struct sockaddr *sai_addr;
+	socklen_t sai_addrlen;
+};
+
+@@ENDIF_SUPPORT_SOCKETS@@
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** Error-handling functions **/
+
+/* Our strerror, which handles the above errors.  Returns a string
+   corresponding to the specified error number.  errno is not affected. */
+
+char const *unsn_strerror(int /*errnum*/);
+
+/* Our perror which handles the above errors.  Sends a message corresponding
+   to errno to standard error. */
+
+void unsn_perror(char const * /*str*/);
+
+/* Compare two error numbers, to decide which describes the more basic error.
+   If errnum1 is more basic, returns -1; if errnum2 is more basic, returns 1;
+   returns 0 only if the two error numbers are numerically equal.  errno is
+   not affected. */
+
+int unsn_errno_cmp(int /*errnum1*/, int /*errnum2*/);
+
+/* Return the more basic of the two error numbers.  errno is not affected. */
+
+int unsn_errno_min(int /*errnum1*/, int /*errnum2*/);
+
+/* Return the less basic of the two error numbers.  errno is not affected. */
+
+int unsn_errno_max(int /*errnum1*/, int /*errnum2*/);
+
+/** Character-level syntax functions **/
+
+/* UNSN coding ctype table and macros */
+
+extern unsigned char unsn_private_ctype_table[2+(int)((unsigned char)-1)];
+
+#define UNSN_CTYPE_OCTET1 (1<<0) /* single-character octet encoding */
+#define UNSN_CTYPE_OCTET  (1<<1) /* octet encoding character */
+#define UNSN_CTYPE_XDIGIT (1<<2) /* hexadecimal digit character */
+#define UNSN_CTYPE_BASIC  (1<<3) /* can appear in a basic UNSN */
+#define UNSN_CTYPE_UNSN   (1<<4) /* can appear in a UNSN */
+
+#define unsn_isoctet1(c) (unsn_private_ctype_table[(c)+1] & UNSN_CTYPE_OCTET1)
+#define unsn_isoctet(c) (unsn_private_ctype_table[(c)+1] & UNSN_CTYPE_OCTET)
+#define unsn_isxdigit(c) (unsn_private_ctype_table[(c)+1] & UNSN_CTYPE_XDIGIT)
+#define unsn_isbasic(c) (unsn_private_ctype_table[(c)+1] & UNSN_CTYPE_BASIC)
+#define unsn_isunsn(c) (unsn_private_ctype_table[(c)+1] & UNSN_CTYPE_UNSN)
+
+/* UNSN coding ctype functions */
+
+int (unsn_isoctet1)(int /*c*/);
+int (unsn_isoctet)(int /*c*/);
+int (unsn_isxdigit)(int /*c*/);
+int (unsn_isbasic)(int /*c*/);
+int (unsn_isunsn)(int /*c*/);
+
+/* Escape octet string as a UNSN <encoded-octet-string> in canonical
+   form.  Returns the length of the output representation written to
+   buffer (excluding NUL terminator, which is appended).  string_len==-1
+   means that string is NUL-terminated; if string_len!=-1, string may be
+   an arbitrary octet string.  buffer may be null, in which case nothing
+   is output, but the length is returned as usual.  errno is not affected. */
+
+size_t unsn_encode(char * /*buffer*/,
+	char const * /*string*/, ssize_t /*string_len*/);
+
+/* Decode UNSN-coded octet string.  The string to decode starts at string
+   and continues as far as possible; the number of characters processed is
+   returned.  The result is placed in the buffer at *pbuffer; *pbuffer is
+   updated to point after the result.  The buffer must be big enough.
+   errno is not affected. */
+
+size_t unsn_decode(char ** /*pbuffer*/, char const * /*string*/);
+
+/** UNSN syntax functions **/
+
+/* Guess what type of address a string is.  allowed is the inclusive-OR
+   of one or more of the possible flags.  The return value is one of
+   the flags.  errno is not affected. */
+
+#define UNSN_ADDRTYPE_UNSN	(1<<0) /* UNSN */
+#define UNSN_ADDRTYPE_HOSTNAME	(1<<1) /* Internet host name or address */
+#define UNSN_ADDRTYPE_PATHNAME	(1<<2) /* Unix pathname */
+
+unsigned unsn_guessaddrtype(char const * /*str*/, unsigned /*allowed*/);
+
+/* Check for UNSN syntax.  Any NUL-terminated stringis a valid argument.
+   Returns 1 if the string matches UNSN syntax, and 0 otherwise.
+   errno is not affected. */
+
+int unsn_syntaxok(char const * /*str*/);
+
+/* Canonize a UNSN.  src must be a NUL-terminated UNSN.  The canonical
+   canonical form is written into the buffer at dst, which must be big
+   enough to fit a copy of the input string.  The generated UNSN is
+   never longer than the input, and dst may be equal to src to canonize
+   in place.  On success, dst is returned.  On failure (due to syntax
+   error), NULL is returned, and the buffer is not modified.  errno is
+   not affected. */
+
+char *unsn_canonize(char * /*dst*/, char const * /*src*/);
+
+/** UNSN alternation **/
+
+/* Opaque alt_iterator structure.  This is used to iterate through the
+   possible alternatives of a UNSN that uses the alternation syntax.  At
+   all times, the iterator either is null or points to one of the possible
+   alternatives.  Iterators are initially null, then are advanced through
+   the alternatives, then become null again when all alternatives are
+   exhausted. */
+
+struct unsn_alt_iterator;
+
+/* Delete an alt_iterator.  errno is not affected. */
+
+void unsn_alt_iterator_free(struct unsn_alt_iterator * /*i*/);
+
+/* Check whether an alt_iterator is in a non-null state.
+   errno is not affected. */
+
+int unsn_alt_iterator_nonnull(struct unsn_alt_iterator const * /*i*/);
+
+/* Set an alt_iterator to the null state.  errno is not affected. */
+
+void unsn_alt_iterator_nullify(struct unsn_alt_iterator * /*i*/);
+
+/* Advance an alt_iterator to the next alternative.  Returns 1 if there
+   is a next alternative, and 0 if not (in which case the iterator is
+   now null).  errno is not affected. */
+
+int unsn_alt_iterator_advance(struct unsn_alt_iterator * /*i*/);
+
+/* Generate an alt_iterator from a UNSN.  On error returns NULL and sets
+   errno. */
+
+struct unsn_alt_iterator *unsn_parse_unsn(char const * /*str*/);
+
+/* Generate a UNSN encoding the current address referenced by an
+   alt_iterator.  On lack of memory, NULL is returned, and errno
+   set to ENOMEM. */
+
+char *unsn_unparse1(struct unsn_alt_iterator const * /*i*/);
+
+@@IF_SUPPORT_SOCKETS@@
+
+/** Socket address iteration **/
+
+/* Opaque sai_iterator structure.  This is used to iterate through the
+   possible socket addresses referenced by a UNSN.  At all times, the
+   iterator either is null or points to one of the possible addresses.
+   Iterators are initially null, then are advanced through the addresses,
+   then become null again when all addresses are exhausted. */
+
+struct unsn_sai_iterator;
+
+/* Delete a sai_iterator.  errno is not affected. */
+
+void unsn_sai_iterator_free(struct unsn_sai_iterator * /*i*/);
+
+/* Get the current state of a sai_iterator.  The socket address returned
+   may actually be an error condition.  errno is not affected. */
+
+struct unsn_sockaddrinfo const *unsn_sai_iterator_sai(
+	struct unsn_sai_iterator const * /*i*/);
+
+/* Set a sai_iterator to the null state.  errno is not affected. */
+
+void unsn_sai_iterator_nullify(struct unsn_sai_iterator * /*i*/);
+
+/* Advance a sai_iterator to the next socket address.  Returns the new
+   socket address.  The socket address returned may actually be an error
+   condition.  errno is not affected. */
+
+struct unsn_sockaddrinfo const *unsn_sai_iterator_advance(
+	struct unsn_sai_iterator * /*i*/);
+
+/* Generate a sai_iterator from a UNSN.  On error returns NULL and sets
+   errno. */
+
+struct unsn_sai_iterator *unsn_mksaiiterator(char const * /*str*/);
+
+/** Socket address functions **/
+
+/* Copy socket address information structure.  The struct unsn_sockaddrinfo
+   and the referenced struct sockaddr are both copied, into a single malloced
+   memory block; freeing the struct unsn_sockaddrinfo will free both
+   structs.  On lack of memory, NULL is returned, and errno
+   set to ENOMEM. */
+
+struct unsn_sockaddrinfo *unsn_copysai(
+	struct unsn_sockaddrinfo const * /*src*/);
+
+/* Convert a socket address to canonical UNSN format.  sock_fd must be
+   a socket with the appropriate parameters for the address (e.g., the
+   address is that of a datagram received on that socket).  The UNSN is
+   returned in malloced storage.  On error, NULL is returned and errno
+   set to indicate the error. */
+
+char *unsn_addrtounsn(int /*sock_fd*/,
+	struct sockaddr const * /*addr*/, socklen_t /*addrlen*/,
+	unsigned /*opts*/);
+
+/* Convert socket address information to canonical UNSN format.  The UNSN
+   is returned in malloced storage.  On error, NULL is returned and
+   errno set to indicate the error. */
+
+char *unsn_aitounsn(int /*family*/, int /*type*/, int /*protocol*/,
+	struct sockaddr const * /*addr*/, socklen_t /*addrlen*/,
+	unsigned /*opts*/);
+
+/* Convert socket address information given in a structure to canonical UNSN
+   format.  The UNSN is returned in malloced storage.  On error, NULL is
+   returned and errno set to indicate the error. */
+
+char *unsn_saitounsn(struct unsn_sockaddrinfo const * /*sai*/,
+	unsigned /*opts*/);
+
+/** Socket operations **/
+
+/* Get the socket address structure for the address to which a socket is
+   bound or connected.  The address is returned by filling in
+   addr_ret->sai_addr and addr_ret->sai_addrlen.  addr_ret must be
+   non-null.  On success, zero is returned.  On error, -1 is returned
+   and errno set to indicate the error. */
+
+int unsn_getsockaddr(int /*sock_fd*/, struct unsn_sockaddrinfo * /*addr_ret*/);
+int unsn_getpeeraddr(int /*sock_fd*/, struct unsn_sockaddrinfo * /*addr_ret*/);
+
+/* Get canonical UNSN for the address to which a socket is bound or connected.
+   Some of the socket parameters have to be guessed.  The name is
+   returned in malloced storage.  On error, NULL is returned and errno
+   set to indicate the error. */
+
+char *unsn_getsockunsn(int /*sock_fd*/, unsigned /*opts*/);
+char *unsn_getpeerunsn(int /*sock_fd*/, unsigned /*opts*/);
+
+/* Get canonical UNSN for the address to which a socket is bound or connected.
+   hints->sai_family, hints->sai_type and hints->sai_protocol are used
+   to complete the address.  The name is returned in malloced storage.
+   On error, NULL is returned and errno set to indicate the error. */
+
+char *unsn_getsockunsn_withhints(int /*sock_fd*/,
+	struct unsn_sockaddrinfo const *hints, unsigned /*opts*/);
+char *unsn_getpeerunsn_withhints(int /*sock_fd*/,
+	struct unsn_sockaddrinfo const *hints, unsigned /*opts*/);
+
+/* Create a socket.  At least one of local_unsn and remote_unsn must
+   be non-null.  If local_unsn is non-null, the new socket is bound to
+   that address, otherwise it is bound to an automatically-assigned
+   address.  If remote_unsn is non-null, the new socket is connected
+   to that address, otherwise it is unconnected.  On success, returns a
+   file descriptor.  On failure, returns -1 and sets errno to indicate
+   the error. */
+
+int unsn_opensock(char const * /*local_unsn*/, char const * /*remote_unsn*/);
+
+/* As above, but also return the address parameters of the socket.
+   hints_ret->sai_family, hints_ret->sai_type and hints_ret->sai_protocol
+   are filled in; the other members of *hints_ret are unaffected.
+   hints_ret may be null in which case this information is not stored. */
+
+int unsn_opensock_gethints(char const * /*local_unsn*/,
+	char const * /*remote_unsn*/,
+	struct unsn_sockaddrinfo * /*hints_ret*/);
+
+/* Create a socket.  At least one of local_addr and remote_addr must
+   be non-null.  If local_addr is non-null, the new socket is bound to
+   that address, otherwise it is bound to an automatically-assigned
+   address.  If remote_addr is non-null, the new socket is connected
+   to that address, otherwise it is unconnected.  On success, returns a
+   file descriptor.  On failure, returns -1 and sets errno to indicate
+   the error. */
+
+int unsn_opensock_fromsai(struct unsn_sockaddrinfo const * /*local_addr*/,
+	struct unsn_sockaddrinfo const * /*remote_addr*/);
+
+@@ENDIF_SUPPORT_SOCKETS@@
+
+#ifdef __cplusplus
+}
+#endif
+
+@@TYPE_UNDEFS@@
+
+#endif

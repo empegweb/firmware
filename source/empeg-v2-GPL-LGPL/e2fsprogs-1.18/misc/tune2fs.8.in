@@ -1,0 +1,177 @@
+.\" Revision 1.0 93/06/3 23:00  chk
+.\" Initial revision
+.\"
+.\"
+.TH TUNE2FS 8 "@E2FSPROGS_MONTH@ @E2FSPROGS_YEAR@" "E2fsprogs version @E2FSPROGS_VERSION@"
+.SH NAME
+tune2fs \- adjust tunable filesystem parameters on second extended filesystems
+.SH SYNOPSIS
+.B tune2fs
+[
+.B \-l
+]
+[
+.B \-c
+.I max-mount-counts
+]
+[
+.B \-e
+.I errors-behavior
+]
+[
+.B \-i
+.I interval-between-checks
+]
+[
+.B \-m
+.I reserved-blocks-percentage
+]
+[
+.B \-r
+.I reserved-blocks-count
+]
+[
+.B \-s
+.I sparse-super-flag
+]
+[
+.B \-u
+.I user
+]
+[
+.B \-g
+.I group
+]
+[
+.B \-C
+.I mount-count
+]
+[
+.B \-L
+.I volume-name
+]
+[
+.B \-M
+.I last-mounted-directory
+]
+[
+.B \-O 
+\fR[^]\fIfeature\fR[,...]
+]
+[
+.B \-U
+.I UUID
+]
+device
+.SH DESCRIPTION
+.BI tune2fs
+adjusts tunable filesystem parameters on a Linux second extended filesystem.
+.SH OPTIONS
+.TP
+.BI \-c " max-mount-counts"
+adjust the maximal mounts count between two filesystem checks.
+.TP
+.BI \-e " error-behavior"
+change the behavior of the kernel code when errors are detected.
+.I error-behavior
+can be one of the following:
+.br
+\	continue\	\	Continue normal execution.
+.br
+\	remount-ro\	Remount filesystem read-only.
+.br
+\	panic\	\	Cause a kernel panic.
+.TP
+.BI \-g " group"
+set the user group which can benefit from the reserved blocks.
+.br
+.I group
+can be a numerical gid or a group name.
+.TP
+.BI \-i " interval-between-checks\fR[\fBd\fR|\fBm\fR|\fBw\fR]"
+adjust the maximal time between two filesystem checks. 
+No postfix or
+.B d
+result in days,
+.B m
+in months, and
+.B w
+in weeks.  A value of zero will disable the timedependent checking.
+.TP
+.B \-l
+list the contents of the filesystem superblock.
+.TP
+.BI \-m " reserved-blocks-percentage"
+adjust the reserved blocks percentage on the given device.
+.TP
+.BI \-r " reserved-blocks-count"
+adjust the reserved blocks count on the given device.
+.TP
+.BI \-s " sparse_super_flag"
+set or reset the sparse_superblock flag.  The sparse_superblock feature
+saves space on really big filesystems.
+.B Warning:
+The Linux 2.0 kernel does not properly support this feature.  Neither do
+all Linux 2.1 kernels; please don't use this unless you know what you're
+doing!
+.TP
+.BI \-u " user"
+set the user who can benefit from the reserved blocks.
+.I user
+can be a numerical uid or a user name.
+.TP
+.BI \-C " mount-count"
+set the number of times the filesystem has been mounted.
+.TP
+.BI \-L " volume-label"
+set the volume label of the filesystem.  
+Ext2 filesystem labels can be at most 16 characters long; if
+.I volume-label 
+is longer than 16 characters, 
+.B tune2fs
+will truncate it and print a warning message.  
+.TP
+.BI \-M " last-mounted-directory"
+set the last-mounted directory for the filesystem.
+.TP
+.BI \-O " \fR[^]\fIfeature\fR[,...]"
+set or clear the indicated filesystem features (options) in the filesystem.
+.I Feature
+can be one of the following supported filesystem options: 
+.IR sparse ,
+which cause the filesystem to use sparse superblocks, and
+.IR filetype ,
+which will cause the filesystem to store file type information in 
+directory entries.  After setting or clearing either filesystem feature,
+e2fsck must be run on the filesystem.
+.TP
+.BI \-U " UUID"
+set the UUID of the filesystem.  A sample UUID looks like this: 
+"c1b9d5a2-f162-11cf-9ece-0020afc76f16".  The uuid may also be
+.IR null ,
+which will set the filesystem UUID to the null UUID.  The uuid may also be
+.IR random ,
+which will generate a new random UUID for the filesystem.
+.SH BUGS
+We haven't found any bugs yet. Perhaps there are bugs but it's unlikely.
+.SH WARNING
+Never use tune2fs to change parameters of a read/write mounted filesystem!
+.B Use this utility
+.B at your own risk.
+You're modifying a filesystem!
+.SH AUTHOR
+.B tune2fs 
+was written by Remy Card <card@masi.ibp.fr>, the developer and maintainer
+of the ext2 fs.
+.B tune2fs
+uses the ext2fs library written by Theodore Ts'o <tytso@mit.edu>.
+This manual page was written by Christian Kuhtz <chk@data-hh.Hanse.DE>.
+Timedependent checking was added by Uwe Ohse <uwe@tirka.gun.de>.
+.SH AVAILABILITY
+.B tune2fs
+is part of the e2fsprogs package and is available for anonymous 
+ftp from tsx-11.mit.edu in /pub/linux/packages/ext2fs.
+.SH SEE ALSO
+.BR dumpe2fs (8),
+.BR e2fsck (8),
+.BR mke2fs (8)

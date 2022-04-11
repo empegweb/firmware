@@ -1,0 +1,65 @@
+[Version]
+Signature="$CHICAGO$"
+Class=USB
+ClassGUID={36FC9E60-C465-11CF-8056-444553540000}
+provider=%MfgName%
+LayoutFile=layout.inf
+DriverVer=01/13/2003,2.0.3.0
+
+[Manufacturer]
+%MfgName%=SONICblue, NT.5.1
+
+[SONICblue]
+%RIOADAC%=RIOHD.Dev, USB\VID_045a&PID_5901
+%RIOCAR%=RIOHD.Dev, USB\VID_084F&PID_0001
+
+[SONICblue.NT.5.1]
+; This driver doesn't support Windows XP and above - use RIOXDRV instead.
+
+[SourceDisksNames]
+1="SONICblue product installation disk",,
+
+[SourceDisksFiles]
+riohd.sys=1
+riohd.inf=1
+
+[DestinationDirs]
+RIOHD.Files.Ext = 10,System32\Drivers
+
+[RIOHD.Dev]
+CopyFiles=RIOHD.Files.Ext
+AddReg=RIOHD.AddReg
+
+[RIOHD.Dev.NT]
+CopyFiles=RIOHD.Files.Ext
+AddReg=RIOHD.AddReg
+
+[RIOHD.Dev.NT.Services]
+Addservice = RIOHD, 0x00000002, RIOHD.AddService
+
+[RIOHD.AddService]
+DisplayName    = %RIOHD.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\RIOHD.sys
+LoadOrderGroup = Base
+
+[RIOHD.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,riohd.sys
+;HKLM,"System\Currentcontrolset\Services\EmpegCar\Parameters","DebugLevel",0x10001,5
+
+
+[RIOHD.Files.Ext]
+riohd.sys
+
+;---------------------------------------------------------------;
+
+[Strings]
+MfgName="SONICblue"
+RIOADAC="SONICblue Rio Advanced Digital Audio Center"
+RIOCAR="SONICblue Rio Car"
+RIOHD.SvcDesc="SONICblue Rio HD USB driver"
+USB\VID_084f&PID_0001.DeviceDesc="SONICblue Rio Car"
+USB\VID_045a&PID_5901.DeviceDesc="SONICblue Rio Advanced Digital Audio Center"

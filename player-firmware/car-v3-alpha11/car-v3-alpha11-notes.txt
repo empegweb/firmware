@@ -1,0 +1,170 @@
+Rio Car Alpha Release 25-Jul-2005
+Version 3.00-alpha11
+
+Copyright (c) Digital Networks North America, Inc. 2003, 2004, 2005
+
+
+* Notes
+
+This is a Rio Car Alpha Release. This release may not be stable, and is
+for Empeg Mark 2 and Rio Car hardware only.
+
+Those who value stability over excitement should steer well clear of
+this version, in favour of the v2.00 release. On the other hand, many
+people do use these alphas on their main players on a daily basis
+without significant problems; your mileage may vary.
+
+
+* General
+
+This release comprises three different versions of the car-player
+software:
+
+  * Standard Edition (car2-*-v3.00-alpha11.upgrade)
+  
+    This is the successor to v3.00-alpha10, and is the one most users
+    should install.
+    
+  * Japanese Edition (car2-*-v3.00JE-alpha11.upgrade)
+
+    This build contains glyphs for the JIS X0208 subset of Japanese
+    characters, in the larger font only. Because of this, the menus
+    and the "Info: Track" screen have been changed in the Japanese
+    edition to use only the larger font. Due to the increased size
+    of the font data, this edition is recommended for 16Mb (and
+    above) players only.
+    
+  * Receiver Edition (car2-*-v3.00RE-alpha11.upgrade)
+  
+    This build turns your car-player into a Rio Receiver-like home
+    audio player, capable only of playing audio content from a network
+    server, not from its own hard disks. You will need Rio Receiver
+    server software running somewhere on your network. Consult the
+    release notes for alpha 8 Receiver Edition for more details.
+
+As always, the Unofficial Empeg BBS at http://empegbbs.com is a good
+place for discussing this alpha, or the car-player in general, or indeed
+life in general.
+
+
+* Installation
+
+You should install the new emplode before installing this release. If
+you fail to do so your car-player unit may not function and it will be
+necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+This release contains an interim Emplode build, which does not yet
+have an installer.  Install the v2.00 version of Emplode, unzip the
+new executable and library to another folder, and execute from there.
+
+Now proceed with installation of the firmware.
+
+Connect your computer to your car-player using the supplied serial
+cable.  Switch off your player at the wall or unplug the IEC cable
+from the brick power supply.
+
+The upgrade can be installed by serial only. Run the Upgrade Wizard
+and either enter or browse for the upgrade file. Click Next and select
+the serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and
+brick power supply. If you have an all-in-one power supply then switch
+it on at the wall if possible, or plug into the wall. The upgrade
+should then be applied. If it fails, try again.
+
+
+* What's New Since 3.00-alpha10 - Player
+
+Reading the dynamic database has been speeded-up.
+
+A bug whereby the player would lose its running-order when Tweak
+Order failed to find a match, is fixed.
+
+Beeps (Menu, Sound->Beeps) now work again.
+
+The player no longer marks tracks for attention under its own
+initiative just because their calculated length is incorrect.
+
+The glyphs for characters U+00D8 LATIN CAPITAL LETTER O WITH STROKE
+and U+03CC GREEK SMALL LETTER OMICRON WITH TONOS in the large font
+have been corrected.
+
+In "Info: Track" and "Info: Now & Next" modes, in addition to the
+letter "s" to indicate shuffle mode, and "r" for repeat mode, you
+get a letter "l" while playing lossless (FLAC and WAV) content.
+
+A crash on certain MP3 files (those with a Xing header containing
+no TOC) is fixed.
+
+Previous alphas, when they detected a player with a memory upgrade
+installed, reserved 64K per megabyte to allow for increased system
+overhead due to the larger memory size. There is anecdotal evidence
+that this isn't enough, so alpha 11 reserves 128K per megabyte. This
+reservation is added to any specified in the config.ini file.
+Symptoms of memory exhaustion range from sluggishness to audio
+glitching to outright crashes.
+
+Key-presses can now be queued-up in the search screens.
+
+The feature that allows disabling of the "Plays" counter display
+in the "Info: Track" mode has been backported from the v2 branch.
+(In your /empeg/var/config.ini file, add "play_count=0" to the
+"[display]" section.) The display is disabled in the Japanese
+Edition due to the changes made in the "Info: Track" screen; to
+see the play count, use the "Track Details" window (hold down
+Info on the remote control).
+
+Manual tuner scan mode (hold down left or right button) has been
+fixed. (We'd all forgotten how it was meant to work, so we had to
+look in the Button Guide on www.riocar.org.)
+
+Tuner AF can be turned off properly now. (Hopefully. We haven't
+been able to test it thoroughly.)
+
+The following tuner settings can be tweaked in the config file, in
+the "[radio]" section:
+  "search_level", defaults to ((60*65535)/100)
+  	- min signal strength to stop on when seeking
+  "ta_switch_level", defaults to ((60*65535)/100)
+  	- min signal strength to change to if there's a TA
+  "af_switch_level", defaults to ((50*65535)/100)
+  	- min signal strength to consider retune for AF
+
+
+* What's New Since 2.10 - Emplode
+
+No new release.
+
+
+* What's New Since 3.00-alpha1 - Emptool
+
+No new release.
+
+
+* Known Issues
+
+Probably doesn't work on Mark 1 players (untested).
+
+The giant font used in InfoTex and related visuals is Latin-1 only and
+does not correctly display accented characters, Greek, or Cyrillic.
+
+The "Toilet Floor" visual was unstable in testing and has been
+temporarily removed for this release.
+
+Reportedly, using the search features can cause audio glitching. This
+has yet to be addressed.
+
+Long bursts of fast-forwarding or rewinding can cause a lockup.
+
+Searching doesn't work properly for accented characters, Greek, or
+Cyrillic.
+
+Although Emplode 2.10 will correctly transfer ID3 and other tags
+containing characters above U+00FF, including Greek and Cyrillic, such
+characters don't appear correctly in Emplode's own UI.
+
+
+Peter Hartley, 2005-Jul-25
+peter@empeg.com

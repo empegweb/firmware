@@ -1,0 +1,162 @@
+.\"
+.\" Utils/uclient.1in -- manual page for uclient
+.\" Copyright (C) 1996, 2000  Andrew Main
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: uclient.1
+.TH UCLIENT 1 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+uclient \- universal socket client
+.SH SYNOPSIS
+.B uclient
+.RI [ options ]
+.I remote-address
+[
+.I command
+.RI [ arg " ...]"
+]
+.SH DESCRIPTION
+.I uclient
+creates a socket connected to the specified
+.IR remote-address .
+If a
+.I command
+is specified, it executes the
+.I command
+with the specified
+.IR arg s,
+with the socket connected to the process's
+standard input and output.
+.PP
+If no
+.I command
+is specified,
+.I uclient
+passes I/O between its standard input/output and the socket.
+.I uclient
+exits when both directions of communication have been shut down.
+If an error occurs in I/O, it exits immediately with a diagnostic.
+.PP
+The effect is that whatever writes to
+.IR uclient 's
+standard input or reads from its standard output is effectively
+communicating with the process at the far end of the connection.
+This transparency extends to passing on pipe closures (EOF and
+broken pipe) to the extent made possible by the communications
+protocol being used.
+The two directions of communication (receiving from the remote socket
+and sending to the remote socket) are treated identically.
+.PP
+If standard input/output is a datagram-based socket and the socket created
+is also datagram-based, datagrams are transmitted intact.  If either
+(or both) is stream-based, all data is transmitted, but
+datagram boundaries are not preserved.
+.PP
+.I remote-address
+must be specified as a
+Universal Network Socket Name (UNSN).
+See
+.IR unsn (7)
+for more information.
+.SH OPTIONS
+.TP
+.B -0
+If executing another command,
+pass it the first
+.I arg
+as the program name and the subsequent
+.IR arg s
+as normal arguments, rather than passing the
+.I command
+as the program name.
+.TP
+.B -2
+If executing another command,
+pass it the socket as standard error,
+in addition to standard input and output.
+By default, standard error is inherited from
+.IR uclient .
+Regardless of options, all file descriptors above 2 are inherited from
+.IR uclient .
+.TP
+.BI -b local-address
+Use
+.I local-address
+(specified as a UNSN)
+as the address for the local end of the connection.
+This option is rarely useful; if it is not specified then an appropriate local
+address is assigned automatically.
+.TP
+.B -q
+If copying data,
+when one direction of communication is closed (e.g., EOF is reached
+on standard input), also close the other direction immediately.
+This more closely matches the behavior of clients such as
+.IR telnet (1).
+.TP
+.B -r
+Shut down the receiving direction of communication immediately,
+before performing any I/O.
+.TP
+.B -R
+If copying data,
+when shutting down the receiving direction of communication,
+do not perform a proper shutdown - simply stop doing I/O.
+.TP
+.B -s
+Shut down the sending direction of communication immediately,
+before performing any I/O.
+.TP
+.B -S
+If copying data,
+when shutting down the sending direction of communication,
+do not perform a proper shutdown - simply stop doing I/O.
+.TP
+.BI -t time-spec
+If no I/O is performed in the time specified by
+.IR time-spec ,
+terminate.  (This is the only way to terminate a pseudo-connection
+for a connectionless protocol.)
+The timer is reset by any I/O, including sending previously buffered data.
+.I time-spec
+can contain numbers of weeks, days, hours, minutes and seconds, units being
+indicated by letters
+.RB ` w "', `" d "', `" h "', `" m "', `" s '
+appended to the number.  More than one unit can be used together, and
+decimal fractions are permitted.
+.SH "OPTION COMBINATIONS"
+Any of the combinations
+.BR -qr ,
+.B -qs
+or
+.B -rs
+will have the effect of shutting down
+.I both
+directions of communication immediately, in which case
+.I uclient
+will terminate immediately without any I/O taking place.
+This is permitted, but probably not what you want.
+.PP
+The combination
+.B -rR
+or
+.B -sS
+will have the effect of preventing all I/O in the appropriate direction
+without doing a proper shutdown.  This is occasionally useful.
+.SH "SEE ALSO"
+.IR libunsn (1),
+.IR telnet (1),
+.IR userver (1)

@@ -1,0 +1,282 @@
+# protocol_errors.mes
+#
+# (C) 2001 empeg Ltd, http://www.empeg.com
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release 1.22 01-Apr-2003 18:52 rob:)
+#
+
+# Global settings for this file
+Facility=4
+Component=0
+Language=English
+
+# Failure codes
+Severity=2
+
+# E_VERSION
+Symbol=E_VERSION
+Code=40
+Text=Version mismatch
+
+# E_OLDVERSION
+Symbol=E_OLDVERSION
+Code=41
+Text=The player is too old.  Visit http://www.riohome.com/ for an upgrade to the player software.
+
+# E_NEWVERSION
+Symbol=E_NEWVERSION
+Code=42
+Text=The player is too new.  Visit http://www.riohome.com/ for an upgrade to the client software.
+
+# E_GET_PROTOCOL_VER
+Symbol=E_GET_PROTOCOL_VER
+Code=43
+Text=Failed to get protocol version
+
+# E_PROTOCOL_FSCK
+Symbol=E_PROTOCOL_FSCK
+Code=44
+Text=Protocol Client Fsck failed
+
+# USB_E_WAIT_ABANDONED
+Symbol=USB_E_WAIT_ABANDONED
+Code=45
+Text=USB Wait Abandoned
+
+# SERIAL_E_GETCOMMSTATE
+Symbol=SERIAL_E_GETCOMMSTATE
+Code=46
+Text=Could not get serial comms state
+
+# SERIAL_E_SETCOMMSTATE
+Symbol=SERIAL_E_SETCOMMSTATE
+Code=47
+Text=Could not set serial comms state
+
+# SERIAL_E_GETTIMEOUTS
+Symbol=SERIAL_E_GETTIMEOUTS
+Code=48
+Text=Could not get serial timeouts
+
+# SERIAL_E_SETTIMEOUTS
+Symbol=SERIAL_E_SETTIMEOUTS
+Code=49
+Text=Could not set serial timeouts
+
+# SERIAL_E_SETOVERLAPPED
+Symbol=SERIAL_E_SETOVERLAPPED
+Code=50
+Text=Could not setup serial overlapped event
+
+# SERIAL_E_HPORT
+Symbol=SERIAL_E_HPORT
+Code=51
+Text=Invalid serial port handle
+
+# USB_E_NOCANCELIO
+Symbol=USB_E_NOCANCELIO
+Code=52
+Text=CancelIo function not available
+
+# USB_E_HPORT
+Symbol=USB_E_HPORT
+Code=53
+Text=Invalid usb port handle
+
+# USB_E_SETOVERLAPPED
+Symbol=USB_E_SETOVERLAPPED
+Code=54
+Text=Could not setup usb overlapped event
+
+# TCP_E_SETSOCKOPT
+Symbol=TCP_E_SETSOCKOPT
+Code=55
+Text=Could not set socket options
+
+# TCP_E_CONNECT
+Symbol=TCP_E_CONNECT
+Code=56
+Text=Could not connect socket
+
+# TCP_E_OPEN
+Symbol=TCP_E_OPEN
+Code=57
+Text=Could not open socket
+
+# TCP_E_ADDR
+Symbol=TCP_E_ADDR
+Code=58
+Text=Could not get host address
+
+# USB_E_WAITABANDONED
+Symbol=USB_E_WAITABANDONED
+Code=59
+Text=USB wait abandoned
+
+# SOCK_E_SELECT
+Symbol=SOCK_E_SELECT
+Code=60
+Text=Select on socket failed
+
+# SOCK_E_READ
+Symbol=SOCK_E_READ
+Code=61
+Text=Read on socket failed
+
+# CONN_E_TIMEDOUT
+Symbol=CONN_E_TIMEDOUT
+Code=62
+Text=Connection timed out
+
+# SOCK_E_CLOSED
+Symbol=SOCK_E_CLOSED
+Code=63
+Text=Socket was closed
+
+# SOCK_E_OPENPIPE
+Symbol=SOCK_E_OPENPIPE
+Code=64
+Text=Could not open pipe for socket
+
+# CONN_E_RESET
+Symbol=CONN_E_RESET
+Code=65
+Text=Connection was reset
+
+# USB_E_OPENDEVICE
+Symbol=USB_E_OPENDEVICE
+Code=66
+Text=Could not open USB device
+
+# SOCK_E_LISTEN
+Symbol=SOCK_E_LISTEN
+Code=67
+Text=Listen on socket failed
+
+# SERIAL_E_OPEN
+Symbol=SERIAL_E_OPEN
+Code=68
+Text=Could not open serial port
+
+# TCP_E_BIND
+Symbol=TCP_E_BIND
+Code=69
+Text=Could not bind socket
+
+# SERIAL_E_BUSY
+Symbol=SERIAL_E_BUSY
+Code=70
+Text=Serial busy
+
+# UPG_E_SHORTFILE
+Symbol=UPG_E_SHORTFILE
+Code=71
+Text=Upgrade file appears to be truncated
+
+# UPG_E_PREMATUREEOF
+Symbol=UPG_E_PREMATUREEOF
+Code=72
+Text=Premature end of file reading from upgrade file
+
+# UPG_E_BADCRC
+Symbol=UPG_E_BADCRC
+Code=73
+Text=Bad CRC in upgrade file
+
+# UPG_E_OLDUPGRADER
+Symbol=UPG_E_OLDUPGRADER
+Code=74
+Text=Old upgrader
+
+# UPG_E_NOPUMP
+Symbol=UPG_E_NOPUMP
+Code=75
+Text=No pump program
+
+# UPG_E_NOUNIT
+Symbol=UPG_E_NOUNIT
+Code=76
+Text=No unit connected
+
+# UPG_E_PARSEHEX
+Symbol=UPG_E_PARSEHEX
+Code=77
+Text=Failed to parse hex response from flash chip
+
+# UPG_E_ADDRESSMISMATCH
+Symbol=UPG_E_ADDRESSMISMATCH
+Code=78
+Text=Address mismatch from flash chip
+
+# UPG_E_NOHYPHEN
+Symbol=UPG_E_NOHYPHEN
+Code=79
+Text=Flash chip not started doing whatever it's supposed to be doing
+
+# UPG_E_BADPUMPSELECT
+Symbol=UPG_E_BADPUMPSELECT
+Code=80
+Text=Didn't select the partition correctly
+
+# UPG_E_CHIPERROR
+Symbol=UPG_E_CHIPERROR
+Code=81
+Text=Flash chip-specific error (prot link?)
+
+# UPG_E_BADERASE
+Symbol=UPG_E_BADERASE
+Code=82
+Text=Flash erase failed
+
+# UPG_E_BADID
+Symbol=UPG_E_BADID
+Code=83
+Text=Bad manufacturer or product ID
+
+# UPG_E_BADPROMPT
+Symbol=UPG_E_BADPROMPT
+Code=84
+Text=Couldn't find prompt
+
+# UPG_E_BADPROGRAM
+Symbol=UPG_E_BADPROGRAM
+Code=85
+Text=Problem programming
+
+# UPG_E_STARTFLASH
+Symbol=UPG_E_STARTFLASH
+Code=86
+Text=Unable to start flash programmer
+
+# UPG_E_SOMETHINGBAD
+Symbol=UPG_E_SOMETHINGBAD
+Code=87
+Text=Something bad happened
+
+# E_CANT_GET_DB_LOCK
+Symbol=E_CANT_GET_DB_LOCK
+Code=88
+Text=Can't get database lock
+
+# E_WRONG_SESSION_COOKIE
+Symbol=E_WRONG_SESSION_COOKIE
+Code=89
+Text=Wrong session cookie
+
+# E_UNIT_NOT_CONNECTED
+Symbol=E_UNIT_NOT_CONNECTED
+Code=90
+Text=Unit not connected
+
+# E_PASSWORD_INCORRECT
+Symbol=E_PASSWORD_INCORRECT
+Code=91
+Text=Password incorrect
+
+# USB_E_INUSE
+Symbol=USB_E_INUSE
+Code=92
+Text=USB device already in use

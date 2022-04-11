@@ -1,0 +1,69 @@
+			CHANGES for emptool
+			===================
+
+		(C) 2001 empeg ltd, http://www.empeg.com
+
+	This software is licensed under the GNU General Public Licence
+	(see file COPYING), unless you possess an alternative written
+	licence from empeg ltd.
+
+(:Header:)
+
+0.91
+----
+	Uses our own libtags instead of id3lib. Now uploads files in the
+	right order! Update protocol for car player V2.0.
+
+0.90
+----
+	More error-checking. Fixes to set, unset, link commands. Upload
+	-p option, and symlink preservation. GNU General Public Licence.
+
+0.89
+----
+	Better error-checking on commands. mklist -p option.
+	Support for Mk2 (network) players. Moving a playlist into
+	the root now works. Better recovery from bad protocol (e.g.
+	noisy line).
+
+0.83
+----
+	Fixes to some rare protocol problem.
+
+0.81
+----
+	Added -e and -l options to most commands. Allows easier
+	scripting. -e escapes backslashes in titles being printed. -l
+	lists long: fid, type, title, length. See man page for
+	details. Detection of serial or usb device type.
+
+	Filesystem check progress now reported.
+
+0.80
+----
+	Overhauled entire program. Wildcards now apply to most
+	commands. Numerics returned for operations. Still some things
+	that need doing - see README for details.
+
+0.7b
+----
+	Minor bug fixes. 'ls' wouldnt list root directory properly.
+
+0.7a
+----
+	'move' now capable of moving between playlists.
+
+	Syntax has changed for 'move'! Use '^' and '$' to prefix
+	second argument to indicate that it should be placed before or
+	after (respectively) the indicated entry.
+
+	Documented 'pin' tag.
+
+	Some crashes with non-present fids prevented.
+
+	Identifiers are now case insensitive.
+
+0.7
+---
+	Initial release (beta 7)
+

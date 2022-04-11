@@ -1,0 +1,111 @@
+.\"
+.\" Lib/getspaddr.3in -- manual page for unsn_get{peer,sock}addr()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_getpeeraddr.3 unsn_getsockaddr.3
+.TH UNSN_GETSOCKADDR 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_getpeeraddr, unsn_getsockaddr \-
+get address to which a socket is bound/connected
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "int unsn_getpeeraddr(int " sock_fd ,
+.BI "        struct unsn_sockaddrinfo *" addr_ret );
+.BI "int unsn_getsockaddr(int " sock_fd ,
+.BI "        struct unsn_sockaddrinfo *" addr_ret );
+.fi
+.SH DESCRIPTION
+These functions determine the address of the specified socket
+.RI ( unsn_getsockaddr )
+or the address to which the specified socket is connected
+.RI ( unsn_getpeeraddr ).
+Only the protocol-specific socket address structure is obtained.
+The structure is stored in
+.IR malloc (3)ed
+memory, which it is the caller's responsibility to
+.IR free (3).
+.PP
+.I addr_ret
+must be non-null; it points to a structure of which some
+members are filled in by the function.
+A pointer to the
+.IR malloc (3)ed
+socket address structure is placed in \fIaddr_ret\fR\fB->sai_addr\fP,
+and the length of the structure is placed in \fIaddr_ret\fR\fB->sai_addrlen\fP.
+On error,
+.BI * addr_ret
+remains unmodified.
+.PP
+If
+.I addr_ret
+was initially partially filled in by
+.IR unsn_opensock_gethints (3),
+these functions will, on success, leave it as a completely filled
+address information structure.
+.SH "RETURN VALUE"
+Returns zero on success.
+On error, -1 is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+Note that some of these error numbers are specific to
+.IR libunsn (3).
+See
+.IR unsn_errno (3)
+for more information.
+.TP
+.B EBADF
+.I sock_fd
+is not a valid file descriptor.
+.TP
+.B ENOTSOCK
+.I sock_fd
+does not refer to a socket.
+.TP
+.B ENOTCONN
+The socket is not connected, and the peer's address was requested.
+.TP
+.B UNSN_ESOCKNOADDR
+It is not possible to determine a usable address for this type of socket.
+.TP
+.B EPFNOSUPPORT
+The socket family is not recognized.
+.TP
+.B ESOCKTNOSUPPORT
+The socket type is not recognized for
+this socket family.
+.TP
+.B EPROTONOSUPPORT
+The protocol is not recognized for
+this socket family and type.
+.TP
+.B EPROTONOSUPPORT
+The address family is not recognized for
+this socket family, type and protocol.
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to store the socket address structure.
+.SH "SEE ALSO"
+.IR getpeername (2),
+.IR getsockname (2),
+.IR libunsn (3),
+.IR unsn_getsockunsn (3),
+.IR unsn_getsockunsn_withhints (3),
+.IR unsn_opensock_gethints (3)

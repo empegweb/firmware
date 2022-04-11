@@ -1,0 +1,467 @@
+Rio Car Beta Release 17-October-2001
+Version 2.00-beta3
+
+Copyright (c) SONICblue, Inc. 2001
+
+
+* Notes
+
+This is a Rio Car beta release.  BY DEFINITION, BETA SOFTWARE MAY NOT
+PERFORM AS ADVERTISED.  It may not be stable.  It may eat your music
+and spoil your day in any number of ways.  Please do not install this
+release unless you understand these important points.
+
+Release 2.00 has been in development for many months.  These notes are
+by no means comprehensive, if you notice a significant new feature that
+isn't mentioned then please let us know so we can add it to the list.
+
+Note that 2.00-beta1 and 2.00-beta2 were restricted releases.  The
+release notes have been combined here, for this first public release.
+
+
+* General
+
+Please submit bugs to carbugs@riohome.com - preferably after reading
+the BBS (http://empeg.comms.net) to check that the bug has not already
+been discussed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes.
+
+
+* Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit may not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+We strongly recommend completely de-installing the previous emplode before
+installing the new one, which installs into a different location.
+
+Connect your computer to your empeg car using the supplied serial cable.
+Switch off your player at the wall or unplug the IEC cable from the brick
+power supply.
+
+The upgrade can be installed by serial only.  Run the Upgrade Wizard and
+either enter or browse for the upgrade file. Click Next and select the
+serial port that your unit is connected to. Click Next again.
+
+When instructed to do so by the upgrade program re-apply power to your
+player by switching it on at the wall or connecting the IEC cable and brick
+power supply. If you have an all-in-one power supply then switch it on at
+the wall if possible or plug into the wall. The upgrade should then be
+applied. If it fails, try again.
+
+
+* What's New Since 1.03 - Player
+
+NB: Features which require a real time clock may not work on Mk.1 players.
+
+MP3 playback is now done using the ARM decoder. There should be little in
+the way of audible difference but the VBR support is much improved, and
+certain tracks that would not play before may now play.
+
+WAV files are supported.
+
+Significant improvements to caching performance (turn on the disk
+indicator to see this in action).
+
+Gapless playback of properly-constructed MP3 files has been improved. Note
+that this is dependent upon how the MP3s were created - most MP3 encoders
+will add artificial silence to the beginning and end of each track as it
+is being created. The car player will no longer insert its own gaps between
+two consecutive tracks on playback.
+
+Play counts and last played times have been implemented.
+
+The running order and programme are now preserved over synchronise
+operations.
+
+Three bookmarks may now be stored and restored.
+
+Repeat modes are now selectable from the player itself. An "r" (repeat all)
+or "R" (repeat track) appears in Track info modes.
+
+Tracks can now be marked for attention on the player. This is done by
+pressing "7" on a Kenwood remote or "Mark" on a Rio remote. The function
+is also available from the Bookmarks menu (we're looking for a more logical
+home for it). Marked tracks appear in emplode with a distinguishing icon,
+and can be a search criteria.
+
+It is now possible to toggle timecode display modes by pressing "1" on the
+remote. It is marked with "Time" on the Rio remote.  Display modes are:
+- Time of Day
+- Track Elapsed
+- Track Remaining
+- Total Elapsed
+- Playlist Elapsed
+- Playlist Remaining
+- Playlist Elapsed / Remaining
+A number followed by "d" indicates days (!).
+
+Balance, beep volume, and loudness are now remembered separately for in-car
+and in-home use.
+
+Several alternative shuffle behaviours have been added..
+- Random: As before
+- Least often played: Tracks played less often will tend toward the start
+- Least recently played: Tracks played less recently will do as above
+- By year: There will be an approximate progression through history
+- Off: As before
+
+Toggling shuffle with the remote will switch between no shuffle and the
+last shuffle mode selected.  When shuffle is active an "S" is shown on
+the Track info screen.
+
+Shuffling the running order is now much less likely to glitch the audio.
+
+When selecting tracks to play using the musical note icon only the tracks
+are played, not the playlists.
+
+It is now possible to skip tracks/fast-forward/rewind while the disk is
+spun down without causing the UI to hang.
+
+Soft power on/off now works during synchronise.
+
+It is no longer possible for the player to pick the wrong menu item if an
+item is selected very quickly after moving to it.
+
+Wendy filters have been implemented.  These provide a means to completely
+hide content on a player, for example if your mother is in the car.
+Filters can be combined for more advanced applications.  They are defined
+from within emplode.  An 'F' appears in track details view if a Wendy
+Filter is active.  Wendy filters are explained in greater detail later in
+this document.
+
+A new "hush" mode has been added which reduces the volume by a configurable
+(from emplode) amount rather than muting it completely.  This is achieved
+by holding the pause button on the Rio remote (there is no Kenwood
+equivalent).  An 'H' appears in track details view if Hush is active.
+
+A detailed info screen is now available for tracks. Press and hold the
+"Info" button on the Rio remote to see this screen. Not available on the
+Kenwood remote.
+
+Pressing the rotary knob now toggles through the various Sound menu
+settings (Volume, Balance, etc).
+
+The volume can now be fixed at a specified gain.  Set the desired level
+then select Settings - Volume - Fix at current level.  Note that this
+setting is stored independently for home (AC power) and car (DC power)
+operation.  To disable the feature, select Adjustable from the same menu.
+
+The external mute line can now be configured (from emplode) to cause mute,
+pause or hush.
+
+A large number of new visuals have been added, and existing visuals have
+been enhanced.  Note that there are random elements which reseed from time
+to time, so any one visual could have several random looks.
+
+Implemented visuals for Aux-In and Tuner.
+
+A transient line info visual has been added which appears and disappears in
+a "Top of the Pops"(tm) style.  The graphical visual behind it squashes into
+the remaining space rather than clipping.  The timecode pops up in isolation
+when scanning within a track.
+
+Volume now ramps up gradually at startup when in the car to avoid pain the
+morning after the heavy night before.  This can be configured from emplode.
+
+Whizzy startup animation (thanks Tony) - empeg and rio versions depending
+on the player personality.
+
+Player reports "No hard disk found, contact support" if it cannot mount
+a root device, instead of just hanging.
+
+DHCP client now does uPnP address allocation in parallel with normal DHCP.
+This means it can be plugged directly into a PC with no network setup (ie,
+set to "automatic") and ethernet will work.
+
+Time zone now works correctly.
+
+Position is remembered in playlist menus - press and hold the playlist menu
+item to return to previous level.  This does not currently work across
+reboots.
+
+Minor UI enhancements, e.g. round corners of menus.
+
+Added support for insert/appending to playlist when the menu button
+is held in the playlist hierarchy.  A submenu opens:
+- Replace: Replaces the entire programme with the new selection (default).
+- Append:  Puts the new selection at the end of the current programme.
+- Insert:  Inserts the selection into the current programme. Multiple
+  insert operations will insert after the last inserted item, not just
+  after the current play position, allowing proper cueing of new tracks
+
+Added insert as well as append during search.  Use "Select Mode" on the Rio
+remote or "CDMDCH" on the Kenwood.  Multiple insert operations will insert
+after the last inserted item, not just after the current play position,
+allowing proper cueing of new tracks
+
+Improved download efficiency.
+
+Implemented Hate Music buttons - press and hold the appropriate remote
+tweak function to remove tracks from the running order.  e.g. If a
+Britney track comes on, press and hold Artist (2 on Kenwood) to remove
+all further Britney tracks from the running order.
+
+Aux-In detects track transitions, and guesses at track numbers and
+timecode.
+
+Fixed the cumulative duration calculations.
+
+The visuals information is now updated via RDS if the selected
+channel is FM.
+
+The EQ UI has been changed to allow more features and make things a little
+easier for the user. In particular:
+- The settings that used to live in the centre of the display have been
+moved into a menu structure. Access this by pressing left/right until the
+preset name is highlighted in the top centre of the screen, then press down.
+- This menu also includes a "copy from" feature for copying entire presets
+- The number keys 1-9 select the n-th band, or the n-th preset
+- The rotary can be used to adjust levels, and can be pressed to select
+gain/freq/Q adjustment
+- Saving has been made automatic
+
+The powerfail indicator now stays on the screen for as long as the voltage
+is beneath the threshold.
+
+Long track names now scroll in info screens.
+
+Search By Playlist has been implemented.
+
+When you un-shuffle, the player will properly un-shuffle "around" your current
+tune according to the order of the playlists you've specified in Emplode. If
+you want the player to always "un-shuffle around the current track" so that
+you're dropped into that track's album, then make sure your album trees are
+listed first in Emplode (based on the Position column).
+
+The visual re-seed function has been re-implemented using the 'Select Mode'
+button on Rio remotes.
+
+It is now possible to have a list of favourite visuals which can be cycled
+by pressing the 'Visual' button on a Rio remote.  The list is channel
+dependent and resides in the config.ini file of the player as shown below -
+This list could be updated via emplode eventually.  Pressing and holding the
+'Visual' button will toggle between 'Favourites mode' and 'All visuals' if a
+favourites list is available for that channel.
+
+config.ini :
+
+[VisualFavourites_DSP]
+count=n
+1=Visual Name
+n=Visual Name
+[VisualFavourites_AUX]
+...
+[VisualFavourites_FM]
+...
+[VisualFavourites_AM]
+...
+
+
+* What's New Since 1.03 - Emplode
+
+(emplode has been completely rewritten, what follows is far from
+comprehensive.  Please refer to the built in help.)
+
+New player discovery dialog, which continuously monitors for players on
+the enabled interfaces.
+
+The tree includes views by Artist, Genre, All Tracks and so forth.  Tracks
+are automatically sorted into these views.
+
+Tracks no longer have to exist within playlists.  All tracks on the player
+are shown in various views from the tree, of which Playlists is one option.
+If a track is erased from all playlists it will not be removed from the
+player - this will only happen when it is erased from one of the fixed
+views.  In future it will be made more obvious to the user whether they
+are erasing a reference to a track, or removing the content entirely.
+
+Implemented "emplode today" HTML view.  This is the first view presented
+when a player is connected, and provides some useful links.  Tunes can be
+dragged & dropped onto HTML view (in which case they will not be added to
+any playlist and will be accessible only from within searches - in future
+the emplode tree structure will be recreated on the player).
+
+Now allows drag and drop onto "Artists", "Albums", etc in which case the tags
+will be updated appropriately.  This is useful for mass retagging of tracks
+using multiple views.
+
+Tracks can be dropped onto the player icon in the tree, in which case they
+are added as content but not added to any playlists.
+
+It is now possible to scroll whilst dragging and dropping.
+
+A search capability has been added with both simple and advanced
+interfaces.  Advanced searches can be saved to disk.
+
+Wendy filters have been implemented.
+
+The free disk space tracking code in emplode is much better, in particular
+it now copes with deletions.
+
+Files already on the player can now be trawled automatically to fill in
+extra information (such as codec, bitrate etc. information) that has been
+supported for newly added files since before v1.0.
+
+Dropping files is now much more user friendly. Items dropped are now sorted
+alphabetically by filename.
+
+Implemented Yes to All confirmation in appropriate dialogs.
+
+Dragging an item from the search results onto the tab control in emplode
+now switches tabs.
+
+Implemented context menu in RHS views in Emplode.
+
+Implemented redirector URL for product support.
+
+Users can now name AUX channel in emplode, to match whatever hardware you
+might have attached.
+
+The volume can be capped at 0dB from emplode.
+
+The Kenwood remote control can be disabled from emplode, to prevent clashes
+with other Kenwood head units in the vehicle.  The Rio remote uses different
+(unique to Rio) codes.
+
+Implemented buttons to allow reordering of tracks. You can also hold down Alt
+while dragging to enable this functionality.
+
+Group-editing multiple selections has been implemented. For instance, you can
+group-select ten tracks, get their properties, and change their Artist field
+in a single operation.
+
+Pressing Alt+3 with multiple items selected gives you WinAmp style
+functionality - pressing OK moves to the next item, rather than applying the
+changes to all of them.
+
+
+* Wendy Filters Documentation
+
+Wendy filters provide a convenient way to filter out tracks from your player.
+When a wendy filter is applied, any tracks which do not match the conditions
+of that filter will no longer appear in playlists or search results. The tracks
+will still exist on the player, but will simply be hidden from view. When the
+wendy filter is cleared, the tracks will be visible and can be played again.
+
+To set up some Wendy filters, first select the option 'Wendy Filters' from the
+emplode Tools menu.
+
+The first step in setting up a wendy filter is to name the wendy flags
+themselves.  There are 32 flags available and by default these are named 'Wendy
+flag 1', 'Wendy flag 2' etc. To rename a Wendy flag, double click on the flag
+itself and then type in the new name, pressing Enter once you have finished.
+Flags you may wish to create could include "Bad Language", "Hated by Wife" and
+so forth.    
+
+To create the Wendy filter itself, switch to the Filters pane and click on the
+New button. You will be prompted for a name. Type in the name required and
+click on OK.
+
+Next, select which flags this filter will examine by clicking the check boxes
+next to the relevant flags. Click once to place a tick in the check box,
+indicating that when the filter is applied, only tracks where that flag is set
+to True will be available. Click twice to place a cross in the check box,
+indicating that when the filter is applied, only tracks where that flag is set
+to False will be available.
+
+Any flags which do not have a tick or cross set for them in a particular filter
+are ignored by that filter.
+
+Once you have set up your Wendy filters, you must ensure that the relevant
+Wendy flags are set in the tracks that you wish to be filtered. To do this,
+select the track and then select 'Properties' from the Edit menu.
+
+Select the 'Wendy Flags' pane. You will now see a list of the flags that you
+previously named in the Wendy Filters dialog. Check any flags which apply to
+this track by clicking on the box next to the flag.
+
+Note: Once you have created your filters and set the relevant flags for tracks
+you wish to be filtered, you must synchronize emplode with your player for the
+relevant information to be uploaded.
+
+You can then apply a filter by going to the 'Filters' menu on your player and
+selecting the relevant filter. To clear a filter, go back to the 'Filters' menu
+and select 'Off'.
+
+Here is an example filter:
+
+Create a flag titled "Bad Language", and tick it for all tracks which have
+bad language in the lyrics.
+
+Create a filter called "Mother Present", then cross (double click) the Bad
+Language flag.
+
+When you select the filter "Mother Present" on the player, all tracks which
+contain bad language will vanish (temporarily!) from the player.
+
+
+* Known Issues - Player
+
+WMA support is not included due to licensing issues.  This functionality will
+be added when the problem is resolved.
+
+The clock could be set from RDS on Mark 1 (isn't currently). (#188)
+
+Player sends junk to the serial port on exit. (#778)
+
+Rewind time pop-up window moves slowly. (#17)
+
+"Title bar" text on search screens overlaps "xxxx tunes" text. (#1020)
+
+Info:Transient doesn't display frequency when scanning in radio. (#1038)
+
+Player has been seen to fail to upgrade to due to "Hardware Revision Failed"
+at stage 0x04 error - please contact us if you see this. (#1021)
+
+Now and Next screen shows multiple repeats of single track. (#1052)
+
+Time info popups - cosmetic problem in info:line mode. (#1073)
+
+InfoTex visuals contain blitter and don't always get proper info fed to
+them. (#976)
+
+Play count (& other stats?) not updated in Repeat track mode. (#1104)
+
+Some users report too much bass in tuner mode. (#1055)
+
+The player doesn't yet keep count of how many times a track has been skipped
+over (but emplode has a column for it - so it always shows 0).
+
+
+* Known Issues - Emplode
+
+Help file is missing because it refers to unannounced products - this will be
+released in a future build.
+
+Rapidly plugging and unplugging USB while empeg is booting can cause a
+blue-screen error in USB driver. (#541)
+
+No close icon on sync dialog and cancel is greyed out. (#79)
+
+Free space doesn't increase when deleting tracks in emplode. (#1054)
+
+Cut & paste into track properties doesn't forget font. (#1056)
+
+Emplode truncates exit event WAV. (#1031)
+
+Tracks dropped on web view aren't deduplicated. (#936)
+
+Occassional errors writing player configuration. (#919)
+
+Network configuration dialog should allow DNS server entry in emplode. (#1080)
+
+User should be warned less often that deleting a playlist doesn't do what
+they might be expecting. (#1105)
+
+
+Rob Voisey 2001/10/17 16:18 +0100 (BST)
+rvoisey@sonicblue.com
+

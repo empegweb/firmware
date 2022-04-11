@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Construct dependency files (gcc does most of the work)
+#
+# (C) 1999-2000 empeg Ltd
+#
+# This software is licensed under the GNU General Public Licence (see file
+# COPYING), unless you possess an alternative written licence from empeg ltd.
+#
+# (:Empeg Source Release  01-Apr-2003 18:52 rob:)
+
+prefix=$1
+cc=$2
+shift
+shift
+( if ! $cc -M $* ; then
+    echo //barf// >&3
+fi | sed -e 's@ /[^ ]*@@g' -e "s@^\(.*\)\.o:@${prefix}\1.d ${prefix}\1.o:@" ) 3>&1 | if ! grep -v //barf// ; then exit 1 ; fi

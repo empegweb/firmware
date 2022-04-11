@@ -1,0 +1,547 @@
+#
+# Lib/Makefile.in -- Makefile for libunsn library
+# Copyright (C) 2000  Andrew Main
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# Paths
+
+SHELL = /bin/sh
+@SET_MAKE@
+
+srcdir      = @srcdir@
+VPATH       = @srcdir@
+
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+mandir      = @mandir@
+libdir      = @libdir@
+includedir  = @includedir@
+
+CC          = @CC@
+CPPFLAGS    = @CPPFLAGS@
+DEFS        = @DEFS@
+CFLAGS      = @CFLAGS@
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@
+
+SHLIB_CFLAGS = @SHLIB_CFLAGS@
+SHLIB_LDFLAGS = @SHLIB_LDFLAGS@
+SHLIB_SONAME_LDFLAG = @SHLIB_SONAME_LDFLAG@
+SHLIB_EXT = @SHLIB_EXT@
+
+RANLIB      = @RANLIB@
+
+INSTALL     = @INSTALL@
+
+MAKEDEFS    = \
+prefix='$(prefix)' exec_prefix='$(exec_prefix)' \
+bindir='$(bindir)' mandir='$(mandir)' libdir='$(libdir)' \
+includedir='$(includedir)' \
+CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' DEFS='$(DEFS)' \
+CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS='$(LIBS)' \
+SHLIB_CFLAGS='$(SHLIB_CFLAGS)' SHLIB_LDFLAGS='$(SHLIB_LDFLAGS)' \
+SHLIB_SONAME_LDFLAG='$(SHLIB_SONAME_LDFLAG)' SHLIB_EXT='$(SHLIB_EXT)' \
+RANLIB='$(RANLIB)'
+
+DISTFILES   = Makefile.in .cvsignore \
+mkprotos protos.spec errcmp.spec squeeze.sed \
+libunsn.h.in libunsn_f1.h libunsn_pr.h \
+chain.c sstring.c \
+alt.c ctype_table.c ilayers.c \
+p_ip.c p_local.c p_tcpudp.c \
+errno.3in libunsn.3in sai.3in socket.7in \
+getspfoo.c.in mkgetspfoo \
+addrtounsn.3in addrtounsn.c \
+aitounsn.3in aitounsn.c \
+altiter.3in altiter.c \
+canonize.3in canonize.c \
+copysai.3in copysai.c \
+ctype.3in ctype_funcs.c \
+decode.3in decode.c \
+encode.3in encode.c \
+errcmp.3in errcmp.c \
+getspaddr.3in getspaddr.c \
+getspunsn.3in getspunsn.c \
+getspunsnh.3in getspunsnh.c \
+guessaddrt.3in guessaddrt.c \
+mksaiiter.3in mksaiiter.c \
+opensfsai.3in opensfsai.c \
+opensock.3in opensock.c \
+parse.3in parse.c \
+perror.3in perror.c \
+saiiter.3in saiiter.c \
+saitounsn.3in saitounsn.c \
+strerror.3in strerror.c \
+syntaxok.3in syntaxok.c \
+unparse1.3in unparse1.c \
+
+MANPAGES = \
+errno.3in libunsn.3in sai.3in socket.7in \
+addrtounsn.3in aitounsn.3in \
+altiter.3in \
+canonize.3in \
+copysai.3in \
+ctype.3in decode.3in encode.3in \
+errcmp.3in \
+getspaddr.3in getspunsn.3in getspunsnh.3in \
+guessaddrt.3in \
+mksaiiter.3in \
+opensfsai.3in opensock.3in \
+parse.3in \
+perror.3in \
+saiiter.3in \
+saitounsn.3in \
+strerror.3in \
+syntaxok.3in \
+unparse1.3in \
+
+# Shared library names
+
+LINKNAME = libunsn.$(SHLIB_EXT)
+SONAME = libunsn.$(SHLIB_EXT).1
+
+SHLIB_BUILDTARGETS = $(SONAME)
+SHNIB_BUILDTARGETS =
+SHLIB_LINKTARGETS = $(LINKNAME)
+SHNIB_LINKTARGETS =
+
+# Build targets
+
+all: libunsn.h libunsn.a
+all: $(SH@L@IB_LINKTARGETS) $(SH@L@IB_BUILDTARGETS)
+all: manpages.list
+
+check: libunsn.a $(SH@L@IB_BUILDTARGETS)
+	@echo 'There are no tests.'
+
+install: install.shlib install.devel install.utils
+uninstall: uninstall.shlib uninstall.devel uninstall.utils
+
+install.shlib: $(SH@L@IB_BUILDTARGETS)
+	set -e; \
+	if test @L@ = L; then \
+		$(srcdir)/../mkinstalldirs $(DESTDIR)$(libdir); \
+		. $(srcdir)/../version.vars; \
+		$(INSTALL) -m 755 $(SONAME) \
+			$(DESTDIR)$(libdir)/$(SONAME)-$$VERSION; \
+		rm -f $(DESTDIR)$(libdir)/$(SONAME)-new; \
+		ln -s $(SONAME)-$$VERSION $(DESTDIR)$(libdir)/$(SONAME)-new; \
+		mv -f $(DESTDIR)$(libdir)/$(SONAME)-new \
+			$(DESTDIR)$(libdir)/$(SONAME); \
+	else :; fi
+
+uninstall.shlib:
+	set -e; \
+	if test @L@ = L; then \
+		. $(srcdir)/../version.vars; \
+		rm -f $(DESTDIR)$(libdir)/$(SONAME)-$$VERSION; \
+		rm -f $(DESTDIR)$(libdir)/$(SONAME); \
+	else :; fi
+
+instlist.shlib:
+	set -e; \
+	if test @L@ = L; then \
+		. $(srcdir)/../version.vars; \
+		( \
+			echo $(libdir)/$(SONAME)-$$VERSION; \
+			echo $(libdir)/$(SONAME) \
+		) >> $(INSTLIST); \
+	else :; fi
+
+install.devel: libunsn.h libunsn.a manpages.list
+	$(srcdir)/../mkinstalldirs $(DESTDIR)$(includedir)
+	$(INSTALL) -m 644 libunsn.h $(DESTDIR)$(includedir)
+	$(srcdir)/../mkinstalldirs $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 libunsn.a $(DESTDIR)$(libdir)
+	set -e; \
+	if test @L@ = L; then \
+		. $(srcdir)/../version.vars; \
+		rm -f $(DESTDIR)$(libdir)/$(LINKNAME)-new; \
+		ln -s $(SONAME) $(DESTDIR)$(libdir)/$(LINKNAME)-new; \
+		mv -f $(DESTDIR)$(libdir)/$(LINKNAME)-new \
+			$(DESTDIR)$(libdir)/$(LINKNAME); \
+	else :; fi
+	set -e; \
+	for manpage in `cat manpages.list`; do \
+		sect=`echo $$manpage | sed 's/^.*\.//'`; \
+		$(srcdir)/../mkinstalldirs $(DESTDIR)$(mandir)/man$$sect; \
+		$(INSTALL) -m 644 man/$$manpage $(DESTDIR)$(mandir)/man$$sect; \
+	done
+
+uninstall.devel: manpages.list
+	rm -f $(DESTDIR)$(includedir)/libunsn.h
+	rm -f $(DESTDIR)$(libdir)/libunsn.a
+	set -e; \
+	if test @L@ = L; then \
+		. $(srcdir)/../version.vars; \
+		rm -f $(DESTDIR)$(libdir)/$(LINKNAME); \
+	else :; fi
+	set -e; \
+	for manpage in `cat manpages.list`; do \
+		sect=`echo $$manpage | sed 's/^.*\.//'`; \
+		rm -f $(DESTDIR)$(mandir)/man$$sect/$$manpage; \
+	done
+
+instlist.devel: manpages.list
+	set -e; \
+	( \
+		echo $(includedir)/libunsn.h; \
+		echo $(libdir)/libunsn.a; \
+		if test @L@ = L; then \
+			. $(srcdir)/../version.vars; \
+			echo $(libdir)/$(LINKNAME); \
+		else :; fi; \
+		for manpage in `cat manpages.list`; do \
+			sect=`echo $$manpage | sed 's/^.*\.//'`; \
+			echo %doc $(mandir)/man$$sect/$$manpage; \
+		done \
+	) >> $(INSTLIST)
+
+install.utils uninstall.utils instlist.utils:
+
+install-strip: install
+
+# Cleaning
+
+clean:
+	rm -f getpeeraddr.c getpeerunsn.c getpeerunsnh.c
+	rm -f getsockaddr.c getsockunsn.c getsockunsnh.c
+	rm -f features.c features.sh libunsn_f.h edit_header.sed libunsn.h
+	rm -f errcmp.l.ic strerror.m.ic ilayers.h ilayers.i.ic ilayers.t.ic
+	rm -f aitounsn.s.ic p_local.i.ic
+	rm -f *.o libunsn.a $(SH@L@IB_BUILDTARGETS) $(SH@L@IB_LINKTARGETS)
+	rm -f manpages.list
+	rm -rf man
+
+distclean: clean
+	rm -f Makefile
+
+superclean: distclean
+
+mostlyclean: clean
+maintainer-clean: distclean
+
+# Distributions
+
+dist: $(DISTFILES)
+	mkdir $(DISTDIR)
+	list=`echo '' $(DISTFILES) | sed 's" \([^ ]\)" '$(srcdir)'/\1"g'`; \
+	ln $$list $(DISTDIR) || cp -p $$list $(DISTDIR)
+	set -e; \
+        for subdir in Compat; do \
+		( cd $$subdir && $(MAKE) $(MAKEDEFS) DISTDIR=$${DISTDIR}/$$subdir dist ); \
+	done
+
+# Configuration
+
+../config.status: ../configure
+	cd .. && ./config.status --recheck
+
+../configure: ../configure.in ../aclocal.m4
+	cd $(srcdir)/.. && autoconf
+
+../config.h: ../stamp-h
+	@: Getting round a bug in GNU make
+
+../stamp-h: ../config.h.in ../config.status
+	cd .. && CONFIG_FILES= CONFIG_HEADERS=config.h ./config.status
+
+../config.h.in: ../stamp-h.in
+	@: Getting round a bug in GNU make
+
+../stamp-h.in: ../acconfig.h ../configure.in ../aclocal.m4
+	cd $(srcdir)/.. && autoheader
+	echo > $(srcdir)/../stamp-h.in
+
+../acconfig.h: ../configure.in ../mkacconfigh
+	cd $(srcdir)/.. && ./mkacconfigh > acconfig.h
+
+Makefile: Makefile.in ../config.status
+	cd .. && CONFIG_FILES=Lib/Makefile CONFIG_HEADERS= ./config.status
+
+# Man pages
+
+manpages.list: $(MANPAGES) ../version.vars
+	test -d man || mkdir man
+	$(srcdir)/../mkmanpages $(srcdir)/../version.vars man \
+		`echo '' $(MANPAGES) | sed 's| | '$(srcdir)'/|g'` > $@ || \
+		( rm -f $@; exit 1 )
+
+# Library building
+
+LIBOBJS = \
+chain.o sstring.o \
+alt.o ctype_table.o ilayers.o \
+p_ip.o p_local.o p_tcpudp.o \
+addrtounsn.o aitounsn.o \
+altiter.o \
+canonize.o \
+copysai.o \
+ctype_funcs.o decode.o encode.o \
+errcmp.o \
+getspaddr.o getspunsn.o getspunsnh.o \
+getpeeraddr.o getpeerunsn.o getpeerunsnh.o \
+getsockaddr.o getsockunsn.o getsockunsnh.o \
+guessaddrt.o \
+mksaiiter.o \
+opensfsai.o opensock.o \
+parse.o \
+perror.o \
+saiiter.o \
+saitounsn.o \
+strerror.o \
+syntaxok.o \
+unparse1.o \
+
+SHLIBOBJS = \
+chain..o sstring..o \
+alt..o ctype_table..o ilayers..o \
+p_ip..o p_local..o p_tcpudp..o \
+addrtounsn..o aitounsn..o \
+altiter..o \
+canonize..o \
+copysai..o \
+ctype_funcs..o decode..o encode..o \
+errcmp..o \
+getspaddr..o getspunsn..o getspunsnh..o \
+getpeeraddr..o getpeerunsn..o getpeerunsnh..o \
+getsockaddr..o getsockunsn..o getsockunsnh..o \
+guessaddrt..o \
+mksaiiter..o \
+opensfsai..o opensock..o \
+parse..o \
+perror..o \
+saiiter..o \
+saitounsn..o \
+strerror..o \
+syntaxok..o \
+unparse1..o \
+
+LIBLISTS = Compat/libobjs.list
+SHLIBLISTS = Compat/shlibobjs.list
+
+$(LIBOBJS) $(SHLIBOBJS): libunsn_f.h libunsn_pr.h libunsn.h Compat/stamp-h
+ilayers.o p_ip.o p_local.o p_tcpudp.o saiiter.o: ilayers.h
+ilayers..o p_ip..o p_local..o p_tcpudp..o saiiter..o: ilayers.h
+
+Compat/stamp-h: FORCE
+	cd Compat && $(MAKE) $(MAKEDEFS) stamp-h
+
+libunsn.a: $(LIBOBJS) $(LIBLISTS)
+	rm -f $@
+	ar cr $@ $(LIBOBJS) `cat $(LIBLISTS)`
+	$(RANLIB) $@
+
+$(SONAME): $(SHLIBOBJS) $(SHLIBLISTS)
+	$(CC) $(SHLIB_CFLAGS) $(LDFLAGS) $(SHLIB_LDFLAGS) \
+		$(SHLIB_SONAME_LDFLAG)$(SONAME) -o $@ \
+		$(SHLIBOBJS) `cat $(SHLIBLISTS)` $(LIBS)
+
+$(LINKNAME): $(SONAME)
+	rm -f $@
+	ln -s $(SONAME) $@
+
+# Compiling
+
+INCLUDES = -I. -I$(srcdir)
+COMPBASE = $(CC) $(INCLUDES) $(CPPFLAGS) $(DEFS) $(CFLAGS)
+COMPILE = $(COMPBASE) -c
+DLCOMPILE = $(COMPBASE) $(SHLIB_CFLAGS) -c -o $@
+
+.SUFFIXES:
+.SUFFIXES: .c .o ..o
+
+.c.o:
+	$(COMPILE) $<
+
+.c..o:
+	$(DLCOMPILE) $<
+
+# Subdirectory object lists
+
+Compat/libobjs.list: FORCE
+	cd Compat && $(MAKE) $(MAKEDEFS) libobjs.list
+
+Compat/shlibobjs.list: FORCE
+	cd Compat && $(MAKE) $(MAKEDEFS) shlibobjs.list
+
+# Automatic source building
+
+features.c: libunsn_f1.h
+	( \
+		echo '"generated file -- source is in Makefile.in"'; \
+		echo '#include <libunsn_f1.h>'; \
+		echo '"Feature Tests Pseudo Source"'; \
+		for feature in `sed -n '/^# *define SUPPORT_/{s/^# *define \(SUPPORT_[A-Z0-9_]*\).*$$/\1/;p;}' < $(srcdir)/libunsn_f1.h | sort -u`; do \
+			echo; \
+			echo '#ifdef '$$feature; \
+			echo '"'$$feature'=yes"'; \
+			echo '#else'; \
+			echo '"'$$feature'=no"'; \
+			echo '#endif'; \
+		done \
+	) > $@
+
+features.sh: features.c Compat/stamp-h
+	$(CPP) $(INCLUDES) $(CPPFLAGS) $(DEFS) features.c | \
+		sed -n -e '1,/"Feature Tests Pseudo Source"/d' \
+			-e '/^#/d' \
+			-e '/"SUPPORT_/{s/^.*"\(SUPPORT_[^"]*\)".*$$/\1/;p;}' \
+			> $@
+
+libunsn_f.h: features.sh
+	( \
+		echo '/* generated file -- do not edit */'; \
+		sed -e 's|^\(.*\)=yes$$|#define \1 1|' \
+			-e 's|^\(.*\)=no$$|/* #undef \1 */|' \
+			< features.sh \
+	) > $@
+
+edit_header.sed: features.sh ../config.h
+	( \
+		set -e; \
+		. ./features.sh; \
+		echo '1,/Copyright/s/~* Lib.* -- /* <libunsn.h> -- /'; \
+		sed < features.sh \
+			-e 's|^\(SUPPORT_[A-Z0-9_]*\)=yes|/^@@IF_\1@@$$/d;/^@@ENDIF_\1@@$$/d|' \
+			-e 's|^\(SUPPORT_[A-Z0-9_]*\)=no|s!^@@IF_\1@@$$!#if 0 /* not available on this system */!;s!^@@ENDIF_\1@@$$!#endif /* not available on this system */!|'; \
+		hdrlist="@TYPEHDR_size_t@"; \
+		test $$SUPPORT_SOCKETS = no || \
+			hdrlist="$$hdrlist @TYPEHDR_socklen_t@"; \
+		hdrlist="$$hdrlist @TYPEHDR_ssize_t@"; \
+		hdrs=' '; \
+		for hdr in $$hdrlist; do \
+			case "$${hdr}:$${hdrs}" in no:*|*" $${hdr} "*) ;; *) \
+				hdrs="$${hdrs}$${hdr} " \
+			;; esac; \
+		done; \
+		if test "$${hdrs}" != " "; then \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo '/* Includes for type definitions (it would be better to get just the'; \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo '   definition, if we knew how). */'; \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo ''; \
+			for hdr in $$hdrs; do \
+				echo '/^@@TYPE_DEFS@@$$/i~'; \
+				echo '#include <'$${hdr}'>'; \
+			done; \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo ''; \
+		fi; \
+		case " $$hdrlist " in *" no "*) \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo '/* Missing types: temporary names */'; \
+			echo '/^@@TYPE_DEFS@@$$/i~'; \
+			echo ''; \
+			echo '/^@@TYPE_UNDEFS@@$$/i~'; \
+			echo '/* The temporary type names are not to be used anywhere else: make sure */'; \
+			echo '/^@@TYPE_UNDEFS@@$$/i~'; \
+			echo ''; \
+			if test @TYPEHDR_size_t@ = no; then \
+				echo '/^@@TYPE_DEFS@@$$/i~'; \
+				sed -n '/^#define size_t/{s/ / UNSN_/;p;}' \
+					< ../config.h; \
+				echo '/^@@TYPE_UNDEFS@@$$/i~'; \
+				echo '#undef UNSN_size_t'; \
+				echo 's/^~(size_t~)$$/UNSN_~1/g'; \
+				echo 's/^~(size_t[^a-zA-Z0-9_]~)/UNSN_~1/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(size_t~)$$/~1UNSN_~2/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(size_t[^a-zA-Z0-9_]~)/~1UNSN_~2/g'; \
+			fi; \
+			if test $${SUPPORT_SOCKETS}:@TYPEHDR_socklen_t@ = yes:no; then \
+				echo '/^@@TYPE_DEFS@@$$/i~'; \
+				sed -n '/^#define socklen_t/{s/ / UNSN_/;p;}' \
+					< ../config.h; \
+				echo '/^@@TYPE_UNDEFS@@$$/i~'; \
+				echo '#undef UNSN_socklen_t'; \
+				echo 's/^~(socklen_t~)$$/UNSN_~1/g'; \
+				echo 's/^~(socklen_t[^a-zA-Z0-9_]~)/UNSN_~1/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(socklen_t~)$$/~1UNSN_~2/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(socklen_t[^a-zA-Z0-9_]~)/~1UNSN_~2/g'; \
+			fi; \
+			if test @TYPEHDR_ssize_t@ = no; then \
+				echo '/^@@TYPE_DEFS@@$$/i~'; \
+				sed -n '/^#define ssize_t/{s/ / UNSN_/;p;}' \
+					< ../config.h; \
+				echo '/^@@TYPE_UNDEFS@@$$/i~'; \
+				echo '#undef UNSN_ssize_t'; \
+				echo 's/^~(ssize_t~)$$/UNSN_~1/g'; \
+				echo 's/^~(ssize_t[^a-zA-Z0-9_]~)/UNSN_~1/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(ssize_t~)$$/~1UNSN_~2/g'; \
+				echo 's/~([^a-zA-Z0-9_]~)~(ssize_t[^a-zA-Z0-9_]~)/~1UNSN_~2/g'; \
+			fi; \
+		;; esac; \
+		echo '/^@@TYPE_DEFS@@$$/d'; \
+		echo '/^@@TYPE_UNDEFS@@$$/d' \
+	) | tr '~' '\\' > $@
+
+libunsn.h: libunsn.h.in edit_header.sed
+	sed -f edit_header.sed < $(srcdir)/libunsn.h.in | \
+		sed -f $(srcdir)/squeeze.sed > $@
+
+errcmp.o errcmp..o: errcmp.l.ic
+errcmp.l.ic: errcmp.spec
+	sed -n 's/[ 	][ 	]*//g;/^$$/d;/^#/d;s/^/#ifdef /;p;s/^#ifdef \(.*\)$$/	\1,/;p;s|^	\(.*\),$$|#endif /* \1 */|;p' < $(srcdir)/errcmp.spec > $@
+
+strerror.o strerror..o: strerror.m.ic
+strerror.m.ic: libunsn.h
+	( \
+		echo 'static char const *errmsg[] = {'; \
+		sed -n '/UNSN_E/{s!^.*/\* !	"!;s! \*/.*$$!",!;p;}' \
+			< libunsn.h || exit 1; \
+		echo '};'; \
+		sed -n '/UNSN_E/{s!UNSN_E[A-Z0-9_]*!NAME!;p;}' \
+			< libunsn.h | \
+			sed -n -e '1{s/NAME/ERRMIN/;s|[ 	]*/\*.*$$||;p;}' \
+				-e '$${s/NAME/ERRMAX/;s|[ 	]*/\*.*$$||;p;}' \
+	) > $@
+
+ilayers.o ilayers..o: ilayers.i.ic ilayers.t.ic
+ilayers.h ilayers.i.ic ilayers.t.ic: protos.spec
+	$(srcdir)/mkprotos $(srcdir)/protos.spec
+
+aitounsn.o aitounsn..o: aitounsn.s.ic
+aitounsn.s.ic: aitounsn.c
+	$(srcdir)/../mksocktlist $(srcdir)/aitounsn.c $@
+
+p_local.o p_local..o: p_local.i.ic
+p_local.i.ic: p_local.c
+	$(srcdir)/../mksocktlist $(srcdir)/p_local.c $@
+
+getpeeraddr.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+getpeerunsn.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+getpeerunsnh.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+getsockaddr.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+getsockunsn.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+getsockunsnh.c: mkgetspfoo getspfoo.c.in
+	$(srcdir)/mkgetspfoo $(srcdir)/getspfoo.c.in $@
+
+# Forcing pseudo-target
+
+FORCE:

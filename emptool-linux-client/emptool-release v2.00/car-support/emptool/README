@@ -1,0 +1,130 @@
+		README for emptool binary releases
+		==================================
+
+		(C) 2000 empeg ltd, http://www.empeg.com
+
+	This software is licensed under the GNU General Public Licence
+	(see file COPYING), unless you possess an alternative written
+	licence from empeg ltd.
+
+(:Empeg Source Release 1.4 01-Apr-2003 18:52 rob:)
+
+-----------------------------------------------------------
+IMPORTANT CHANGE FOR BETA 9 AND LATER (emptool 0.81 and up)
+-----------------------------------------------------------
+
+The client-player protocol interface has had some changes which mean
+that a beta 9 (or later) client will not work on a beta 8b player, and
+a beta 8b client will not work on a beta 9 (or later) player. If you
+get messages such as:
+
+"Protocol version of emptool is too old for your player"
+or
+"Protocol version of your player is too old for emptool"
+
+then the versions are incompatible. Obtain a current image and
+apply it with 'upgclient', and then run the enclosed emptool.
+
+Also note that the new 'upgclient' should be used for upgrade files
+from Beta 8b releases onwards. So, in either case, you should
+definitely use the new 'upgclient' binary.
+
+-------------------------------------------
+
+This package contains emptool, the linux empeg-car uploader, and
+upgclient, a tool for upgrading releases on the player.
+
+Please refer any bugs to bugs@empeg.com.
+
+
+Package contents:
+-----------------
+
+empeg-car/			Directory containing package files
+empeg-car/README		This text
+empeg-car/CHANGES		Change log (terse)
+empeg-car/emptool		Database uploader binary
+empeg-car/emptool.static	Database uploader binary (statically linked in
+				case your libraries differ from ours)
+empeg-car/emptool.1		Manual page for emptool
+empeg-car/numerics.h		Include file for emptool's numeric codes.
+empeg-car/upgclient		Release upgrader binary
+empeg-car/upgclient.static	Database uploader binary (statically linked in
+				case your libraries differ from ours)
+
+
+emptool
+-------
+
+To get a brief list of usage for emptool, run the program without any
+options. This will bring up the default help text. To start emptool if
+the player is connected to your first serial port, run it with
+
+./emptool /dev/ttyS0
+
+A more detailed overview is found in the manual page included in this
+package. This is called 'emptool.1' and can be viewed with GNU man with
+
+man ./emptool.1
+
+or copied to your /usr/man/man1 (or /usr/local/man/man1) directories
+and viewed with
+
+man emptool
+
+ - - - - - - - - - -
+New for version 0.81:
+ - - - - - - - - - -
+
+Added -e and -l options for most commands. Using -e makes all titles
+that are printed as output escape any spaces with a backslash-space
+sequence, e.g:
+
+		/Long title name
+	becomes
+		/Long\ title\ name
+
+The -l option prints a node in 'long' style, e.g:
+
+     970 playlist /Fatboy\ Slim                                              23
+
+The fields are, in order: FID node number (hex), type (playlist or
+tune), title and length. The length for playlists is the number of
+entries. For tunes, this is the length of the file itself.
+
+Filesystem check progress is now reported!
+
+ - - - - - - - - - -
+New for version 0.80:
+ - - - - - - - - - -
+
+- Completely overhauled entire program. Syntax has changed for 'set',
+'unset' and 'ls' - please refer to man page. Features missing:
+
+  - 'ls' doesnt show any file details (length, type etc)
+  - Some progress reports are repeated twice (e.g "Downloading")
+  - Can still ctrl-c the program at 'unsafe' points (at any point)
+
+- Numeric codes for most operations. Script writers will probably want
+to look at "numerics.h" which is taken straight from the
+source. Numerics are output as 4 digit numbers at the start of a
+line. Run emptool to see what the format is :) Beware that the codes
+may change with new releases (hopefully won't have to).
+
+- The '$' '^' '#' '#begin' '#end' symbols are currently unimplemented!
+This means if you have two identifiers with the same name, you can't
+access them properly.
+
+upgclient
+---------
+
+Usage is fairly self-explanatory. To upgrade a player on your first
+serial port with the file "developer-beta8c.upgrade", use
+
+./upgclient -p /dev/ttyS0 developer-beta8c.upgrade
+
+Help text is shown when run without arguments.
+
+Known problems:
+
+- Baudrate setting is possible, but the player only supports 115200.

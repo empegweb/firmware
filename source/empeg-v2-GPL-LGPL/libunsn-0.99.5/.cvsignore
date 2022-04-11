@@ -1,0 +1,11 @@
+Makefile
+acconfig.h
+configure
+config.cache
+config.log
+config.h.in
+config.h
+config.status
+stamp-h
+stamp-h.in
+dist

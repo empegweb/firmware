@@ -1,0 +1,413 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.28 empeg/kernel/Makefile:1.30
+--- empeg/kernel/Makefile:1.28	Tue Jul  4 15:25:13 2000
++++ empeg/kernel/Makefile	Sat Jul 15 17:58:04 2000
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg27
++EXTRAVERSION = -rmk5-np17-empeg29
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_display.c
+diff -u empeg/kernel/arch/arm/special/empeg_display.c:1.27 empeg/kernel/arch/arm/special/empeg_display.c:1.29
+--- empeg/kernel/arch/arm/special/empeg_display.c:1.27	Mon Jun 26 21:59:38 2000
++++ empeg/kernel/arch/arm/special/empeg_display.c	Tue Jul  4 19:00:08 2000
+@@ -777,8 +777,14 @@
+ void __init empeg_display_init(void)
+ {
+ 	struct display_dev *dev = devices;
+-	int result;
++	int result,delay;
+ 	
++	/* Initialise main board->display board comms: mk2 only */
++	if (empeg_hardwarerevision()>=6) {
++		/* Set brightness */
++		display_sendcontrol(16);
++	}
++
+ 	/* Firstly, we need to locate the LCD DMA buffer to a 4k page
+ 	   boundary to ensure that the SA1100 DMA controller can do
+ 	   display fetches for the LCD. We currently do this by having
+@@ -832,9 +838,13 @@
+ 	display_setpalette(dev, PALETTE_STANDARD);
+ /*	display_setpalette(dev, PALETTE_DIRECT);*/
+ 	
+-	/* Set up SA1100 LCD controller: first ensure that it's turned off */
++	/* First ensure that LCD controller is turned off */
+ 	LCCR0 = 0;
+-	
++
++	/* Small delay to ensure DMA is turned off */
++	delay=jiffies+(HZ/10);
++	while(jiffies<delay);
++
+ 	/* Set up the DMA controller's base address for the screen */
+ 	DBAR1 = (unsigned char*)virt_to_phys((int)dev->hardware_buffer);
+ 	
+@@ -864,7 +874,6 @@
+ 	
+ 	/* LCD control register 0; flags & enable */
+ 	LCCR0 = 
+-		LCCR0_LEN+            /* Enable LCD controller */
+ 		LCCR0_Mono+           /* Monochrome mode (ie time-domain greyscaling) */
+ 		LCCR0_Sngl+           /* Single panel mode */
+ 		LCCR0_LDM+            /* No LCD disable done IRQ */
+@@ -874,6 +883,8 @@
+ 		LCCR0_LtlEnd+         /* Little-endian frame buffer */
+ 		LCCR0_4PixMono+       /* 4-pixels-per-clock mono display */
+ 		LCCR0_DMADel(0);      /* No DMA delay */
++	LCCR0|= LCCR0_LEN;            /* Enable LCD controller */
++
+   
+ 	/* Turn on display: raising GPIO18 turns on the VN02 high-side
+ 	   driver, which feeds the raw car input power to a number of
+@@ -960,7 +971,8 @@
+ 	GPSR=EMPEG_DSPPOM | EMPEG_DISPLAYPOWER;
+ #else
+ 	struct display_dev *dev = devices;
+-		/* Set up SA1100 LCD controller: first ensure that it's turned off */
++
++	/* Set up SA1100 LCD controller: first ensure that it's turned off */
+ 	LCCR0 = 0;
+ 	
+ //	printk("Frame buffer start is at %p\n", empegfb_start);
+Index: empeg/kernel/arch/arm/special/empeg_power.c
+diff -u empeg/kernel/arch/arm/special/empeg_power.c:1.4 empeg/kernel/arch/arm/special/empeg_power.c:1.8
+--- empeg/kernel/arch/arm/special/empeg_power.c:1.4	Tue Jun 13 19:10:35 2000
++++ empeg/kernel/arch/arm/special/empeg_power.c	Sat Jul 15 17:11:25 2000
+@@ -42,8 +42,11 @@
+  * You can read the current power states from this driver with ioctls, and also
+  * from /proc/empeg_power
+  *
++ * When run on a mk1, this code is used to provide compatible ioctls.
++ *
+  * 2000/03/15 HBF First version
+  * 2000/05/24 HBF Added ioctls
++ * 2000/07/10 HBF Will now run on Mk1's and show levels on I/O
+  * 
+  */
+ 
+@@ -85,7 +88,7 @@
+   NULL, /* power_read */
+   NULL, /* power_write */
+   NULL, /* power_readdir */
+-  NULL, /* power_poll */
++  power_poll,
+   power_ioctl,
+   NULL, /* power_mmap */
+   power_open,
+@@ -100,6 +103,9 @@
+ 	int bit;
+ 	unsigned long flags;
+ 
++	/* Not really valid on Mk1's */
++	if (empeg_hardwarerevision()<6) return;
++
+ 	/* Need to do this with IRQs disabled to preserve timings */
+ 	save_flags_cli(flags);
+ 
+@@ -135,6 +141,49 @@
+ 	restore_flags(flags);
+ }
+ 
++/* Bitset of current power state */
++int getbitset(void)
++{
++	int bitset=0;
++	unsigned int gplr=GPLR;
++	
++	if (empeg_hardwarerevision()<6) {
++		/* Mk1 */
++		if (gplr&EMPEG_EXTPOWER)  bitset|=1;
++		if (powerfail_enabled())  bitset|=2;
++		/* Accessory ON */        bitset|=4;
++	} else {
++		/* Mk2 */
++		if (gplr&EMPEG_EXTPOWER)  bitset|=1;
++		if (powerfail_enabled())  bitset|=2;
++		if (gplr&EMPEG_ACCSENSE)  bitset|=4;
++		if (power_firstboot)      bitset|=8;
++		if (gplr&EMPEG_SERIALDCD) bitset|=16; /* Tel mute */
++		if (gplr&EMPEG_SERIALCTS) bitset|=32; /* Dimmer sense */
++	}
++
++	return bitset;
++}
++
++/* Timer routine */
++static void check_power(void *dev_id)
++{
++	struct power_dev *dev=(struct power_dev*)dev_id;
++	int state=getbitset();
++
++	/* Changed? */
++	if (state!=dev->laststate) {
++		/* Save new state */
++		dev->newstate=state;
++
++		/* Something has happened, wake up any waiters */
++		wake_up_interruptible(&dev->wq);
++	}
++	
++	/* Requeue ourselves */
++	queue_task(&dev->poller, &tq_timer);
++}
++
+ /* First boot time? */
+ int empeg_power_firstboot(void)
+ {
+@@ -144,9 +193,10 @@
+ /* Device initialisation */
+ void __init empeg_power_init(void)
+ {
++	struct power_dev *dev=power_devices;
+ 	unsigned long flags;
+ 	int result;
+-	
++
+ 	/* Get the device */
+ 	result=register_chrdev(EMPEG_POWER_MAJOR,"empeg_power",&power_fops);
+ 	if (result<0) {
+@@ -154,23 +204,43 @@
+ 		       EMPEG_POWER_MAJOR);
+ 		return;
+ 	}
+-
+-	/* Disable IRQs completely here as timing is critical */
+-	save_flags_cli(flags);
+ 
+-	/* Ask power PIC if this is our first boot */
+-	powercontrol(2);
++	/* On Mk2, check for first boot flag */
++	if (empeg_hardwarerevision()>=6) {
++		/* Disable IRQs completely here as timing is critical */
++		save_flags_cli(flags);
++
++		/* Ask power PIC If this is our first boot */
++		powercontrol(2);
++
++		/* Wait to ensure PIC has twiddled accessory sense line
++		   correctly */
++		udelay(100);
+ 
+-	/* Wait to ensure PIC has twiddled accessory sense line correctly */
+-	udelay(100);
++		/* Read reply */
++		power_firstboot=(GPLR&EMPEG_ACCSENSE)?0:1;
+ 
+-	/* Read reply */
+-	power_firstboot=(GPLR&EMPEG_ACCSENSE)?0:1;
++		/* IRQs back on */
++		restore_flags(flags);
++	}
+ 
+-	/* IRQs back on */
+-	restore_flags(flags);
++	/* Initialise current state */
++	dev->laststate=getbitset();
+ 
+-	printk("empeg power-pic driver initialised%s\n",power_firstboot?" (first boot)":"");
++	/* Initialise polling of state */
++	dev->wq=NULL;
++	dev->poller.sync=0;
++	dev->poller.routine=check_power;
++	dev->poller.data=dev;
++	queue_task(&dev->poller,&tq_timer);
++	
++	/* Print init message */
++	if (empeg_hardwarerevision()>=6) {
++		printk("empeg power-pic driver initialised%s\n",power_firstboot?" (first boot)":"");
++	} else {
++		/* We're on a mk1 */
++		printk("empeg power state driver initialised\n");
++	}
+ }
+ 
+ static int power_open(struct inode *inode, struct file *flip)
+@@ -188,18 +258,47 @@
+ 	MOD_DEC_USE_COUNT;
+ 	return 0;
+ }
++
++static unsigned int power_poll(struct file *flip, poll_table *wait)
++{
++	struct power_dev *dev=(struct power_dev*)flip->private_data;
++
++	/* Wait on queue */
++	poll_wait(flip, &dev->wq, wait);
++
++	if (dev->laststate!=dev->newstate)
++		return POLLIN | POLLRDNORM;
++	else
++		return 0;
++}
+ 
+-static int power_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, unsigned long arg)
++static int power_ioctl(struct inode *inode, struct file *flip,
++		       unsigned int cmd, unsigned long arg)
+ {
++	struct power_dev *dev=(struct power_dev*)flip->private_data;
++
+ 	switch(cmd) {
+-	case EMPEG_POWER_TURNOFF:
+-		/* No arguments - turn off now */
++	case EMPEG_POWER_TURNOFF: {
++#ifdef CONFIG_EMPEG_STATE
++	        /* Ensure state information is flushed, as we won't get a
++		   powerdown interrupt */
++		extern void state_cleanse(void);
++		state_cleanse();
++#endif
++		/* Mk1? */
++		if (empeg_hardwarerevision()<6) return -EINVAL;
++
++		/* Turn off now */
+ 		powercontrol(0);
+ 		return 0;
++	}
+ 
+ 	case EMPEG_POWER_WAKETIME: {
+ 		int waketime;
+ 
++		/* Mk1? */
++		if (empeg_hardwarerevision()<6) return -EINVAL;
++
+ 		/* 0=never wakeup, 1-253=wakeup in n*15 seconds */
+ 		get_user_ret(waketime, (int*)arg, -EFAULT);
+ 
+@@ -222,15 +321,11 @@
+ 		   b1 = 0 powerfail disabled, 1 powerfail enabled
+ 		   b2 = 0 accessory low, 1 accessory high
+ 		   b3 = 0 2nd or later boot, 1 first boot
++		   b4 = 0 tel mute low, 1 tel mute high
++		   b5 = 0 lights off, 1 lights on
+ 		*/
+-		int bitset=0;
+-
+-		if (GPLR&EMPEG_EXTPOWER) bitset|=1;
+-		if (powerfail_enabled()) bitset|=2;
+-		if (GPLR&EMPEG_ACCSENSE) bitset|=4;
+-		if (power_firstboot)     bitset|=8;
+-
+-		put_user_ret(bitset, (int*)arg, -EFAULT);
++		dev->laststate=dev->newstate;
++		put_user_ret(dev->laststate, (int*)arg, -EFAULT);
+ 
+ 		return 0;
+ 	}
+Index: empeg/kernel/arch/arm/special/empeg_power.h
+diff -u empeg/kernel/arch/arm/special/empeg_power.h:1.1 empeg/kernel/arch/arm/special/empeg_power.h:1.2
+--- empeg/kernel/arch/arm/special/empeg_power.h:1.1	Sat Apr 15 15:18:05 2000
++++ empeg/kernel/arch/arm/special/empeg_power.h	Fri Jul 14 13:51:28 2000
+@@ -8,12 +8,17 @@
+ struct power_dev
+ {
+ 	time_t alarmtime;           /* Current alarm time */
++	struct wait_queue *wq;      /* Wait queue for poll */
++        struct tq_struct poller;    /* Checks the power state */
++	int laststate;              /* Last power state */
++	int newstate;               /* New power state */
+ };
+ 
+ /* Declarations */
+ static int power_ioctl(struct inode*,struct file*,unsigned int,unsigned long);
+ static int power_open(struct inode*,struct file*);
+ static int power_release(struct inode*,struct file*);
++static unsigned int power_poll(struct file *flip, poll_table *wait);
+ 
+ /* External initialisation */
+ void empeg_power_init(void);
+Index: empeg/kernel/arch/arm/special/empeg_state.c
+diff -u empeg/kernel/arch/arm/special/empeg_state.c:1.20 empeg/kernel/arch/arm/special/empeg_state.c:1.22
+--- empeg/kernel/arch/arm/special/empeg_state.c:1.20	Tue May 23 15:58:30 2000
++++ empeg/kernel/arch/arm/special/empeg_state.c	Mon Jul 10 10:21:28 2000
+@@ -374,6 +374,14 @@
+ 	return 0;
+ }
+ 
++/* Forced cleanse routine, usually called just before a software-initiated
++   powerdown */
++extern void state_cleanse()
++{
++	/* Is the state dirty? Flush it if it is */
++	if (dirty) state_store();
++}
++
+ static void powerfail_interrupt(int irq, void *dev_id, struct pt_regs *regs)
+ {
+ 	if (enabled) {
+@@ -394,7 +402,7 @@
+ 		
+ 		/* Something so we can see how close the actual
+                    powerfail *is*! */
+-		printk("The quick brown fox jumped over the lazy hen.\n");
++		printk("The quick brown fox jumped over the lazy dog.\n");
+ 
+ 		/* Queue up a powerfail timeout call just in case the
+ 		 * power hasn't really gone away. */
+Index: empeg/kernel/drivers/char/Config.in
+diff -u empeg/kernel/drivers/char/Config.in:1.14 empeg/kernel/drivers/char/Config.in:1.15
+--- empeg/kernel/drivers/char/Config.in:1.14	Sun Jun 11 16:58:57 2000
++++ empeg/kernel/drivers/char/Config.in	Sat Jul 15 17:11:43 2000
+@@ -164,7 +164,7 @@
+   if [ "$CONFIG_EMPEG_DISPLAY" = "y" ]; then
+     bool '  display is upside-down' CONFIG_EMPEG_DISPLAY_INVERTED
+   fi
+-  bool 'empeg-car power control support (Mk2)' CONFIG_EMPEG_POWER
++  bool 'empeg-car power control support' CONFIG_EMPEG_POWER
+ fi
+ 
+ mainmenu_option next_comment
+Index: empeg/kernel/drivers/char/serial_sa1100.c
+diff -u empeg/kernel/drivers/char/serial_sa1100.c:1.8 empeg/kernel/drivers/char/serial_sa1100.c:1.9
+--- empeg/kernel/drivers/char/serial_sa1100.c:1.8	Sat Mar 18 15:59:18 2000
++++ empeg/kernel/drivers/char/serial_sa1100.c	Wed Jul  5 13:40:39 2000
+@@ -966,8 +966,8 @@
+ 	  serial_outp(info, UTCR3, IER_copy) ;
+ 
+ #ifdef CONFIG_SA1100_EMPEG
+-	  /* On flateric we need to configure up the endec too */
+-	  if (empeg_hardwarerevision()==5 && info->port==(int)&Ser2UTCR0) {
++	  /* On flateric & above we need to configure up the endec too */
++	  if (empeg_hardwarerevision()>=5 && info->port==(int)&Ser2UTCR0) {
+ 		  static int endecset[]={115200,57600,19200,9600,38400,4800,2400,230400,0};
+ 		  int a=0;
+ 
+@@ -2346,11 +2346,13 @@
+ #ifdef CONFIG_SA1100_EMPEG
+ 	case (int)&Ser2UTCR0:
+ 		/* Check hardware revision */
+-		if (empeg_hardwarerevision()==5) {
+-			/* flateric uses external HP endec: program up outputs */
++		if (empeg_hardwarerevision()>=5) {
++			/* flateric & later use external HP endec: program up
++			   outputs */
+ 			GPDR|=(EMPEG_SIRSPEED0|EMPEG_SIRSPEED1|EMPEG_SIRSPEED2);
+ 
+-			/* setting the speed will program up the endec correctly */
++			/* setting the speed will program up the endec
++			   correctly */
+ 		} else {
+ 			/* uart serial port 2 on sa1100: HP-SIR */
+ 			Ser2HSCR0=0;
+Index: empeg/kernel/include/asm-arm/arch-sa1100/empeg.h
+diff -u empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:1.36 empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:1.37
+--- empeg/kernel/include/asm-arm/arch-sa1100/empeg.h:1.36	Sun Jun 11 16:59:40 2000
++++ empeg/kernel/include/asm-arm/arch-sa1100/empeg.h	Fri Jul 14 17:20:03 2000
+@@ -206,6 +206,13 @@
+ #define EMPEG_POWER_WAKETIME _IOW(EMPEG_POWER_MAGIC, 1, int)
+ #define EMPEG_POWER_READSTATE _IOR(EMPEG_POWER_MAGIC, 2, int)
+ 
++#define EMPEG_POWER_FLAG_DC 		0x01
++#define EMPEG_POWER_FLAG_FAILENABLED	0x02
++#define EMPEG_POWER_FLAG_ACCESSORY	0x04
++#define EMPEG_POWER_FLAG_FIRSTBOOT	0x08
++#define EMPEG_POWER_FLAG_EXTMUTE	0x10
++#define EMPEG_POWER_FLAG_LIGHTS		0x20
++
+ /* State storage ioctls */
+ /* Shouldn't need either of these in normal use. */
+ #define EMPEG_STATE_MAGIC 's'

@@ -1,0 +1,395 @@
+2000-07-20T01:10Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: Version 0.99.5 released.
+
+2000-07-20T01:09Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in, rpmrc.in: Rewrote RPM build code for RPMv3.  Special
+	rpmrc is no longer required, everything can be configured on the
+	rpm command line.  builddir can also be set on the command line.
+
+2000-07-20T01:05Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4: Recognize new GNU gethostbyaddr_r() which has the
+	len argument being of type size_t instead of int.
+
+2000-07-17T21:49Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Correction to usage message.  From Mike Crowe
+	<mac@fysh.org>.
+
+	Lib/aitounsn.c, Lib/p_ip.c, Lib/p_tcpudp.c, Lib/Compat/ipnode.c:
+	Handle the case where GNU-style getXXbyYY_r() functions
+	return indicating success but set the result pointer to null.
+	This behaviour seems to be new in glibc; it has been observed in
+	glibc 2.1.3 when doing gethostbyname2_r() on an IPv4 dotted-quad
+	address using AF_INET6.
+
+2000-01-17T19:58Z	Andrew Main <zefram@fysh.org>
+
+	MACHINES: List experience with 0.99.4.
+
+2000-01-17T19:53Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4, configure.in: Recognize HP-UX getXXbyYY_r()
+	prototypes.
+
+2000-01-16T00:12Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in: Remove acconfig.h in superclean.
+
+2000-01-15T23:54Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: Version 0.99.4 released.
+
+2000-01-15T22:42Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4 (zefram_GET_PROTOTYPE): Avoid breaking multi-keyword
+	type specifiers when removing argument names.  Additional code
+	to handle C++ references (&) the same way as C pointers (*).
+
+2000-01-15T22:26Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4, Lib/Makefile.in: Remove # lines from preprocessor
+	output, to avoid confusing the code looking at that output.
+
+2000-01-15T22:11Z	Andrew Main <zefram@fysh.org>
+
+	MACHINES: Note experiences with HP-UX.
+
+2000-01-15T22:01Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Compat/socket.h: Copied backup definitions of {A,P}F_LOCAL
+	from sock_local.h, so that this header correctly defines all
+	{A,P}F_* constants.
+
+2000-01-15T21:37Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4 (zefram_GET_PROTOTYPE): Correct rules to remove
+	argument names.
+
+	aclocal.m4 (zefram_CHECK_FUNC_FLAVOR_NETDBR): Correct
+	prototypes for glibc and Solaris in the light of the new
+	zefram_GET_PROTOTYPE.
+
+2000-01-15T21:21Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Makefile.in, Lib/squeeze.sed: Separate out a short sed script
+	into a separate file so that it can use whole lines for labels,
+	as some seds require.
+
+2000-01-15T21:21Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in: Include MACHINES and acconfig.h in distributions.
+
+	aclocal.m4 (zefram_GET_PROTOTYPE): Better handling of `restrict'.
+
+2000-01-15T20:20Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: Version 0.99.3 released.
+
+2000-01-15T20:16Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Makefile.in: Better error checking in the distribution
+	building rule.
+
+2000-01-15T20:12Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, mkacconfigh, Lib/aitounsn.c, Lib/p_ip.c,
+	Lib/p_tcpudp.c: Use getXXbyYY_r() prototype checking for protocol
+	and port name lookups.
+
+2000-01-15T01:47Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4, configure.in, mkacconfigh, Lib/Compat/ipnode.c:
+	Use getXXbyYY_r() prototype check to decide how to implement
+	getipnodeby{name,addr}().
+
+2000-01-14T20:46Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4: Recognize Solaris getXXbyYY_r() prototypes.
+
+2000-01-14T15:09Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4, configure.in: Initial code to check full prototype
+	of getXXbyYY_r() functions.  Recognizes only the GNU flavor.
+	Not currently used for anything.
+
+2000-01-14T00:23Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/Compat/getopt.h, Lib/Compat/ip.h,
+	Lib/Compat/poll.h: More backup prototypes.
+
+2000-01-13T23:02Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/Compat/ip.h: Use in_addr_t if available.
+
+2000-01-13T22:57Z	Andrew Main <zefram@fysh.org>
+
+	aclocal.m4, configure.in, mkacconfigh, Lib/strerror.c,
+	Lib/Compat/errno.h, Lib/Compat/stdlib.h: More backup prototypes.
+
+2000-01-13T08:18Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/Compat/string.h, Lib/Compat/wait.h: More backup
+	prototypes.
+
+2000-01-12T23:02Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in, aclocal.m4, config.guess, config.sub, configure.in,
+	Lib/.cvsignore, Lib/Makefile.in, Lib/Compat/Makefile.in,
+	Utils/Makefile.in: Greater configurability of shared library
+	building.
+
+2000-01-12T20:58Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in, preconfig: Pre-configuration script.
+
+2000-01-12T20:53Z	Andrew Main <zefram@fysh.org>
+
+	.cvsignore, Makefile.in, acconfig.h, mkacconfigh, Lib/Makefile.in,
+	Lib/Compat/Makefile.in, Utils/Makefile.in: Generate acconfig.h
+	from configure.in.
+
+2000-01-12T18:50Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, aclocal.m4: Various cleanups and efficiency
+	improvements of the configure tests.
+
+2000-01-12T08:08Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, aclocal.m4, configure.in, Lib/Makefile.in: Work
+	out the correct definition of socklen_t from the prototype of
+	getsockname(), rather than just using a static default.
+
+	aclocal.m4, configure.in: Make some tests automatically optional,
+	only being run if it is sensible to do so.
+
+2000-01-12T04:20Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, aclocal.m4, configure.in, Lib/Compat/socket.h:
+	Hack to avoid a warning on Solaris, where bind() and connect()
+	have different prototypes.
+
+2000-01-12T03:26Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, configure.in, Lib/Compat/unistd.h: Backup prototypes
+	for setre{g,u}id().
+
+2000-01-12T03:12Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Compat/wait.h, Utils/userver.c: Move wait fallback cleverness
+	into compatibility header.
+
+2000-01-12T00:40Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/Compat/unistd.h: Backup prototypes for
+	setres{g,u}id().
+
+2000-01-12T00:31Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in, aclocal.m4, configure.in, Lib/Makefile.in,
+	Lib/Compat/Makefile.in, Utils/Makefile.in: Separate autoconf
+	macros into aclocal.m4.
+
+2000-01-11T21:35Z	Andrew Main <zefram@fysh.org>
+
+	Lib/aitounsn.c, Lib/libunsn_f1.h, Lib/libunsn_pr.h,
+	Lib/p_ip.c, Lib/p_local.c, Lib/p_tcpudp.c, Lib/saiiter.c,
+	Lib/Compat/Makefile.in, Lib/Compat/compat.h,
+	Lib/Compat/hnbyteorder.c, Lib/Compat/in6addr.c,
+	Lib/Compat/inet_ntop.c, Lib/Compat/inet_pton.c,
+	Lib/Compat/inetdb.h, Lib/Compat/ip.h, Lib/Compat/ipnode.c,
+	Lib/Compat/poll.c, Lib/Compat/sock_inet.h,
+	Lib/Compat/sock_local.h, Lib/Compat/socket.h: Split
+	<Compat/compat.h> into more specific headers.
+
+2000-01-11T19:02Z	Andrew Main <zefram@fysh.org>
+
+	Lib/opensfsai.c, Lib/opensock.c, Lib/Compat/Makefile.in,
+	Lib/Compat/unistd.h, Utils/uclient.c, Utils/userver.c: Add
+	<Compat/unistd.h>.
+
+2000-01-11T07:43Z	Andrew Main <zefram@fysh.org>
+
+	Lib/.cvsignore, Lib/Makefile.in, Lib/libunsn_f.h,
+	Lib/libunsn_f1.h, Lib/libunsn_pr.h: Determine SUPPORT_* feature
+	tests once, then generate a header that defines the feature test
+	macros without including the headers needed to calculate them.
+
+2000-01-11T07:30Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Compat/compat.h, Lib/Compat/poll.h, Lib/Compat/string.h:
+	Use unsn_compat_* symbol names for compatibility implementations.
+
+2000-01-11T01:22Z	Andrew Main <zefram@fysh.org>
+
+	Makefile.in, acconfig.h, configure.in, system.h, Lib/Makefile.in,
+	Lib/*.c, Lib/getspfoo.c.in, Lib/libunsn_f.h, Lib/libunsn_pr.h,
+	Lib/mkprotos, Lib/system_sa.h, Lib/Compat/.cvsignore,
+	Lib/Compat/Makefile.in, Lib/Compat/*.c, Lib/Compat/*.h,
+	Utils/Makefile.in, Utils/*.c, Utils/utils.h: Put all compatibility
+	hacks into Lib/Compat/.
+
+2000-01-10T22:00Z	Andrew Main <zefram@fysh.org>
+
+	Lib/compat.c, Lib/system_sa.h: Don't build compatibility versions
+	of {ntoh,hton}{l,s}() if they are defined as macros only.
+
+2000-01-10T21:52Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, configure.in, system.h, Lib/.cvsignore,
+	Lib/Makefile.in, Lib/addrtounsn.c, Lib/aitounsn.c, Lib/copysai.c,
+	Lib/getspaddr.c, Lib/getspunsn.c, Lib/getspunsnh.c,
+	Lib/libunsn.h.in, Lib/libunsn_f.h, Lib/libunsn_pr.h,
+	Lib/mksaiiter.c, Lib/opensfsai.c, Lib/opensock.c, Lib/saiiter.c,
+	Lib/saitounsn.c, Lib/system_sa.h, Utils/Makefile.in:
+	Conditionalize the existence of the socket-based functions on
+	the availability of the Sockets API.  This makes the rest of
+	the library available on systems that don't have sockets.
+
+2000-01-08T18:30Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Log when input is received in -w mode.
+
+2000-01-08T18:18Z	Andrew Main <zefram@fysh.org>
+
+	Utils/i2u.1in, Utils/i2u.pl: Implement discard/dgram service.
+	inetd2userver now implements all the inetd builtins (echo,
+	discard, time, daytime, chargen).
+
+2000-01-08T08:11Z	Andrew Main <zefram@fysh.org>
+
+	libunsn.spec.in: Use variable interpolation more logically to
+	make libunsn.spec a better starting point for modification.
+
+2000-01-08T08:06Z	Andrew Main <zefram@fysh.org>
+
+	libunsn.spec.in: Make the RPM binary packages relocatable.
+
+2000-01-08T07:44Z	Andrew Main <zefram@fysh.org>
+
+	README: Fix some of the text about installing.
+
+	MACHINES: New file to record the results of installing on
+	different platforms.
+
+2000-01-08T05:46Z	Andrew Main <zefram@fysh.org>
+
+	.cvsignore, Makefile.in, README, libunsn.spec.in, rpmrc.in,
+	Lib/Makefile.in, Utils/Makefile.in: Automated RPM building.
+
+2000-01-08T00:35Z	Andrew Main <zefram@fysh.org>
+
+	Utils/Makefile.in: Only set LD_RUN_PATH if it is necessary.
+
+2000-01-07T22:02Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: Version 0.99.2 released.
+
+2000-01-07T21:51Z	Andrew Main <zefram@fysh.org>
+
+	Lib/compat.c (getipnodebyaddr): Handle IPv4-embedded IPv6
+	addresses manually, in case we can use IPv6 but the local
+	gethostbyaddr() doesn't know about IPv6 addresses.
+
+2000-01-07T07:48Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/Makefile.in: Use linker option -h instead of
+	-soname when making a shared library.
+
+2000-01-07T06:13Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Remember to sync the log file.
+
+2000-01-07T04:28Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: Version 0.99.1 released.
+
+2000-01-07T04:24Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Makefile.in, Utils/Makefile.in: Use $(DESTDIR) when
+	installing.
+
+2000-01-07T03:35Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Lib/.cvsignore, Lib/Makefile.in, Utils/Makefile.in:
+	Build libunsn as a shared library if possible.	(Only tries to
+	do it the GCC way at the moment.)
+
+2000-01-07T01:14Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Fixed a problem with the option combination -2L,
+	where log messages were going to the wrong version of stderr.
+
+2000-01-07T00:56Z	Andrew Main <zefram@fysh.org>
+
+	Utils/i2u.pl: Implemented chargen services as Perl one-liners.
+
+2000-01-06T23:46Z	Andrew Main <zefram@fysh.org>
+
+	Utils/Makefile.in, Utils/userver.1in, Utils/userver.c: userver
+	option -t to time out waiting for a connection.
+
+2000-01-06T22:59Z	Andrew Main <zefram@fysh.org>
+
+	Utils/Makefile.in, Utils/pollto.c, Utils/uclient.c,
+	Utils/userver.c, Utils/utils.h: Factor out the poll() with long
+	timeout code.
+
+2000-01-06T07:27Z	Andrew Main <zefram@fysh.org>
+
+	Utils/i2u.pl, Utils/userver.1in, Utils/userver.c: userver option
+	-w to give the subordinate program access to the main socket.
+
+2000-01-06T03:43Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Rearrange signal blocking and child checking
+	so that signals are blocked only once (instead of twice) per
+	execution of the main loop, and so that the server throttling
+	message appears when the maximum number of concurrent servers
+	is exceeded, rather than when it is merely reached.
+
+2000-01-06T02:31Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Utils/i2u.pl, Utils/userver.1in, Utils/userver.c:
+	userver option -m to limit the number of concurrent servers.
+
+2000-01-05T23:28Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.1in, Utils/userver.c: Option -a to substitute the
+	remote address into the command line.
+
+	Utils/userver.c: Simplify handling of the remote address.
+
+2000-01-05T22:15Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Simplify handling of the local address.
+
+	Utils/userver.c: Clarify handling of uninterruptible datagram
+	reception.
+
+2000-01-05T21:54Z	Andrew Main <zefram@fysh.org>
+
+	Utils/userver.c: Include the time when logging to stderr.
+
+2000-01-05T18:13Z	Andrew Main <zefram@fysh.org>
+
+	acconfig.h, configure.in, system.h, Utils/Makefile.in,
+	Utils/userver.c: Use sigaction() instead of signal() where
+	available.
+
+2000-01-05T04:09Z	Andrew Main <zefram@fysh.org>
+
+	Lib/Makefile.in, Lib/guessaddrt.3in, Lib/guessaddrt.c,
+	Lib/libunsn.3in, Lib/libunsn.h.in, Lib/syntaxok.3in: New function,
+	unsn_guessaddrtype().
+
+2000-01-04T19:45Z	Andrew Main <zefram@fysh.org>
+
+	configure.in, Utils/Makefile.in, Utils/i2u.1in, Utils/i2u.pl,
+	Utils/libunsn.1in, Utils/userver.1in: New utility, inetd2userver.
+
+2000-01-04T00:38Z	Andrew Main <zefram@fysh.org>
+
+	version.vars: First public beta, version 0.99.0, released.

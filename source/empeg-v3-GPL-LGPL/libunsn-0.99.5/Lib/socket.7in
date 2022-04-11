@@ -1,0 +1,811 @@
+.\"
+.\" Lib/socket.7in -- brief description of sockets
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: socket.7
+.TH SOCKET 7 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+socket \- Berkeley Sockets API cheat sheet
+.SH DESCRIPTION
+This manual page describes the Berkeley Sockets API, which is widely
+implemented as an interface for networking under Unix,
+but not so widely explained.
+This introduction is aimed at programmers that don't grok sockets
+because there isn't a man page for them.
+Guess what, this is that missing man page.
+.SS "What is a socket?"
+From a network's point of view, a socket is an addressable point within
+the network.  In the Sockets API's view of networking, all network
+communication takes place point-to-point between sockets.
+There is no inherent distinction between the two parties involved in a network
+communication, so they are referred to as `peers'.
+.PP
+In the sense of the Sockets API,
+a socket is an interface between a Unix process and a network.  The socket
+presents itself to a Unix process as a special type of file, via a file
+descriptor.  In the network, the socket has a network address, and can
+communicate with other sockets.
+.SS "Categories of socket"
+The ways that sockets are used can be separated into three distinct categories:
+.TP
+.B Connectionless communications
+For stateless network protocols, with no concept of a connection between
+peers, this is the only type of socket possible.
+A connectionless communication socket has a network address,
+and can send messages to and receive messages from peers.
+It can communicate with several peers simultaneously.
+.TP
+.B Connected communications
+For network protocols that require the establishment of a connection before
+data can be communicated, data communication is performed via connected sockets.
+A connected socket has its own network address, and is connected to exactly one
+other network address, its peer.  It can communicate with its peer only,
+and cannot do anything else.
+.TP
+.B Passive connection establishment
+For network protocols that require the establishment of a connection before
+data can be communicated, this type of socket exists to help establish
+connections.  A passive socket has a network address.  When a remote peer
+attempts to establish a connection to this address, the passive socket becomes
+aware of this, and can create a connected socket to handle that connection.
+The passive socket cannot perform communications itself, but can remain in
+existence indefinitely to establish many connections.
+.PP
+To complicate things a little, in the standard Sockets API sockets are
+created in a degenerate state that falls into none of the above categories.
+Several steps are required to reach one of the above three useful states.
+.SH "USING THE SOCKETS API"
+The Berkely Sockets API is typically BSD.  An unUnixly specific interface,
+which has tended to keep sockets separate from other Unix I/O objects.
+A slightly misdesigned interface, as a result necessarily more complex than
+it should have been, and even baroque in places.
+Odd bits of missing functionality, sometimes patched by later addition of
+new system calls.  And yet the design is in places just right; some of the
+functionality it provides, for sockets only, is not really socket-specific,
+and should by rights be available for all I/O.
+.PP
+Possibly the greatest criticism that can be levelled against the Sockets API
+is that it doesn't go far enough.  The user has to deal with a large number
+of details to achieve anything, details that should have been packaged away
+more neatly.  Some libraries do in fact provide such an interface layer
+above the Sockets system calls; where such libraries are not used, a packaging
+layer above the Sockets API is still a wise idea.
+.SS "C interface headers"
+The header
+.B <sys/socket.h>
+contains the basic Sockets API definitions.
+On some systems,
+.B <sys/types.h>
+must be included first.
+.PP
+On some systems, there is a
+.B <sys/sockio.h>
+containing definitions for the socket-specific
+.IR ioctl (2)s.
+.SS "Socket addresses"
+Within the Sockets API, network addresses are broken down into several parts:
+.TP
+.B protocol family
+Specified as an integer, one of the
+.RB ` PF_ '
+constants.  This specifies which protocol suite the socket supports.
+(For example, the TCP/IPv4 protocol suite, comprising IPv4, TCP and UDP, is
+.BR PF_INET .)
+It must be specified when the socket is created, and cannot be changed.
+The set of
+.RB ` PF_ '
+constants varies between systems.  Some systems have the constants
+for protocol families that are not actually supported, in which case
+socket createion will fail with the error
+.BR EPFNOSUPPORT .
+.TP
+.B socket type
+Specified as an integer, one of the
+.RB ` SOCK_ '
+constants.  This is an immutable property of the socket, set at creation time.
+Some of the socket types designate the type of communication which the
+socket can perform; the two most common are
+.B SOCK_STREAM
+for connected byte streams and
+.B SOCK_DGRAM
+for connectionless unreliable datagrams.
+The exact meaning is protocol family-defined, and some such as
+.B SOCK_RAW
+are entirely protocol family-dependent.
+Each protocol family only allows a certain subset of socket types.
+.TP
+.B next-level protocol
+An integer, set at socket creation time, whose interpretation is protocol
+family-dependent.  It is used to specify major protocol options or select
+between several protocols available within a single protocol suite.
+Usually no such selection is required (or it is implicit in the
+choice of socket type), in which case the protocol should
+be specified as zero.
+.TP
+.B address family
+An integer, one of the
+.RB ` AF_ '
+constants, identifying the type of address structure being used.
+The set of address families supported is protocol family-dependent.
+Usually the protocol families and address families are in one-to-one
+correspondence, with the constant names differing only in the first letter;
+most protocol families accept only their own address family.
+.TP
+.B specific address
+A structure containing all the remaining address data required by the
+protocol being used.  The type is one of the
+.RB ` sockaddr_ '
+structs; exactly which structure should be used depends on the address family.
+(For example, the address family
+.B AF_INET
+goes with
+.BR "struct sockaddr_in" .)
+The address structures are all based on
+.BR "struct sockaddr" ,
+which has one or two members common to all address structures;
+.B sa_family
+contains the address family, and
+.B sa_len
+(which does not exist on all systems)
+contains the length of the address structure, which is also passed separately
+in all interfaces that involve an address structure.
+.SS "Intermediate socket states"
+A socket initially (when created by
+.IR socket (2))
+has no network address of its own.  It cannot communicate in this state.
+An address can be requested using the
+.IR bind (2)
+system call.  This is not always necessary; if the socket remains unbound,
+it will be implicitly assigned an appropriate address as soon as it does
+something that requires one (e.g., when an attempt is made to communicate
+over the network).
+Once assigned, the socket's address is irrevocable.
+.PP
+For connection-oriented protocols, even after
+.IR bind (2)ing,
+a socket cannot be used immediately; it is in an intermediate state.
+It can either be made into a connected socket, via
+.IR connect (2),
+or a passive socket, via
+.IR listen (2).
+A socket can only go one of these two routes; they are mutually
+exclusive, and the choice is irrevocable.
+.SS "Address binding"
+.IR bind (2)
+is a separate system call partly because it can
+fail distinctly from everything
+else; after a failure, another
+.IR bind (2)
+can be attempted.
+.IR bind (2)
+cannot be used after the socket has been successfully bound to an address,
+either explicitly through
+.IR bind (2)
+or implicitly through
+.IR connect (2),
+.IR listen (2)
+or an I/O operation.
+.SS "Establishing connections actively"
+A socket for a connection-oriented protocol can be connected to a peer
+using the
+.IR connect (2)
+system call.
+The interface is similar to
+.IR bind (2),
+and like
+.IR bind (2)
+a failed
+.IR connect (2)
+can be retried.
+Once the socket has been connected, it can be used for communications.
+The socket cannot be disconnected, or connected to a different peer.
+.SS "Establishing connections passively"
+A socket for a connection-oriented protocol can be marked as passive
+using the
+.IR listen (2)
+system call.
+When making this call, it is necessary to specify the length of the
+pending connection queue.  This is the maximum number of
+.RI un accept (2)ed
+connections that the system will queue up.
+If the queue gets full then any further attempted connections will be
+refused, until a connection is removed from the queue using
+.IR accept (2).
+The number specified is capped to
+.BR SOMAXCONN ,
+and usually one wants the longest possible queue, so that is a suitable
+value.  Some systems lack the constant, however.  Older systems tend to
+have a limit of 5 for this value, but newer systems make it much larger.
+.PP
+An
+.IR accept (2)
+cannot be revoked, but some systems allow
+.IR accept (2)
+to be called again, on a socket that has already been made passive,
+in order to change the connection queue length.
+.PP
+When a socket has been made passive, the system accepts connections for it.
+A connection can then be made available in user space by the
+.IR accept (2)
+system call.  This call blocks until a queued connection is available, and
+then returns a socket referring to that connection.  The original passive
+socket is unaffected, except for the changes made to its connection queue,
+and can be used to
+.IR accept (2)
+more connections.
+The new socket is created in a connected state.  It has the same network
+address as the passive socket, and is connected to whatever peer
+initiated the connection.
+.SS "Connecting with connectionless protocols"
+.IR connect (2)
+is permitted to be used with sockets for connectionless protocols.
+Although the effect is superficially similar to the use of
+.IR connect (2)
+for a connection-oriented protocol, even in useful ways, the process
+is conecptually very different.
+.PP
+.IR connect (2)ing
+a connectionless socket does not imply any network communication.
+There is nothing that the network would recognize as a connection,
+and the `connection' is in no way exclusive.
+The `connection' can be changed to a different address by calling
+.IR connect (2)
+again, or it can be revoked by calling
+.IR connect (2)
+with an address of family
+.BR AF_UNSPEC .
+.PP
+The effect of the
+.IR connect (2)
+call is twofold.  Firstly, it allows
+connected-style output operations to be performed, sending to
+the address nominated with
+.IR connect (2).
+Secondly, it forces the socket to receive data only from the nominated address;
+data from other addresses can be received by other sockets with the same
+network address.
+.PP
+Essentially,
+.IR connect (2)
+with a connectionless protocol has the effect of largely restricting the socket
+to a conversation with one peer only; it is in this respect that it resembles
+a genuine network connection.  This is a convenient state for a socket in many
+applications.
+.SS "Performing I/O"
+There are five pairs of I/O primitives that can be used with sockets.
+These are:
+.TP
+.PD 0
+\fIread\fR(2)/\fIwrite\fR(2)       the standard stream I/O operations
+.TP
+\fIreadv\fR(2)/\fIwritev\fR(2)     scatter/gather stream I/O
+.TP
+\fIrecv\fR(2)/\fIsend\fR(2)        basic datagram I/O
+.TP
+\fIrecvfrom\fR(2)/\fIsendto\fR(2)  datagram I/O with peer address
+.TP
+\fIrecvmsg\fR(2)/\fIsendmsg\fR(2)  datagram I/O with all options
+.PD
+.PP
+The first two pairs are standard primitives that can be used with other
+file types.  The last three are all specific to sockets.  Although the
+interfaces give the appearance of separate sets of primitives for stream and
+datagram I/O, in fact all five sets of primitives can be used on either type
+of socket.  Internally, they are all mapped to a single method pair; this is
+.IR recvmsg (2)/ sendmsg (2)
+(the most general interface) if the system has it.
+.PP
+On sockets supporting stream I/O
+.RB ( SOCK_STREAM
+sockets), all the interfaces behave the way one would expect
+.IR read (2)/ write (2)
+to behave on a pipe.  In this case,
+.IR recv (2)/ send (2)
+are very nearly aliases for
+.IR read (2)/ write (2),
+and
+.IR recvfrom (2)/ sendto (2)
+and
+.IR recvmsg (2)/ sendmsg (2)
+add very little extra capability; however, it may be worth using these
+interfaces for the
+.B MSG_PEEK
+and
+.B MSG_WAITALL
+flags.
+.PP
+On sockets supporting datagram I/O
+.RB ( SOCK_DGRAM ", " SOCK_SEQPACKET
+and most other types), the datagram-based interfaces receive and send
+one datagram at a time.  On receive, in the general case it is desirable
+to use
+.IR recvmsg (2)
+with the flag
+.BR MSG_PEEK ,
+so that the receive buffer can be resized if necessary (indicated by the
+.B MSG_TRUNC
+return flag).
+.IR read (2)/ write (2)
+also receive and send one datagram at a time, in the manner of
+.IR recv (2)/ send (2),
+except that they may handle zero-length packets and buffers differently.
+.PP
+The
+.IR recvfrom (2)/ sendto (2)
+and
+.IR recvmsg (2)/ sendmsg (2)
+interfaces provide an option to record/specify the peer's address.
+The behaviour of this is different for each possible connection status of
+a socket, and between reception and sending:
+.TP
+.PD 0
+.RB "                     " "receive send"
+.TP
+.BR "connection-oriented  " "OK      BAD"
+.TP
+.BR "pseudo-connected     " "OK      ?"
+.TP
+.BR "unconnected          " "OK*     OK!"
+.PD
+.PP
+In the above table, `OK' indicates that the option will work.  `OK*'
+indicates that it is recommended (it is the only way to determine where
+the packet is coming from).  `OK!' indicates that the option is required:
+the operation will fail without it (and hence the interfaces that
+do not provide the option will always fail).  `BAD' indicates that the option
+is semantically meaningless, and may have unpredictable behaviour.  `?'
+indicates that the option is semantically meaningful, but may or may not
+work as expected.
+.PP
+The fact that
+.IR read (2)/ write (2)
+are usable on sockets means that programs using connection-oriented stream-I/O
+sockets can just use the normal I/O interfaces everywhere without having to
+know anything special about sockets.  In fact, they can use
+.IR fdopen (3)
+to get a
+.IR stdio (3)
+stream handle on a socket, and use buffered I/O.  If doing this, it is
+particularly important to
+.IR fflush (3)
+at all the right times.
+Another possibility is that such sockets can be passed to utility programs
+that use them for I/O without ever knowing that they are sockets.
+(This is where Unix's `everything's a file' philosophy really pays off.)
+.PP
+Unfortunately, datagram protocol sockets break the file model.  Although the
+stream I/O primitives appear to work on datagram sockets, doing this actually
+results in lost data (datagrams get truncated, and can be zero length).
+When dealing with a datagram protocol, to handle it properly,
+it is necessary to know what it is, and use the datagram I/O primitives.
+.SS "Closing sockets"
+The two directions of communication on a socket can be closed independently,
+using
+.IR shutdown (2).
+Note that this affects the whole socket, not just a single file descriptor
+referring to it.  The degree to which I/O is prevented depends on the socket
+type and the implementation; in some cases, it is still possible to successfully
+read data from a socket after doing a
+.IR shutdown (2)
+of the receiving direction.
+.PP
+Traditionally, the direction argument to
+.IR shutdown (2)
+is just a number.  Newer standards mandate symbolic constants
+.BR SHUT_RD ,
+.B SHUT_WR
+and
+.BR SHUT_RDWR .
+These are stylistically preferred.
+.SS "Socket options"
+Many network protocols have protocol-specific options that need to be
+user-configurable.  To be consistent with the rest of Unix, these ought to
+be set via
+.IR ioctl (2)
+calls, but, like ttys, the standard interface is in fact a socket-specific
+one.
+.PP
+Option values can be set with
+.IR setsockopt (2),
+and examined with
+.IR getsockopt (2).
+This interface has exactly two advantages over an
+.IR ioctl (2)-style
+interface, both minor.  One is that the different domains for options are
+delimited explicitly, with a separate argument
+.RI ( level ).
+The other is that the length of the additional argument is indicated
+explicitly.
+.PP
+Theoretically, the
+.I level
+argument indicates to which protocol layer the other arguments apply, with
+.B SOL_SOCKET
+denoting generic options that apply to all sockets.  In fact, some of the
+.B SOL_SOCKET
+options are really TCP-specific, and are unlikely to make any difference
+with any other socket types.
+.PP
+The only option likely to be set with any regularity is
+.BR SO_REUSEADDR ,
+which has the effect of making the socket's use of a local address
+non-exclusive.  This is a good idea more often than one might expect; in
+particular, it can solve problems with TCP address-reuse timeouts.
+.SS "Extracting information from a socket"
+Of the arguments to
+.IR socket (2),
+only the socket type can be reliably determined.  This is done by
+.IR getsockopt (2),
+using the `option' identifier
+.BR SO_TYPE .
+The protocol family can usually be determined from the address family (part
+of the address, see next paragraph), but the next-level protocol number
+in the general case can't be determined at all.
+The socket option
+.B SO_PROTOTYPE
+on Solaris looks as if it should provide this capability, but in fact it
+gives no useful information, affects nothing, and from Solaris 2.6 onwards
+is disabled.
+.PP
+The local address of a socket can be determined using
+.IR getsockname (2).
+This isn't supposed to fail even if the socket is not yet bound to any local
+address, so in such circumstances what it returns is rather protocol-dependent.
+.IR getpeername (2)
+can similarly be used to find the address to which a socket is
+.IR connect (2)ed,
+and this is allowed to fail with
+.BR ENOTCONN .
+In both cases, only the address structure (including the address family)
+is returned; the precise interpretation of the address requires other knowledge.
+.PP
+Where
+.IR poll (2)
+or
+.IR select (2)
+has indicated an error condition on a socket, that error condition can be
+examined, without attempting actual I/O, by doing a
+.IR getsockopt (2)
+for option
+.BR SO_ERROR .
+.SS "Socket pairs"
+The
+.IR socketpair (2)
+system call has the convenient capability of generating a pair of sockets
+connected to each other.  This can only reasonably be done with local-domain
+sockets (about which see below).  This is, essentially, a packaging of the
+process of creating two sockets and connecting them to each other, though
+it may in fact be implemented more efficiently.
+.PP
+A pair of sockets thus created act as the two ends of a bidirectional pipe,
+with the bonus that socket-specific I/O primitives work, including the
+tricks that can be played with local-domain sockets.  Some programs may just
+use a socket pair as a pipe with knobs on (or even ignore the knobs); some
+may use a socket pair in order to get a datagram-oriented pipe.
+.PP
+In case I didn't make it clear,
+.IR socketpair (2)
+rocks.
+.IR pipe (2)
+is obsolete.
+.SS "Using sockets non-blockingly"
+Socket I/O can be done non-blockingly in the same way as I/O on other files,
+by using
+.IR fcntl (2)'s
+.B F_SETFL
+command to set the
+.B O_NONBLOCK
+(or
+.BR O_NDELAY )
+flag.  This affects all I/O operations.  The datagram-based I/O operations can
+also be made non-blocking on a per-operation basis using the
+.B MSG_DONTWAIT
+flag, where available.
+.PP
+.IR accept (2)
+is treated like I/O, for the purposes of
+blocking.
+A passive socket (blocking or not) can be tested for the availability of
+a pending connection in
+.IR poll (2)/ select (2)
+by checking the socket file descriptor for readability.
+An
+.IR accept (2)
+on a non-blocking socket fails with
+.B EAGAIN
+(or
+.BR EWOULDBLOCK )
+if no pending connections are immediately available.
+.PP
+There's a gotcha with the use of
+.B O_NONBLOCK
+on a passive socket.  At least some implemetations of
+.IR accept (2)
+copy the non-blocking flag across to the newly created
+connected socket.  This is probably not what you want.
+To be safe, if using
+.B O_NONBLOCK
+on a passive socket, always clear or set that flag explicitly on
+the sockets created by
+.IR accept (2).
+.PP
+.IR connect (2)
+is handled specially for non-blocking I/O.  Because
+.IR connect (2)
+is inherently a network protocol negotiation operation,
+at least for connection-oriented protocols,
+it is impossible to use
+.IR poll (2)/ select (2)
+to test for
+.RI ` connect (2)
+will not now block': there's no such status.
+To make
+.IR connect (2)
+not block, it is necessary to give the socket file descriptor the
+.B O_NONBLOCK
+flag.
+.IR connect (2)
+will then merely start the connection operation, returning the pseudo-error
+.B EINPROGRESS
+to indicate that the operation has started asynchronously.
+Completion of this operation can be tested for in
+.IR poll (2)/ select (2)
+by checking the socket file descriptor for writability; in this case,
+the socket appearing writable does not actually indicate writability,
+it indicates completion of the
+.IR connect (2).
+An error return from an asynchronous
+.IR connect (2)
+can only be discovered by using
+.IR getsockopt (2)
+and
+.B SO_ERROR
+as described above.
+.SH "SPECIFIC PROTOCOL FAMILIES"
+Usually, a network protocol family identified by
+.BI PF_ FOOBAR
+has a header
+.BI <net foobar / foo .h>
+which defines
+.BI "struct sockaddr_" foo
+and any trivially related definitions.
+.SS "Internet domain sockets"
+IPv4 and IPv6 are used via protocol families
+.B PF_INET
+and
+.B PF_INET6
+resepctively.  The definitions required for both protocol families are in
+.BR <netinet/in.h> ;
+the address structures are
+.B struct sockaddr_in
+and
+.B struct sockaddr_in6
+respectively.
+.PP
+Four different protocols are covered by each of these protocol families.
+A socket of type
+.B SOCK_STREAM
+implements TCP layered over IP; the next-level protocol argument is permitted
+to be either zero or
+.B IPPROTO_TCP
+(6).
+Similarly,
+.B SOCK_DGRAM
+implements UDP layered over IP; the next-level protocol argument is permitted
+to be either zero or
+.B IPPROTO_UDP
+(17).
+In these cases, the
+.BR sin_port / sin6_port
+member of the address structure specifies the TCP/UDP port number (zero is
+treated as not specifying a port).
+.PP
+A socket of type
+.B SOCK_RAW
+implements bare IP.  The low 8 bits of the next-level protocol argument specify
+the next-level protocol field in the IP header.  This will usually be one of the
+.RB ` IPPROTO_ '
+constants.  For
+.BR PF_INET ,
+if the argument is
+.B IPPROTO_RAW
+(255) then even the IP header will not be supplied; the user-specified address
+will be used for routing, and then the user-provided datagrams placed on the
+wire as IP packets.  To actually use an IP protocol field of 255, higher bits
+in the protocol argument must be made non-zero so that the argument does not
+have exactly that value.  For
+.BR PF_INET6 ,
+.B IPPROTO_RAW
+is not supposed to have these semantics, but older implementations
+implement the
+.B PF_INET
+semantics anyway.  That functionality should be implemented via the
+.B IP_HDRINCL
+socket option where possible.
+.PP
+In
+.BR "struct sockaddr_in6" ,
+the member
+.B sin6_flowinfo
+is at the time of writing undefined, and should be set to zero.
+The member
+.B sin6_scope_id
+is not available in older implementations; where it exists, it should be
+set to zero, or see RFC 2553 for details of correct usage.
+.PP
+Confusingly, the
+.IR getsockopt (2)/ setsockopt (2)
+.I level
+parameter value for IP subprotocols is mixed up with the IP-specific
+subprotocol numbers.  The appropriate values for TCP, UDP and IP layers
+are
+.BR IPPROTO_TCP ,
+.B IPPROTO_UDP
+and the completely bogus
+.B IPPROTO_IP
+(0).
+Some systems provide the names
+.BR SOL_TCP ,
+.B SOL_UDP
+and
+.BR SOL_IP ,
+which should be preferred as a matter of style.
+.PP
+Several definitions for dealing with IP addresses are in
+.BR <arpa/inet.h> .
+Other headers there, such as
+.BR <arpa/telnet.h> ,
+contain definitions for higher-level protocols commonly implemented over IP.
+.B <netdb.h>
+contains definitions needed for run-time lookups of Internet hostnames and
+so on.
+.PP
+A
+.B PF_INET6
+socket can talk IPv4 as well as IPv6, on a dual-protocol system,
+by using IPv4-mapped IPv6 addresses.  The unspecified IPv6 address is taken
+to match all IPv4 addresses, as well as all IPv6-only addresses.
+This will be true of IPX as well is IPv4, just as soon as the format
+and semantics for IPX-mapped IPv6 addresses has been determined.
+.SS "Unix domain sockets"
+Unix-domain (or `local-domain') sockets are used via the
+.B PF_UNIX
+protocol family.  Some systems provide the names
+.B PF_FILE
+or
+.BR PF_LOCAL ;
+the latter is stylistically preferred.  The header
+.B <sys/un.h>
+defines the address structure
+.BR "struct sockaddr_un" .
+.PP
+Unix-domain sockets are addressed using the Unix filesystem as their address
+space; the address structure is intended to hold a NUL-terminated pathname.
+A filesystem node is created on
+.IR bind (2),
+but can thereafter be handled as any other file (renamed, moved, linked and
+unlinked).  When the socket is destroyed, the filesystem node remains, and
+must be removed manually.  If no
+.IR bind (2)
+is performed, a Unix-domain socket can exist with no address.
+.PP
+Some systems provide additional, non-filesystem based addresses.  On such
+systems, a socket address structure where the first byte of the pathname
+is NUL indicates an `abstract' socket address; the byte sequence up to the
+end of the address structure (as determined by the accompanying length argument)
+is the address, in a unique namespace.
+.PP
+Because Unix-domain sockets can only be connected to other Unix-domain sockets
+on the same machine, there are some tricks that can be played with them.
+.IR recvmsg (2)/ sendmsg (2)
+allow additional control information to be sent with a datagram.  Unix-domain
+sockets can use this interface with the
+.B SCM_CREDENTIALS
+message type to transmit process credential information unforgeably.
+More interesting is
+.BR SCM_RIGHTS ,
+which can be used to copy a file descriptor from one process to another
+via connected Unix-domain sockets.
+.SH "OTHER SOCKET-RELATED APIS"
+The
+.IR libunsn (3)
+library provides a layer on top of the Sockets API, to make the more
+awkward control operations more convenient.  This is really a byproduct of
+the main purpose of the library, which is to support the use of
+Universal Network Socket Names (UNSNs) (see
+.IR unsn (7))
+with sockets.  UNSNs are a unified way of specifying network addresses,
+designed to have a sufficiently general structure that they can specify an
+address in any network, not relying on the addressing architecture of any
+specific protocols.
+.PP
+Associated with the
+.IR libunsn (3)
+library is a set of shell utilities, for which see
+.IR libunsn (1).
+These provide something that has been largely missing: a way to set up
+sockets on the command line and in shell scripts.  These bring down the
+barrier to entry to sockets; where previously it was necessary to write
+a lengthy C program to do anything non-trivial, these utilities do the
+socket-specific parts of what simple applications require in the way
+of network access.
+.SH "SEE ALSO"
+.IR accept (2),
+.IR bind (2),
+.IR connect (2),
+.IR getsockopt (2),
+.IR libunsn (1),
+.IR libunsn (3),
+.IR listen (2),
+.IR recv (2),
+.IR send (2),
+.IR setsockopt (2),
+.IR shutdown (2),
+.IR socket (2),
+.IR socketpair (2)
+.SH BUGS
+.SS "Bugs in the Sockets API"
+Many.  This is one of those interfaces that looks like it was cobbled
+together over a weekend, and then frozen as soon as it was physically
+possible to use it.  Of particular note:
+.TP
+o
+A socket is irrevocably tied to a `domain' (protocol family, protocol suite),
+whereas internally that information isn't really needed until the socket needs
+to be bound to an address.
+.TP
+o
+There is no way to get all the creation parameters from an existing socket.
+.TP
+o
+The socket `type' merges more than one concept.  Distinguishing
+.BR SOCK_STREAM ", " SOCK_DGRAM ,
+etc., is good, but
+.B SOCK_RAW
+is logically a sub-protocol issue.
+Consequently, determining the type of an existing socket is not quite as
+useful as it should be.
+.TP
+o
+.IR bind (2)ing
+is irrevocable.  As it is a separate step, it should really be undoable.
+.TP
+o
+There should be some way to
+.IR connect (2)
+and
+.IR listen (2)
+on the same socket, the
+.IR connect (2)
+creating a new socket on the same address, much like
+.IR accept (2).
+.TP
+o
+Some of the features of
+.IR recvmsg (2)/ sendmsg (2)
+should be available with all files, not just sockets.
+.SS "Bugs in this man page"
+This man page is not quite complete.  It does not address out-of-band data
+at all, and in some places dodges the question of whether a particular
+feature is portable or not.  Patches addressing these issues are particularly
+welcome.
+.PP
+Arguably, this man page should be less opinionated.
+Arguably, this man page should be more opinionated.
+Patches addressing either of these issues may or may not be welcome
+for their technical value, but will almost certainly be welcome for humor
+value.

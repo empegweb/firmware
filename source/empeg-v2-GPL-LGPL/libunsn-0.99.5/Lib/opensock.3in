@@ -1,0 +1,134 @@
+.\"
+.\" Lib/opensock.3in -- manual page for unsn_opensock{,_gethints}()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_opensock.3 unsn_opensock_gethints.3
+.TH UNSN_OPENSOCK 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_opensock, unsn_opensock_gethints \- create a socket using UNSN addresses
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "int unsn_opensock(char const *" local_unsn ", char const *" remote_unsn );
+.BI "int unsn_opensock_gethints(char const *" local_unsn ,
+.BI "        char const *" remote_unsn ,
+.BI "        struct unsn_sockaddrinfo *" addr_hints );
+.fi
+.SH DESCRIPTION
+These functions create a socket.  The addresses to which the socket is
+to be bound and/or connected are specified in the form of
+Universal Network Socket Names (UNSNs).
+At least one of
+.I local_unsn
+and
+.I remote_unsn
+must be non-null.
+.PP
+.I local_unsn
+specifies the address to which the socket is to be bound
+(the local endpoint for communications).
+It must either be a NUL-terminated UNSN or a null pointer.
+If it is a UNSN, the socket created will be bound to the address it specifies.
+(This is necessary if the socket is to be used passively, to receive
+connections.)
+If it is a null pointer, the socket created will be bound to an
+address automatically assigned, of a type appropriate for the address
+to which it is to be connected.
+(This is the behavior usually desired when connecting to a remote service.)
+.PP
+.I remote_unsn
+specifies the address to which the socket is to be connected
+(the remote endpoint for communications).
+It must either be a NUL-terminated UNSN or a null pointer.
+If it is a UNSN, the socket created will be connected
+to the address it specifies.
+If it is a null pointer, the socket will be created in an unconnected state.
+.PP
+.I addr_hints
+points to a structure whose
+.BR sai_family ,
+.B sai_type
+and
+.B sai_protocol
+members will be filled in with the specific values used for the socket
+created.  The other members of the structure are unaffected.
+On error, the entire structure will be unmodified.
+.I addr_hints
+may be a null pointer, in which case this information will not be
+stored anywhere;
+.I unsn_opensock
+is exactly equivalent to
+.I unsn_opensock_gethints
+with a null
+.IR addr_hints .
+.PP
+An unconnected socket can be used for bidirectional communications in a
+connectionless protocol.  In a connection-oriented protocol, an unconnected
+socket can either be made passive, to accept connections, or can later
+be connected, to communicate.
+A connected socket can only be used for communication with the socket
+to which it is connected; this applies to both connectionless and
+connection-oriented protocols.
+.PP
+The created socket will have the
+.B SO_REUSEADDR
+option set, allowing multiple use of its local address.
+.PP
+Note that there are some race conditions in this operation, imposed by the
+Sockets API.  For example, when creating a pseudo-connected socket (for a
+connectionless protocol), it is possible for the socket to receive datagrams
+from remote addresses other than that to which it is being connected, because
+there is a delay between allocating the local address and connecting to the
+remote address.
+.SH "RETURN VALUE"
+Returns a file descriptor referencing the newly created socket.
+On error, returns -1, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+Note that some of these error numbers are specific to
+.IR libunsn (3).
+See
+.IR unsn_errno (3)
+for more information.
+.TP
+.B EINVAL
+.I local_unsn
+and
+.I remote_unsn
+are both null pointers.
+.TP
+.B UNSN_EUNSNBADSYNTAX
+One of the addresses did not have correct UNSN syntax.
+.TP
+.B UNSN_EADDRINCOMPAT
+The two addresses specify incompatible network protocols.
+.TP
+.B EADDRINUSE
+The local address specified is already in use.
+.TP
+.B ECONNREFUSED
+The remote server specified refused the connection request.
+.PP
+Many other errors are possible.
+.SH "SEE ALSO"
+.IR bind (2),
+.IR connect (2),
+.IR libunsn (3),
+.IR socket (2),
+.IR unsn_opensock_fromsai (3)

@@ -1,0 +1,102 @@
+.\"
+.\" Lib/aitounsn.3in -- manual page for unsn_aitounsn()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_aitounsn.3
+.TH UNSN_AITOUNSN 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_aitounsn \- convert socket address information to UNSN string
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char *unsn_aitounsn(int " family ", int " type ", int " protocol ,
+.BI "        struct sockaddr const *" addr ", socklen_t " addrlen ,
+.BI "        unsigned " opts );
+.fi
+.SH DESCRIPTION
+This function converts socket address information
+to a Universal Network Socket Name (UNSN) string.
+.PP
+The
+.IR family ,
+.I type
+and
+.I protocol
+arguments correspond to the
+.IR family ,
+.I type
+and
+.I protocol
+arguments to the
+.IR socket (2)
+function; the interpretation of the socket address structure
+depends on the value of these arguments.
+.B addr
+points to the structure giving the protocol-specific address data.
+.B addrlen
+gives the length of this structure; this must be correct,
+and can affect the interpretation of the address data structure
+for some protocols.
+.PP
+The
+.I opts
+argument is the inclusive-OR of zero or more bit flags affecting the
+operation of the function.  The following flags are defined:
+.TP
+.B UNSN_USENAMES
+In generating the UNSN, use symbolic names rather than numeric addresses
+wherever possible.  The default is to use numeric addresses only.
+.SH "RETURN VALUE"
+Returns freshly
+.IR malloc (3)ed
+storage, containing a NUL-terminated UNSN in canonical format
+corresponding to the specified
+socket address.  The caller is responsible for
+.IR free (3)ing
+this storage.  On error, NULL is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.IR addrlen
+was not valid for this type of socket address structure.
+.TP
+.B EPFNOSUPPORT
+The specified socket family is not supported.
+.TP
+.B ESOCKTNOSUPPORT
+The specified socket type is not supported for
+the specified socket family.
+.TP
+.B EPROTONOSUPPORT
+The specified protocol is not supported for
+the specified socket family and type.
+.TP
+.B EAFNOSUPPORT
+The specified address family is not supported for
+the specified socket family, type and protocol.
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to build the string to be returned.
+.SH "SEE ALSO"
+.IR libunsn (3),
+.IR socket (2),
+.IR unsn_addrtounsn (3),
+.IR unsn_saitounsn (3)

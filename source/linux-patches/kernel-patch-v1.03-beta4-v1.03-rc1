@@ -1,0 +1,121 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.36.2.7 empeg/kernel/Makefile:1.36.2.8
+--- empeg/kernel/Makefile:1.36.2.7	Wed Feb 14 20:23:49 2001
++++ empeg/kernel/Makefile	Fri Jun 15 16:41:17 2001
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg42
++EXTRAVERSION = -rmk5-np17-empeg43
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_dsp_i2c.h
+diff -u empeg/kernel/arch/arm/special/empeg_dsp_i2c.h:1.3.2.3 empeg/kernel/arch/arm/special/empeg_dsp_i2c.h:1.3.2.4
+--- empeg/kernel/arch/arm/special/empeg_dsp_i2c.h:1.3.2.3	Mon Jun  4 19:03:29 2001
++++ empeg/kernel/arch/arm/special/empeg_dsp_i2c.h	Fri Jun 15 16:17:34 2001
+@@ -10,6 +10,7 @@
+ #define X_pltd		0x00e
+ #define X_noisflt	0x01c
+ #define X_leva_u	0x019
++#define X_audioc	0x06a
+ #define X_stepSize	0x120
+ #define X_counterX	0x121
+ #define X_plusmax	0x122
+@@ -45,6 +46,35 @@
+ #define Y_c91		0x87b
+ #define Y_c61		0x87d
+ #define Y_EMute		0x887
++
++/* Bass/treble, bank0 */
++#define Y_Ctl0		0x8b0
++#define Y_Cth0		0x8b1
++#define Y_Btl0		0x8b2
++#define Y_Bth0		0x8b3
++#define Y_At00		0x8b4
++#define Y_At10		0x8b5
++#define Y_At20		0x8b6
++#define Y_KTrt0		0x8b7
++#define Y_KTft0		0x8b8
++#define Y_KTmid0	0x8b9
++#define Y_KTbas0	0x8ba
++#define Y_KTtre0	0x8bb
++
++/* Bass/treble, bank1 */
++#define Y_Ctl1		0x8be
++#define Y_Cth1		0x8bf
++#define Y_Btl1		0x8c0
++#define Y_Bth1		0x8c1
++#define Y_At01		0x8c2
++#define Y_At11		0x8c3
++#define Y_At21		0x8c4
++#define Y_KTrt1		0x8c5
++#define Y_KTft1		0x8c6
++#define Y_KTmid1	0x8c7
++#define Y_KTbas1	0x8c8
++#define Y_KTtre1	0x8c9
++
+ #define Y_VGA		0x8e0
+ #define Y_KLCl		0x8e1
+ #define Y_KLCh		0x8e2
+Index: empeg/kernel/arch/arm/special/empeg_mixer.c
+diff -u empeg/kernel/arch/arm/special/empeg_mixer.c:1.4.2.8 empeg/kernel/arch/arm/special/empeg_mixer.c:1.4.2.9
+--- empeg/kernel/arch/arm/special/empeg_mixer.c:1.4.2.8	Tue Jun  5 19:35:27 2001
++++ empeg/kernel/arch/arm/special/empeg_mixer.c	Fri Jun 15 16:18:10 2001
+@@ -994,6 +994,25 @@
+ 			/* Multipath -> Stereo and Response */
+ 			dsp_write(Y_E_mltp_str, 0);
+ 			dsp_write(Y_E_mltp_rsp, 0);
++
++			/* Load bank1 with bass boost:
++			   Values calculated by cdsp.exe
++                           +6db bass, 0db treble, first order cutoff 125Hz */
++			dsp_write(Y_Ctl1,0x055);
++			dsp_write(Y_Cth1,0x3ee);
++			dsp_write(Y_Btl1,0x000);
++			dsp_write(Y_Bth1,0x000);
++			dsp_write(Y_At01,0x008);
++			dsp_write(Y_At11,0x008);
++			dsp_write(Y_At21,0x000);
++			dsp_write(Y_KTrt1,0x4c4);
++			dsp_write(Y_KTft1,0x662);
++			dsp_write(Y_KTmid1,0x402);
++			dsp_write(Y_KTbas1,0x47a);
++			dsp_write(Y_KTtre1,0x000);
++
++			/* Enable bank1 tone control */
++			dsp_write(X_audioc, 0x2f80);
+ 		}
+ 
+ 		/* use str_corr method of de-emphasis/adaptation */
+@@ -1049,6 +1068,9 @@
+ 		dsp_write(Y_p13, 0x000);
+ 		dsp_write(Y_p13, 0x7ff);
+ #endif
++
++		/* Disable tone control (select bank0) */
++		dsp_write(X_audioc, 0x2c00);
+ 		
+ 		empeg_mixer_set_sampling_rate(dev, 38000);
+ 		break;    
+@@ -1074,6 +1096,9 @@
+ 		/* Select mode */
+ 		dsp_write(X_modpntr,0x0200);
+ 
++		/* Disable tone control (select bank0) */
++		dsp_write(X_audioc, 0x2c00);
++		
+ 		empeg_mixer_set_sampling_rate(dev, 44100);
+ 		break;
+ 		
+@@ -1094,6 +1119,9 @@
+ 		/* Select mode */
+ 		dsp_write(X_modpntr,0x200);
+ 
++		/* Disable tone control (select bank0) */
++		dsp_write(X_audioc, 0x2c00);
++		
+ 		empeg_mixer_set_sampling_rate(dev, 44100);
+ 		break;    
+ 	}

@@ -1,0 +1,57 @@
+.\"
+.\" Utils/i2u.1in -- manual page for inetd2userver
+.\" Copyright (C) 1996, 2000  Andrew Main
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: inetd2userver.1
+.TH INETD2USERVER 1 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+inetd2userver \- convert inetd.conf to userver-using script
+.SH SYNOPSIS
+.B inetd2userver
+.RI [ conf-file ]
+.SH DESCRIPTION
+.I inetd2userver
+reads in an
+.IR inetd (8)
+configuration file, and
+generates a shell script to provide the same services using
+.IR userver (1).
+The conviguration file can be specified as
+.IR conf-file ;
+it defaults to
+.BR /etc/inetd.conf .
+The script generated is written to standard output.
+.PP
+Lines in the configuration file that
+.I inetd2userver
+doesn't understand or can't handle (which should only be RPC entries)
+are retained in the generated script,
+in such a manner that the script will use
+.IR inetd (8)
+to handle them.
+.PP
+The script does not have the same semantics as
+.IR inetd (8)
+with respect to PID files and signals.  The translation is idiomatic rather
+than literal; one would probably want to modify the script to fit local
+configuration, although it
+.I can
+reasonably be used unmodified.
+.SH "SEE ALSO"
+.IR inetd (8),
+.IR libunsn (1),
+.IR userver (1)

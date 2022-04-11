@@ -1,0 +1,124 @@
+.\"
+.\" Lib/getspunsnh.3in -- manual page for unsn_get{peer,sock}unsn_withhints()
+.\" Copyright (C) 2000  Andrew Main
+.\"
+.\" This library is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2 of the License, or (at your option) any later version.
+.\"
+.\" This library is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+.\"
+.\" NAMES: unsn_getpeerunsn_withhints.3 unsn_getsockunsn_withhints.3
+.TH UNSN_GETSOCKUNSN_WITHHINTS 3 "@DATE@" "libunsn @VERSION@"
+.SH NAME
+unsn_getpeerunsn_withhints, unsn_getsockunsn_withhints \-
+get address to which a socket is bound/connected as a UNSN
+.SH SYNOPSIS
+.nf
+.B #include <libunsn.h>
+.sp
+.BI "char *unsn_getpeerunsn_withhints(int " sock_fd ,
+.BI "        struct unsn_sockaddrinfo const *" hints ", unsigned " opts );
+.BI "char *unsn_getsockunsn_withhints(int " sock_fd ,
+.BI "        struct unsn_sockaddrinfo const *" hints ", unsigned " opts );
+.fi
+.SH DESCRIPTION
+These functions determine the address of the specified socket
+.RI ( unsn_getsockunsn_withhints )
+or the address to which the specified socket is connected
+.RI ( unsn_getpeerunsn_withhints ).
+The address is returned in the form of a
+Universal Network Socket Name (UNSN) string.
+.PP
+The
+.I hints
+argument must be non-null.
+\fIhints\fR\fB->sai_family\fP,
+\fIhints\fR\fB->sai_type\fP and
+\fIhints\fR\fB->sai_protocol\fP
+must be the parameters passed to
+.IR socket (2)
+to create the socket;
+they are required in order to complete the address.
+The versions of these functions that do not take a
+.I hints
+argument (see
+.IR unsn_getsockunsn (3))
+can usually guess these parameters, but will sometimes be unable to,
+and so will fail.  Usually, the
+.I hints
+structure will have been filled in by
+.IR unsn_opensock_gethints (3).
+.PP
+The
+.I opts
+argument is the inclusive-OR of zero or more bit flags affecting the
+operation of the function.  The following flags are defined:
+.TP
+.B UNSN_USENAMES
+In generating the UNSN, use symbolic names rather than numeric addresses
+wherever possible.  The default is to use numeric addresses only.
+.PP
+Note that these functions produce equivalent results to a combination of
+.IR unsn_getpeeraddr (3)/ unsn_getsockaddr (3)
+and
+.IR unsn_saitounsn (3).
+.SH "RETURN VALUE"
+Returns freshly
+.IR malloc (3)ed
+storage, containing a NUL-terminated UNSN in canonical format.
+The caller is responsible for
+.IR free (3)ing
+this storage.  On error, NULL is returned, and
+.IR errno (3)
+is set to indicate the error.
+.SH ERRORS
+Note that some of these error numbers are specific to
+.IR libunsn (3).
+See
+.IR unsn_errno (3)
+for more information.
+.TP
+.B EBADF
+.I sock_fd
+is not a valid file descriptor.
+.TP
+.B ENOTSOCK
+.I sock_fd
+does not refer to a socket.
+.TP
+.B ENOTCONN
+The socket is not connected, and the peer's address was requested.
+.TP
+.B EPFNOSUPPORT
+The socket family is not recognized.
+.TP
+.B ESOCKTNOSUPPORT
+The socket type is not recognized for
+this socket family.
+.TP
+.B EPROTONOSUPPORT
+The protocol is not recognized for
+this socket family and type.
+.TP
+.B EPROTONOSUPPORT
+The address family is not recognized for
+this socket family, type and protocol.
+.TP
+.B ENOMEM
+.IR malloc (3)
+failed to allocate enough memory to build the string to be returned.
+.SH "SEE ALSO"
+.IR getpeername (2),
+.IR getsockname (2),
+.IR libunsn (3),
+.IR unsn_getsockunsn (3),
+.IR unsn_opensock_gethints (3)

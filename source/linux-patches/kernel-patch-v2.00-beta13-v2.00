@@ -1,0 +1,64 @@
+Index: empeg/kernel/Makefile
+diff -u empeg/kernel/Makefile:1.48.2.1 empeg/kernel/Makefile:1.48.2.2
+--- empeg/kernel/Makefile:1.48.2.1	Wed Jul 24 18:12:01 2002
++++ empeg/kernel/Makefile	Wed Jan 15 21:07:29 2003
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 2
+ SUBLEVEL = 14
+-EXTRAVERSION = -rmk5-np17-empeg51
++EXTRAVERSION = -rmk5-np17-empeg52
+ 
+ #ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+ ARCH := arm
+Index: empeg/kernel/arch/arm/special/empeg_audio3.c
+diff -u empeg/kernel/arch/arm/special/empeg_audio3.c:1.7 empeg/kernel/arch/arm/special/empeg_audio3.c:1.7.2.1
+--- empeg/kernel/arch/arm/special/empeg_audio3.c:1.7	Tue Jan  8 17:27:12 2002
++++ empeg/kernel/arch/arm/special/empeg_audio3.c	Fri Aug 30 19:06:11 2002
+@@ -68,6 +68,7 @@
+ #include <linux/init.h>
+ #include <linux/vmalloc.h>
+ #include <linux/soundcard.h>
++#include <linux/poll.h>
+ #include <asm/segment.h>
+ #include <asm/irq.h>
+ #include <asm/io.h>
+@@ -187,6 +188,7 @@
+ static int empeg_audio_read_proc(char *buf, char **start, off_t offset,
+ 				 int length, int *eof, void *private);
+ #endif
++static unsigned int empeg_audio_poll(struct file *file, poll_table *wait);
+ 
+ static struct tq_struct emit_task =
+ {
+@@ -201,6 +203,7 @@
+ static struct file_operations audio_fops =
+ {
+ 	write:		empeg_audio_write,
++	poll:		empeg_audio_poll,
+ 	ioctl:		empeg_audio_ioctl,
+ 	open:		empeg_audio_open,
+ };
+@@ -376,6 +379,22 @@
+ 
+ 	/* Write complete */
+ 	return total;
++}
++
++static unsigned int empeg_audio_poll(struct file *file, poll_table *wait)
++{
++	audio_dev *dev = &audio[0];
++	int free;
++
++	/* This tells select/poll to include our ISR signal in the things it waits for
++	   (it returns immediately in all cases) */
++	poll_wait(file, &dev->waitq, wait);
++
++	/* Now we check our state and return corresponding flags */
++	if( dev->free > 0 )
++	        return POLLOUT | POLLWRNORM;
++	else
++                return 0;
+ }
+ 
+ /* Throw away all complete blocks waiting to go out to the DAC and return how

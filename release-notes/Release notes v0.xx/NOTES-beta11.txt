@@ -1,0 +1,122 @@
+empeg-car software beta-11 release.
+
+* Versions:
+
+empeg-car player 0.86
+emplode          0.88
+empegUpgrade	 0.88
+emptool		 TBD
+kernel           2.2.14-rmk5-np17-empeg25
+
+* Notes
+
+*  General
+
+This release makes changes to the configuration of your empeg-car that will
+not be revoked by installing a version prior to beta8b.
+
+When submitting bug reports to bugs@empeg.com please put each bug in a
+separate email - this helps us to classify bugs and to archive the reports
+when the bugs have been fixed.
+
+Release notes are not cumulative. If you are upgrading by more than one
+release then please read each set of release notes. These are available at
+http://www2.empeg.com/upgrades/test/all_notes.html
+
+You should not run this version of the player with an earlier release of
+emplode or this version of emplode with an earlier release of the player.
+
+*  Installation
+
+Download either the consumer or developer images and emplode (or emptool)
+from the empeg-car upgrades site.
+
+You should install the new emplode or emptool before installing this
+release. If you fail to do so your empeg-car unit will not function and it
+will be necessary to apply the upgrade again using the correct version of
+empegUpgrade or upgclient.
+
+Remove the power connector from your empeg-car and connect your empeg-car
+to your computer using the supplied serial cable. Do _not_ reconnect the
+power to your empeg-car.
+
+The upgrade can be installed by serial only. Select Upgrade empeg-car
+software from the Tools menu and either enter or browse for the upgrade
+file. Click Next and select the serial port that your unit is connected
+to. Click Next again.
+
+When instructed to do so by the upgrade program plug in the empeg-car
+power connector. The upgrade should then be applied.
+
+* Changes:
+
+*  player:
+
+It is now possible to quickly toggle between the last full screen text
+visual and the last full screen graphical visual by holding the bottom
+button on the unit.
+
+The now and next visual now correctly updates when items are appended to a
+playlist.
+
+The separate IR bugfix has been rolled in.
+
+Shuffle now works immediately and therefore more like a CD player. On long
+playlists it may interrupt the audio for a little while. Shuffle can be
+toggled by pressing zero on the remote control.
+
+Running order tweaking support has been added. You can dynamically tweak
+the order of the currently playing running order. This works by scanning
+forward from the next track trying to find a track with a matching field
+and swapping it with the next track. e.g. pressing 2 on the remote control
+during playback will find the next song by the same artist as the current
+song and ensure that it is played next (if it exists). If the next track
+already fits the criteria then subsequent tracks will be swapped, so
+pressing 2 three times will cause the next three tracks to be by the same
+artist as the current track (if such songs exist in the remainder of the
+playlist). 2=Artist, 3=Source, 5=Genre, 6=Year. You can also swap the next
+track with another later in the running order at random by pressing 8.
+
+Many other changes that we can't remember.
+
+*  emplode:
+
+Basic ID3v2 tags are now supported.
+
+Many synchronisation protocol problems have been solved. Most of these
+wouldn't cause the synchronisation to fail but they may have caused delays
+whilst synchronising.
+
+Other minor changes.
+
+*  empegUpgrade:
+
+Minor changes.
+
+*  emptool
+
+Many improvements have been made. A new version should be available soon.
+
+*  developer
+
+* Known bugs:
+
+The empeg hangs if connected via USB to a machine that is switched
+off. Removing the USB cable fixes the problem.
+
+The emplode install program doesn't restart the computer when necessary to
+ensure that the empeg-car device is found. This is not always essential.
+
+The emplode program doesn't check whether files are valid MP3 files before
+downloading.
+
+The same PIN may be entered for more than one tune/playlist - the empeg-car
+will play the first one it finds.
+
+Plugging more than empeg-car into a single machine via USB may confuse
+emplode.
+
+It is not currently possible to play WAV files on the unit.
+
+Mike Crowe 2000/06/24 16:14 BST
+mac@empeg.com
